@@ -1,0 +1,97 @@
+[
+    {
+        "question_number": "Q.2(a)",
+        "module_number": 1,
+        "source_exam": "Mid Semester",
+        "source_year": 2024,
+        "marks": 5,
+        "question_text": "Derive the expression for the equivalent resistance of three resistors connected in parallel and show that the total conductance is the sum of individual conductances.",
+        "question_latex": "\\text{Derive the expression for the equivalent resistance of three resistors connected in parallel.}",
+        "question_type": "derivation",
+        "question_uid": "e931ca82b1d4f4e5a6c7d8e9f0a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9",
+        "tags": [
+            "DC Circuits",
+            "Resistors"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "answer": "For three resistors $R_1, R_2, R_3$ in parallel, the voltage $V$ across each is the same. Total current $I = I_1 + I_2 + I_3$. \nBy Ohm's Law, $I = V/R_{eq}$, $I_1 = V/R_1$, $I_2 = V/R_2$, and $I_3 = V/R_3$. \nSubstituting these: $V/R_{eq} = V/R_1 + V/R_2 + V/R_3$. \nDividing by $V$: $1/R_{eq} = 1/R_1 + 1/R_2 + 1/R_3$. \nSince conductance $G = 1/R$, then $G_{total} = G_1 + G_2 + G_3$."
+    },
+    {
+        "question_number": "Q.4(b)",
+        "module_number": 2,
+        "source_exam": "End Semester",
+        "source_year": 2023,
+        "marks": 5,
+        "question_text": "Derive the expression for the energy stored in a magnetic field of an inductor with inductance L and current I.",
+        "question_latex": "\\text{Derive the expression for the energy stored in a magnetic field of an inductor.}",
+        "question_type": "derivation",
+        "question_uid": "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2",
+        "tags": [
+            "Magnetic Circuits",
+            "Inductance"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "answer": "The power delivered to an inductor is $P = v \\cdot i$, where $v = L \\frac{di}{dt}$. \nThe work done $dW$ in a small time $dt$ is $dW = P dt = (L \\frac{di}{dt}) i dt = Li di$. \nTo find the total energy $W$ stored when current increases from $0$ to $I$: \n$W = \\int_{0}^{I} Li di = L [\\frac{i^2}{2}]_0^I = \\frac{1}{2}LI^2$."
+    },
+    {
+        "question_number": "Q.3(b)",
+        "module_number": 3,
+        "source_exam": "Mid Semester",
+        "source_year": 2024,
+        "marks": 3,
+        "question_text": "For a series R-L-C circuit, derive the condition for resonance and find the expression for resonant frequency.",
+        "question_latex": "\\text{Derive the condition for resonance and resonant frequency for a series R-L-C circuit.}",
+        "question_type": "derivation",
+        "question_uid": "r1l2c3s4e5r6i7e8s9o0n1a2n3c4e5f6r7e8q9u0e1n2c3y4z5a6b7c8d9e0f1",
+        "tags": [
+            "AC Circuits",
+            "Resonance"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "answer": "In a series RLC circuit, total impedance is $Z = R + j(X_L - X_C)$, where $X_L = \\omega L$ and $X_C = 1/(\\omega C)$. \nResonance occurs when the reactive part of the impedance is zero: $X_L - X_C = 0 \\Rightarrow \\omega L = 1/(\\omega C)$. \nSolving for $\\omega$: $\\omega^2 = 1/(LC) \\Rightarrow \\omega_0 = 1/\\sqrt{LC}$. \nSince $\\omega = 2\\pi f$, the resonant frequency is $f_0 = \\frac{1}{2\\pi\\sqrt{LC}}$."
+    },
+    {
+        "question_number": "Q.5(a)",
+        "module_number": 4,
+        "source_exam": "End Semester",
+        "source_year": 2022,
+        "marks": 6,
+        "question_text": "In a 3-phase balanced Delta (Δ) connection, derive the relationship between line current and phase current.",
+        "question_latex": "\\text{Derive the relationship between line current } (I_L) \\text{ and phase current } (I_{ph}) \\text{ for a balanced Delta connection.}",
+        "question_type": "derivation",
+        "question_uid": "d1e2l3t4a5c6o7n8n9e0c1t2i3o4n5r6e7l8a9t1i0o1n2i3l4i5p6h7a8s9e",
+        "tags": [
+            "Three-Phase Systems",
+            "Delta Connection"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "answer": "In a Delta connection, Line Voltage = Phase Voltage ($V_L = V_{ph}$). \nApplying KCL at a node: Line current $\\vec{I_L} = \\vec{I_{ph1}} - \\vec{I_{ph2}}$. \nUsing a phasor diagram, the angle between two phase currents is $120^\\circ$. \nThe magnitude $I_L = \\sqrt{I_{ph}^2 + I_{ph}^2 - 2I_{ph}I_{ph}\\cos(120^\\circ)}$. \n$I_L = \\sqrt{I_{ph}^2 + I_{ph}^2 - 2I_{ph}^2(-0.5)} = \\sqrt{3I_{ph}^2} = \\sqrt{3}I_{ph}$."
+    },
+    {
+        "question_number": "Q.2(b)",
+        "module_number": 5,
+        "source_exam": "End Semester",
+        "source_year": 2024,
+        "marks": 5,
+        "question_text": "Derive the expression for the force between two parallel current-carrying conductors.",
+        "question_latex": "\\text{Derive the expression for the force between two parallel current-carrying conductors.}",
+        "question_type": "derivation",
+        "question_uid": "f1o2r3c4e5p6a7r8a9l0l1e2l3w4i5r6e7s8d9e0r1i2v3a4t5i6o7n8u9i0d1",
+        "tags": [
+            "Magnetostatics",
+            "Magnetic Forces"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "answer": "Consider two parallel wires carrying currents $I_1$ and $I_2$ separated by distance $d$. \nThe magnetic field produced by wire 1 at the location of wire 2 is $B_1 = \\frac{\\mu_0 I_1}{2\\pi d}$. \nThe force on a length $l$ of wire 2 is $F = I_2 l B_1 \\sin(90^\\circ)$. \nSubstituting $B_1$: $F = I_2 l (\\frac{\\mu_0 I_1}{2\\pi d})$. \nThe force per unit length is $\\frac{F}{l} = \\frac{\\mu_0 I_1 I_2}{2\\pi d}$."
+    }
+]

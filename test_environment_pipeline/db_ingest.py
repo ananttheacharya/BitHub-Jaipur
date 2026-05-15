@@ -19,17 +19,11 @@ from dotenv import load_dotenv
 # ------------------------------------------------------------------
 # CONFIGURATION
 # ------------------------------------------------------------------
-BASE_DIR = Path(__file__).resolve().parent
-ROOT_DIR = BASE_DIR.parent
-
-NORMALIZED_DIR = BASE_DIR / "normalized_questions"
+BASE_DIR       = Path(__file__).parent
+NORM_DIR       = BASE_DIR / "normalized_questions"
 ANSWERS_DIR    = BASE_DIR / "answers"
-ANSWERS_DIR.mkdir(exist_ok=True)
 
-
-
-
-load_dotenv(ROOT_DIR / ".env")
+load_dotenv(BASE_DIR.parent / ".env")
 SSH_HOST        = os.getenv("DB_SSH_HOST")
 SSH_USER        = os.getenv("DB_SSH_USER")
 SSH_PASS        = os.getenv("DB_SSH_PASS")

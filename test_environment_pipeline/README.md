@@ -1,6 +1,6 @@
-# MA24103 — Mathematics 2 Data Pipeline
+# Test Environment Pipeline (formerly MA24103)
 
-This directory contains the full data pipeline for the **MA24103 (Mathematics 2)** course in BitHub V2.
+This directory contains the full, universal data pipeline for importing and processing course materials in BitHub V2. Used originally as a testbed for the **MA24103 (Mathematics 2)** course, it has been updated to be subject-agnostic.
 
 ## What's in here
 

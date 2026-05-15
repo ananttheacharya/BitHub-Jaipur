@@ -1,0 +1,22 @@
+[
+    {
+        "question_uid": "a7610db6abd6b79b439943e00f52b488e3892fdb97c11eb8c1670ed133bea091",
+        "subject_code": "EE24101",
+        "question_type": "derivation",
+        "solution_text": "1. Assumption: Three resistors R1, R2, and R3 are connected in parallel to a voltage source V. Each resistor experiences the same voltage V, while the total current I splits into branch currents I1, I2, and I3. 2. Law: Kirchhoff's Current Law (KCL) states that the sum of currents entering a node equals the sum of currents leaving it. Thus, I = I1 + I2 + I3. 3. Ohm's Law states I = V/R, so I1 = V/R1, I2 = V/R2, and I3 = V/R3. 4. Substituting these into the KCL equation: V/Req = V/R1 + V/R2 + V/R3. 5. Factoring out V, we get 1/Req = 1/R1 + 1/R2 + 1/R3. 6. Conductance G is defined as G = 1/R. Substituting this, we obtain G_total = G1 + G2 + G3.",
+        "solution_latex": "\\text{Consider three resistors } R_1, R_2, \\text{ and } R_3 \\text{ connected in parallel across a voltage source } V. \\text{ By Kirchhoff's Current Law (KCL):} \\\\ I_{total} = I_1 + I_2 + I_3 \\\\ \\text{Using Ohm's Law } (I = V/R): \\\\ \\frac{V}{R_{eq}} = \\frac{V}{R_1} + \\frac{V}{R_2} + \\frac{V}{R_3} \\\\ \\text{Dividing both sides by } V: \\\\ \\frac{1}{R_{eq}} = \\frac{1}{R_1} + \\frac{1}{R_2} + \\frac{1}{R_3} \\\\ \\text{Since conductance } G = 1/R, \\text{ we define } G_{eq} = 1/R_{eq}, G_1 = 1/R_1, G_2 = 1/R_2, \\text{ and } G_3 = 1/R_3. \\\\ \\text{Therefore: } G_{eq} = G_1 + G_2 + G_3.",
+        "final_answer": "1/R_{eq} = 1/R_1 + 1/R_2 + 1/R_3; G_{total} = G_1 + G_2 + G_3",
+        "confidence_score": 1.0,
+        "generated_by": "gemini-3.1-flash-lite"
+    },
+    {
+        "question_uid": "d4a2a0fa72886e813f2c30aa2769c24190f458ca944d33dcda0965480ad5486c",
+        "subject_code": "EE24101",
+        "question_type": "derivation",
+        "solution_text": "To derive the energy stored in an inductor, we start from the power relationship in an electrical circuit. 1. The instantaneous power p(t) delivered to an inductor is given by the product of the voltage v(t) across it and the current i(t) flowing through it: p(t) = v(t) * i(t). 2. According to Faraday's Law of Induction for an inductor, the voltage across the inductor is v(t) = L * di/dt. 3. Substituting this into the power equation, we get p(t) = L * i(t) * di/dt. 4. Since power is the rate of change of energy (p = dW/dt), we can write dW = L * i * di. 5. To find the total energy W stored as the current increases from 0 to I, we integrate both sides: W = integral from 0 to I of (L * i * di). 6. Evaluating the integral yields W = 1/2 * L * I^2.",
+        "solution_latex": "The instantaneous power p(t) supplied to an inductor is defined as p(t) = v(t)i(t). By the definition of an ideal inductor, v(t) = L \\frac{di}{dt}. Substituting this into the power equation: p(t) = L i(t) \\frac{di}{dt}. Since p(t) = \\frac{dW}{dt}, we have dW = L i di. To find the total energy W stored when the current increases from 0 to I, we integrate: W = \\int_{0}^{W} dW' = \\int_{0}^{I} L i' di'. Solving the integral: W = L \\left[ \\frac{1}{2} i'^2 \\right]_{0}^{I}. Thus, W = \\frac{1}{2}LI^2.",
+        "final_answer": "W = 1/2 LI^2",
+        "confidence_score": 1.0,
+        "generated_by": "gemini-3.1-flash-lite"
+    }
+]

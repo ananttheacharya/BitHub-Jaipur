@@ -4,13 +4,18 @@ This directory contains the full, universal data pipeline for importing and proc
 
 ## What's in here
 
-| File | Purpose |
+| File / Folder | Purpose |
 |---|---|
 | `normalization.py` | Cleans raw OCR-scanned JSON, enforces LaTeX formatting, generates semantic tags |
-| `solution_generator.py` | Calls the Gemini API to generate step-by-step solutions for each question |
+| `answer_generator.py` | Main script to generate step-by-step solutions for questions (replaces `solution_generator.py`) |
 | `db_ingest.py` | Ingests normalized questions + solutions into the MySQL database via SSH |
-| `normalized_MA24103.json` | Cleaned dataset — 45 questions (End Sem 2022/23/24, Mid Sem 2023/24) |
-| `generated_solutions.json` | AI-generated solutions for all 45 questions |
+| `db_cleanup_derivations.py` | Removes accidental derivation duplicates from the database |
+| `refactor_modules.py` | Maps module numbers from mapping files to raw question data |
+| `raw_questions/` | Contains unprocessed OCR-scanned JSON data and module mapping files |
+| `normalized_questions/` | Contains cleaned, structured JSON data ready for ingestion |
+| `answers/` | Contains generated solutions, failed generation logs, and malformed data logs |
+| `ingest_logs/` | History of generated SQL statements used for database ingestion |
+| `backups_and_prototypes/` | Legacy test files and UI prototypes |
 | `.env.example` | Template for required environment variables |
 
 ## Setup

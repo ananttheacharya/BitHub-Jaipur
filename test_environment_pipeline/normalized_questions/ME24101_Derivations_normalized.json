@@ -1,0 +1,64 @@
+[
+    {
+        "question_number": "Q.1(a)",
+        "module_number": 1,
+        "source_exam": "End Semester",
+        "source_year": 2024,
+        "marks": 5,
+        "question_text": "Using vector analysis, prove that the moment of a force F in 3D space, with respect to an arbitrary axis defined in the Cartesian coordinate system, remains constant regardless of the point chosen on the arbitrary axis.",
+        "question_latex": "\\text{Using vector analysis, prove that the moment of a force } \\mathbf{F} \\text{ in 3D space, with respect to an arbitrary axis defined in the Cartesian coordinate system, remains constant regardless of the point chosen on the arbitrary axis.}",
+        "question_type": "derivation",
+        "question_uid": "9541d57496ed82fac116586ef48bbec1cdeae6e0e3904e68ff6ba107e7ed82d6",
+        "tags": [
+            "Moment",
+            "Statics",
+            "Vectors"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "subject": "Basics of Mechanical Engineering",
+        "subject_code": "ME24101"
+    },
+    {
+        "question_number": "Q.1(a)",
+        "module_number": 1,
+        "source_exam": "End Semester",
+        "source_year": 2024,
+        "marks": 4,
+        "question_text": "Discuss the transformation of a determinate truss into an indeterminate one, accompanied by mathematical reasoning. Additionally, illustrate the process with appropriate diagrams.",
+        "question_latex": "\\text{Discuss the transformation of a determinate truss into an indeterminate one, accompanied by mathematical reasoning.}",
+        "question_type": "theoretical/derivation",
+        "question_uid": "11cb53aaf4690b1e4bbb22118fc259901059d22352c7d61aa5463ec2a7309ea5",
+        "tags": [
+            "Indeterminacy",
+            "Trusses"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "subject": "Basics of Mechanical Engineering",
+        "subject_code": "ME24101"
+    },
+    {
+        "question_number": "Q.3(a)",
+        "module_number": 3,
+        "source_exam": "End Semester",
+        "source_year": 2023,
+        "marks": 5,
+        "question_text": "For a simple screw jack, derive the expressions for effort applied at the circumference of spindle and force applied at the end of the lever, when the load is hoisted upwards.",
+        "question_latex": "\\text{For a simple screw jack, derive the expressions for effort applied at the circumference of spindle (P) and force applied at the end of the lever (P}_1\\text{) when the load (W) is hoisted upwards.}",
+        "question_type": "derivation",
+        "question_uid": "d9c17fe02bb4c451165ac9a821b2e659b2cba5b59c2c23a59ad17eea95bf2ad5",
+        "tags": [
+            "Friction",
+            "Mechanics",
+            "Screw Jack"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "subject": "Basics of Mechanical Engineering",
+        "subject_code": "ME24101"
+    }
+]

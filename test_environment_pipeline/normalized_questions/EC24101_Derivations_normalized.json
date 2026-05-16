@@ -1,0 +1,169 @@
+[
+    {
+        "question_number": "Q.3(b)",
+        "module_number": 2,
+        "source_exam": "Mid Semester",
+        "source_year": 2025,
+        "marks": 3,
+        "question_text": "Derive the relationship between α, β and γ for a transistor.",
+        "question_latex": "\\text{Derive the relationship between } \\alpha, \\beta \\text{ and } \\gamma \\text{ for a transistor.}",
+        "question_type": "derivation",
+        "question_uid": "416d383acffa72ac9c00482f1cb59b003ff1f0d26b55f862260d1a88fbd34794",
+        "tags": [
+            "BJT",
+            "Semiconductor Devices",
+            "Transistor Characteristics"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "subject": "Basics of Electronic Engineering",
+        "subject_code": "EC24101"
+    },
+    {
+        "question_number": "Q1(b)",
+        "module_number": 1,
+        "source_exam": "Mid Semester",
+        "source_year": 2024,
+        "marks": 3,
+        "question_text": "Explain the working of Centre-tap full wave rectifier circuit and derive its efficiency.",
+        "question_latex": "\\text{Explain the working of Centre-tap full wave rectifier circuit and derive its efficiency.}",
+        "question_type": "derivation",
+        "question_uid": "6270d747eeae533f24be3001679563e1f59e1c6eb129a7a4d5d059426ecc83c1",
+        "tags": [
+            "Circuit Analysis",
+            "Diodes",
+            "Rectifiers"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "subject": "Basics of Electronic Engineering",
+        "subject_code": "EC24101"
+    },
+    {
+        "question_number": "Q.2(a)",
+        "module_number": 1,
+        "source_exam": "Mid Semester",
+        "source_year": 2022,
+        "marks": 3,
+        "question_text": "Draw the circuit of diode based Half Wave Rectifier (HWR) and Derive the expressions for average and RMS voltage for HWR.",
+        "question_latex": "\\text{Draw the circuit of diode based Half Wave Rectifier (HWR) and Derive the expressions for average and RMS voltage for HWR.}",
+        "question_type": "derivation",
+        "question_uid": "ac746205b2ad2a5ba5861e2e2f5e8c438bace1bdc5e99c295f54d77ecaa51318",
+        "tags": [
+            "Circuit Analysis",
+            "Diodes",
+            "Rectifiers"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "subject": "Basics of Electronic Engineering",
+        "subject_code": "EC24101"
+    },
+    {
+        "question_number": "Q.2(b)",
+        "module_number": 2,
+        "source_exam": "End Semester",
+        "source_year": 2022,
+        "marks": 5,
+        "question_text": "Derive the Shockley's equation for drain current for JFET.",
+        "question_latex": "\\text{Derive the Shockley's equation for drain current for JFET.}",
+        "question_type": "derivation",
+        "question_uid": "adcf40686487b6008341a5242c6ebc00627d1b9f027b414b0a2a1f1094d1c261",
+        "tags": [
+            "Field Effect Transistors",
+            "JFET"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "subject": "Basics of Electronic Engineering",
+        "subject_code": "EC24101"
+    },
+    {
+        "question_number": "Q.3(a)",
+        "module_number": 3,
+        "source_exam": "End Semester",
+        "source_year": 2024,
+        "marks": 5,
+        "question_text": "Explain the circuit connection of a Hartley Oscillator and find the expression for frequency of oscillation.",
+        "question_latex": "\\text{Explain the circuit connection of a Hartley Oscillator and find the expression for frequency of oscillation.}",
+        "question_type": "derivation",
+        "question_uid": "f4c39c7fd35ad5edb4675ccab4bfd6965e01ffbe2b3b530f2adcff516940e268",
+        "tags": [
+            "Circuit Analysis",
+            "Feedback Circuits",
+            "Oscillators"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "subject": "Basics of Electronic Engineering",
+        "subject_code": "EC24101"
+    },
+    {
+        "question_number": "Q.3(a)",
+        "module_number": 3,
+        "source_exam": "End Semester",
+        "source_year": 2022,
+        "marks": 5,
+        "question_text": "Explain the working of the RC phase shift oscillator. Derive its frequency of oscillation.",
+        "question_latex": "\\text{Explain the working of the RC phase shift oscillator. Derive its frequency of oscillation.}",
+        "question_type": "derivation",
+        "question_uid": "768044d37feff71b5a3352ab63335b955ddaf5762e03a8aa6c9bd31b123acf10",
+        "tags": [
+            "Feedback Circuits",
+            "Oscillators"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "subject": "Basics of Electronic Engineering",
+        "subject_code": "EC24101"
+    },
+    {
+        "question_number": "Q.3(b)",
+        "module_number": 3,
+        "source_exam": "End Semester",
+        "source_year": 2023,
+        "marks": 5,
+        "question_text": "Schematize the op-amp-based adder circuit, or summing amplifier circuit, and deduce the expression of its output voltage (vo).",
+        "question_latex": "\\text{Schematize the op-amp-based adder circuit, and deduce the expression of its output voltage } (v_o).",
+        "question_type": "derivation",
+        "question_uid": "ea3da4230692a266f890aa1689b074a0931bd8c7beca669c5f96ea80a402ea5f",
+        "tags": [
+            "Circuit Analysis",
+            "Linear ICs",
+            "Operational Amplifiers",
+            "Semiconductor Devices"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "subject": "Basics of Electronic Engineering",
+        "subject_code": "EC24101"
+    },
+    {
+        "question_number": "Q.4(b)",
+        "module_number": 4,
+        "source_exam": "End Semester",
+        "source_year": 2024,
+        "marks": 5,
+        "question_text": "Derive the expression for sum and carry of the full adder and implement the circuit.",
+        "question_latex": "\\text{Derive the expression for sum and carry of the full adder and implement the circuit.}",
+        "question_type": "derivation",
+        "question_uid": "18eb30d083f6aa82607060c36b20ea775a19869c8429ef3f3b7504cda70fca36",
+        "tags": [
+            "Circuit Analysis",
+            "Combinational Circuits",
+            "Digital Electronics"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "subject": "Basics of Electronic Engineering",
+        "subject_code": "EC24101"
+    }
+]

@@ -1,0 +1,154 @@
+[
+    {
+        "question_number": "Q.3(b)",
+        "module_number": 2,
+        "source_exam": "Mid Semester",
+        "source_year": 2025,
+        "marks": 3,
+        "question_text": "Derive the relationship between α, β and γ for a transistor.",
+        "question_latex": "\\text{Derive the relationship between } \\alpha, \\beta \\text{ and } \\gamma \\text{ for a transistor.}",
+        "question_type": "derivation",
+        "question_uid": "b7a1c2d3e4f5g6h7i8j9k0l1m2n3o4p5q6r7s8t9u0v1w2x3y4z5a6b7c8d9e0f1",
+        "tags": [
+            "BJT",
+            "Transistor Characteristics"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "answer": "Basic relations: $I_E = I_B + I_C$, $\\alpha = I_C/I_E$, $\\beta = I_C/I_B$, and $\\gamma = I_E/I_B$. \n1. Relationship between $\\alpha$ and $\\beta$: Since $I_B = I_E - I_C$, then $\\beta = \\frac{I_C}{I_E - I_C}$. Dividing by $I_E$: $\\beta = \\frac{\\alpha}{1-\\alpha}$ or $\\alpha = \\frac{\\beta}{1+\\beta}$.\n2. Relationship between $\\beta$ and $\\gamma$: $\\gamma = \\frac{I_E}{I_B} = \\frac{I_B + I_C}{I_B} = 1 + \\frac{I_C}{I_B} = 1 + \\beta$.\n3. Relationship between $\\alpha$ and $\\gamma$: Since $\\gamma = 1 + \\beta$ and $\\beta = \\frac{\\alpha}{1-\\alpha}$, then $\\gamma = 1 + \\frac{\\alpha}{1-\\alpha} = \\frac{1}{1-\\alpha}$."
+    },
+    {
+        "question_number": "Q1(b)",
+        "module_number": 1,
+        "source_exam": "Mid Semester",
+        "source_year": 2024,
+        "marks": 3,
+        "question_text": "Explain the working of Centre-tap full wave rectifier circuit and derive its efficiency.",
+        "question_latex": "\\text{Explain the working of Centre-tap full wave rectifier circuit and derive its efficiency.}",
+        "question_type": "derivation",
+        "question_uid": "r1e2c3t4i5f6i7e8r9m0o1p2q3r4s5t6u7v8w9x0y1z2a3b4c5d6e7f8g9h0i1j2",
+        "tags": [
+            "Rectifiers",
+            "Diodes"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "answer": "Efficiency $\\eta = P_{dc}/P_{ac}$. For CT-FWR, $I_{dc} = \\frac{2I_m}{\\pi}$ and $I_{rms} = \\frac{I_m}{\\sqrt{2}}$. \n$P_{dc} = I_{dc}^2 R_L = (\\frac{2I_m}{\\pi})^2 R_L$. \n$P_{ac} = I_{rms}^2 (r_d + R_L) = (\\frac{I_m}{\\sqrt{2}})^2 (r_d + R_L)$. \n$\\eta = \\frac{4I_m^2 R_L / \\pi^2}{I_m^2 (r_d + R_L) / 2} = \\frac{8}{\\pi^2} \\frac{R_L}{r_d + R_L}$. \nFor ideal diodes ($r_d=0$), $\\eta = 8/\\pi^2 \\approx 0.812$ or $81.2\\%$."
+    },
+    {
+        "question_number": "Q.2(a)",
+        "module_number": 1,
+        "source_exam": "Mid Semester",
+        "source_year": 2022,
+        "marks": 3,
+        "question_text": "Draw the circuit of diode based Half Wave Rectifier (HWR) and Derive the expressions for average and RMS voltage for HWR.",
+        "question_latex": "\\text{Draw the circuit of diode based Half Wave Rectifier (HWR) and Derive the expressions for average and RMS voltage for HWR.}",
+        "question_type": "derivation",
+        "question_uid": "h1w2r3a4v5g6e7r8m9s0o1p2q3r4s5t6u7v8w9x0y1z2a3b4c5d6e7f8g9h0i1j2",
+        "tags": [
+            "Rectifiers",
+            "Diodes"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "answer": "1. Average Voltage ($V_{dc}$): $V_{dc} = \\frac{1}{2\\pi} \\int_{0}^{\\pi} V_m \\sin(\\omega t) d(\\omega t) = \\frac{V_m}{2\\pi} [-\\cos(\\omega t)]_0^{\\pi} = \\frac{V_m}{2\\pi} [1 - (-1)] = \\frac{V_m}{\\pi}$.\n2. RMS Voltage ($V_{rms}$): $V_{rms} = \\sqrt{\\frac{1}{2\\pi} \\int_{0}^{\\pi} [V_m \\sin(\\omega t)]^2 d(\\omega t)} = \\sqrt{\\frac{V_m^2}{4\\pi} \\int_{0}^{\\pi} (1-\\cos 2\\omega t) d(\\omega t)} = \\sqrt{\\frac{V_m^2}{4\\pi} [\\pi]} = \\frac{V_m}{2}$."
+    },
+    {
+        "question_number": "Q.2(b)",
+        "module_number": 2,
+        "source_exam": "End Semester",
+        "source_year": 2022,
+        "marks": 5,
+        "question_text": "Derive the Shockley's equation for drain current for JFET.",
+        "question_latex": "\\text{Derive the Shockley's equation for drain current for JFET.}",
+        "question_type": "derivation",
+        "question_uid": "s1h2o3c4k5l6e7y8d9r0a1i2n3c4u5r6r7e8n9t0a1b2c3d4e5f6g7h8i9j0k1",
+        "tags": [
+            "JFET",
+            "Field Effect Transistors"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "answer": "Shockley's equation relates $I_D$ to $V_{GS}$. For a JFET, the depletion width depends on the reverse bias $V_{GS}$. The channel width $w$ decreases as $V_{GS}$ becomes more negative. The effective current is proportional to the square of the available channel opening. Mathematically, $I_D = I_{DSS} \\left( 1 - \\frac{V_{GS}}{V_P} \\right)^2$, where $I_{DSS}$ is the maximum saturation current (at $V_{GS}=0$) and $V_P$ is the pinch-off voltage."
+    },
+    {
+        "question_number": "Q.3(a)",
+        "module_number": 3,
+        "source_exam": "End Semester",
+        "source_year": 2024,
+        "marks": 5,
+        "question_text": "Explain the circuit connection of a Hartley Oscillator and find the expression for frequency of oscillation.",
+        "question_latex": "\\text{Explain the circuit connection of a Hartley Oscillator and find the expression for frequency of oscillation.}",
+        "question_type": "derivation",
+        "question_uid": "o1s2c3i4l5l6a7t8o9r0h1a2r3t4l5e6y7f8r9e0q1u2e3n4c5y6a7b8c9d0e1",
+        "tags": [
+            "Oscillators",
+            "Feedback Circuits"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "answer": "In a Hartley oscillator, the tank circuit consists of two inductors $L_1, L_2$ and one capacitor $C$. The total inductance is $L_{eq} = L_1 + L_2 + 2M$ (neglecting mutual inductance $M$, $L_{eq} = L_1 + L_2$). The frequency of oscillation is determined by the resonance condition of the tank circuit where $X_L = X_C$. Thus, $\\omega L_{eq} = \\frac{1}{\\omega C} \\Rightarrow \\omega^2 = \\frac{1}{L_{eq}C}$. The frequency is $f = \\frac{1}{2\\pi \\sqrt{(L_1 + L_2)C}}$."
+    },
+    {
+        "question_number": "Q.3(a)",
+        "module_number": 3,
+        "source_exam": "End Semester",
+        "source_year": 2022,
+        "marks": 5,
+        "question_text": "Explain the working of the RC phase shift oscillator. Derive its frequency of oscillation.",
+        "question_latex": "\\text{Explain the working of the RC phase shift oscillator. Derive its frequency of oscillation.}",
+        "question_type": "derivation",
+        "question_uid": "r1c2p3h4a5s6e7s8h9i0f1t2o3s4c5i6l7l8a9t0o1r2d3e4r5i6v7e8a9b0c1",
+        "tags": [
+            "Oscillators",
+            "Feedback Circuits"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "answer": "The circuit uses an Op-Amp (or transistor) and three RC sections. Each RC section provides a $60^\\circ$ phase shift, totaling $180^\\circ$. The amplifier provides another $180^\\circ$ for a total of $360^\\circ$. Setting the imaginary part of the feedback loop transfer function $\\beta$ to zero: $1 - 5(RC\\omega)^2 = 0$ is incorrect; the specific loop gain derivation for 3-stages yields $\\omega = \\frac{1}{RC\\sqrt{6}}$. Thus, $f = \\frac{1}{2\\pi RC \\sqrt{6}}$. The gain condition for sustained oscillation is $A \\geq 29$."
+    },
+    {
+        "question_number": "Q.3(b)",
+        "module_number": 3,
+        "source_exam": "End Semester",
+        "source_year": 2023,
+        "marks": 5,
+        "question_text": "Schematize the op-amp-based adder circuit, or summing amplifier circuit, and deduce the expression of its output voltage (vo).",
+        "question_latex": "\\text{Schematize the op-amp-based adder circuit, and deduce the expression of its output voltage } (v_o).",
+        "question_type": "derivation",
+        "question_uid": "o1p2a3m4p5a6d7d8e9r0s1u2m3m4i5n6g7a8m9p0l1i2f3i4e5r6v7o8l9t0a",
+        "tags": [
+            "Operational Amplifiers",
+            "Linear ICs"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "answer": "For an inverting summing amplifier with inputs $V_1, V_2, ... V_n$ connected via resistors $R_1, R_2, ... R_n$ to the inverting terminal. By KCL at the virtual ground node: $I_1 + I_2 + ... + I_n + I_f = 0$. Since the inverting node is at $0V$, $\\frac{V_1}{R_1} + \\frac{V_2}{R_2} + ... + \\frac{V_n}{R_n} + \\frac{V_o}{R_f} = 0$. Solving for $V_o$: $V_o = -R_f \\left( \\frac{V_1}{R_1} + \\frac{V_2}{R_2} + ... + \\frac{V_n}{R_n} \\right)$. If $R_1=R_2=...=R_f$, then $V_o = -(V_1 + V_2 + ... + V_n)$."
+    },
+    {
+        "question_number": "Q.4(b)",
+        "module_number": 4,
+        "source_exam": "End Semester",
+        "source_year": 2024,
+        "marks": 5,
+        "question_text": "Derive the expression for sum and carry of the full adder and implement the circuit.",
+        "question_latex": "\\text{Derive the expression for sum and carry of the full adder and implement the circuit.}",
+        "question_type": "derivation",
+        "question_uid": "f1u2l3l4a5d6d7e8r9o1u2p3u4t5s6u7m8c9a0r1r2y3d4e5r6i7v8a9t0i1o2",
+        "tags": [
+            "Digital Electronics",
+            "Combinational Circuits"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "answer": "A Full Adder has three inputs: $A, B, C_{in}$.\n1. Sum ($S$): From truth table, $S$ is 1 when odd number of inputs are 1. $S = A \\oplus B \\oplus C_{in}$.\n2. Carry ($C_{out}$): $C_{out}$ is 1 when at least two inputs are 1. $C_{out} = AB + BC_{in} + AC_{in}$. This is derived using K-Map: $C_{out} = AB + C_{in}(A \\oplus B)$ is also a common implementation form using XOR and AND gates."
+    }
+]

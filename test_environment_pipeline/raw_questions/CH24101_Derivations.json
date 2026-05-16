@@ -1,0 +1,79 @@
+[
+    {
+        "question_number": "Q.3(a)",
+        "module_number": 3,
+        "source_exam": "End Semester",
+        "source_year": 2025,
+        "marks": 5,
+        "question_text": "In a temperature-jump experiment, derive the expression for the relaxation time t of a reversible reaction A ⇌ B in terms of the forward and reverse rate constants.",
+        "question_latex": "\\text{In a temperature-jump experiment, derive the expression for the relaxation time } \\tau \\text{ of a reversible reaction } A \\xrightleftharpoons[k_r]{k_f} B \\text{ in terms of the forward and reverse rate constants.}",
+        "question_type": "derivation",
+        "question_uid": "f9b4c2e1d0a5f8b9e6c7d4a3b2e1f0c9d8a7b6e5f4c3d2b1a0e9f8c7d6b5a4f3",
+        "answer": "Consider the reversible reaction: $A \\xrightleftharpoons[k_r]{k_f} B$. At equilibrium, the rates of the forward and backward reactions are equal: $k_f[A]_{eq} = k_r[B]_{eq}$. If a small perturbation is applied (like a T-jump), the system shifts from its equilibrium. Let $x$ be the displacement such that $[A] = [A]_{eq} + x$ and $[B] = [B]_{eq} - x$. The net rate of change of $x$ is: $\\frac{dx}{dt} = -k_f([A]_{eq} + x) + k_r([B]_{eq} - x)$. Expanding this: $\\frac{dx}{dt} = -(k_f[A]_{eq} - k_r[B]_{eq}) - (k_f + k_r)x$. Since $(k_f[A]_{eq} - k_r[B]_{eq}) = 0$ at equilibrium, the equation simplifies to $\\frac{dx}{dt} = -(k_f + k_r)x$. Comparing this with the standard relaxation equation $\\frac{dx}{dt} = -\\frac{x}{\\tau}$, we derive $\\tau = \\frac{1}{k_f + k_r}$. [cite: 2]",
+        "tags": [
+            "Chemical Kinetics",
+            "Relaxation Methods"
+        ],
+        "is_normalized": true,
+        "is_verified": true,
+        "latex_valid": true
+    },
+    {
+        "question_number": "Q.3(b)",
+        "module_number": 3,
+        "source_exam": "End Semester",
+        "source_year": 2025,
+        "marks": 5,
+        "question_text": "Derive Michaelis-Menten equation.",
+        "question_latex": "\\text{Derive Michaelis-Menten equation.}",
+        "question_type": "derivation",
+        "question_uid": "7d6f5e4c3b2a10f9e8d7c6b5a4f3e2d1c0b9a8f7e6d5c4b3a2f1e0d9c8b7a6f5",
+        "answer": "The Michaelis-Menten mechanism is defined as: $E + S \\xrightleftharpoons[k_{-1}]{k_1} ES \\xrightarrow{k_2} E + P$. Applying the Steady-State Approximation (SSA) to the intermediate $[ES]$, we set its rate of change to zero: $\\frac{d[ES]}{dt} = k_1[E][S] - (k_{-1} + k_2)[ES] = 0$. Solving for $[ES]$ gives $[ES] = \\frac{k_1[E][S]}{k_{-1} + k_2}$. Using the total enzyme concentration $[E]_0 = [E] + [ES]$, we substitute $[E] = [E]_0 - [ES]$ into the equation: $[ES] = \\frac{k_1([E]_0 - [ES])[S]}{k_{-1} + k_2}$. Rearranging to solve for $[ES]$ yields $[ES] = \\frac{[E]_0[S]}{K_m + [S]}$, where $K_m = \\frac{k_{-1} + k_2}{k_1}$. The initial velocity $V$ is the rate of product formation: $V = k_2[ES]$. Substituting $[ES]$ gives $V = \\frac{k_2[E]_0[S]}{K_m + [S]}$. Defining $V_{max} = k_2[E]_0$, we obtain the Michaelis-Menten equation: $V = \\frac{V_{max}[S]}{K_m + [S]}$. [cite: 2, 8, 9, 10]",
+        "tags": [
+            "Enzyme Kinetics",
+            "Biochemistry"
+        ],
+        "is_normalized": true,
+        "is_verified": true,
+        "latex_valid": true
+    },
+    {
+        "question_number": "Q.3(a)",
+        "module_number": 3,
+        "source_exam": "End Semester",
+        "source_year": 2024,
+        "marks": 5,
+        "question_text": "Derive the kinetics of consecutive reaction and show the graphical representation of variation of concentration of A, B, C.",
+        "question_latex": "\\text{Derive the kinetics of consecutive reaction } A \\xrightarrow{k_1} B \\xrightarrow{k_2} C \\text{ and show the graphical representation.}",
+        "question_type": "derivation",
+        "question_uid": "a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8f90",
+        "answer": "For the consecutive reaction $A \\xrightarrow{k_1} B \\xrightarrow{k_2} C$, the concentration of A decreases exponentially: $[A] = [A]_0 e^{-k_1t}$. The rate of change for B is $\\frac{d[B]}{dt} = k_1[A] - k_2[B] = k_1[A]_0 e^{-k_1t} - k_2[B]$. This is a first-order linear differential equation solved using the integrating factor $e^{k_2t}$, resulting in $[B] = \\frac{k_1 [A]_0}{k_2 - k_1} (e^{-k_1t} - e^{-k_2t})$. The concentration of C is found through mass balance, $[A]_0 = [A] + [B] + [C]$, which yields $[C] = [A]_0 \\left[ 1 + \\frac{k_1 e^{-k_2t} - k_2 e^{-k_1t}}{k_2 - k_1} \\right]$. Graphically, [A] decays exponentially, [B] rises to a maximum and then falls, while [C] grows sigmoidally starting from zero. [cite: 4, 6]",
+        "tags": [
+            "Chemical Kinetics",
+            "Consecutive Reactions"
+        ],
+        "is_normalized": true,
+        "is_verified": true,
+        "latex_valid": true
+    },
+    {
+        "question_number": "Q.1(a)",
+        "module_number": 1,
+        "source_exam": "End Semester",
+        "source_year": 2023,
+        "marks": 5,
+        "question_text": "Draw Born-Haber cycle for the formation of KCL. What are the applications of Born-Haber cycle?",
+        "question_latex": "\\text{Draw Born-Haber cycle for the formation of } KCl \\text{. What are the applications of Born-Haber cycle?}",
+        "question_type": "derivation",
+        "question_uid": "c3d4e5f6a1b2b9e6c7d4a3b2e1f0c9d8a7b6e5f4c3d2b1a0e9f8c7d6b5a4f3e2",
+        "answer": "The Born-Haber cycle for $KCl$ consists of several thermodynamic steps: 1. Sublimation: $K(s) \\to K(g), \\Delta H_{sub}$. 2. Ionization: $K(g) \\to K^+(g) + e^-, IE$. 3. Dissociation: $\\frac{1}{2}Cl_2(g) \\to Cl(g), \\frac{1}{2}\\Delta H_{diss}$. 4. Electron Gain: $Cl(g) + e^- \\to Cl^-(g), EA$. 5. Lattice formation: $K^+(g) + Cl^-(g) \\to KCl(s), U$. Hess's Law states: $\\Delta H_f = \\Delta H_{sub} + IE + \\frac{1}{2}\\Delta H_{diss} + EA + U$. Applications include calculating unknown lattice energies, determining electron affinities, and estimating the heat of formation for hypothetical compounds. [cite: 9, 10]",
+        "tags": [
+            "Thermodynamics",
+            "Chemical Bonding",
+            "Born-Haber Cycle"
+        ],
+        "is_normalized": true,
+        "is_verified": true,
+        "latex_valid": true
+    }
+]

@@ -18,5 +18,35 @@
         "final_answer": "W = 1/2 LI^2",
         "confidence_score": 1.0,
         "generated_by": "gemini-3.1-flash-lite"
+    },
+    {
+        "question_uid": "e58b60fe5204c333cbe990aa78d6be9bdcce45c09943efaaa8e8e8ca7e70a69d",
+        "subject_code": "EE24101",
+        "question_type": "derivation",
+        "solution_text": "1. Define the circuit impedance: A series R-L-C circuit has a total complex impedance Z = R + j(XL - XC), where XL = omega*L and XC = 1/(omega*C). 2. Define resonance: Resonance occurs when the imaginary part of the impedance is zero, meaning the voltage and current are in phase. 3. Set the imaginary part to zero: omega*L - 1/(omega*C) = 0. 4. Solve for omega: omega*L = 1/(omega*C) implies omega^2 = 1/(LC). 5. Calculate resonant frequency: Since omega = 2*pi*f, solve for f. The resonant frequency is f = 1 / (2 * pi * sqrt(LC)).",
+        "solution_latex": "Step 1: The total impedance Z of a series R-L-C circuit is given by Z = R + j(X_L - X_C), where X_L = \\omega L and X_C = \\frac{1}{\\omega C}. Step 2: Resonance occurs when the reactive part of the impedance is zero (unity power factor condition), i.e., Im(Z) = 0. Step 3: Setting the imaginary part to zero yields \\omega L - \\frac{1}{\\omega C} = 0. Step 4: Rearranging for \\omega: \\omega^2 = \\frac{1}{LC} \\implies \\omega_0 = \\frac{1}{\\sqrt{LC}}. Step 5: Since \\omega_0 = 2\\pi f_0, we obtain the resonant frequency: f_0 = \\frac{1}{2\\pi \\sqrt{LC}}.",
+        "final_answer": "f_0 = \\frac{1}{2\\pi \\sqrt{LC}}",
+        "confidence_score": 1.0,
+        "generated_by": "gemini-3.1-flash-lite"
+    },
+    {
+        "question_uid": "f68c3dc6faa2cdc24e2eac4277d11eb2f1432488af814b06ab4f0a4e9e799bb6",
+        "subject_code": "EE24101",
+        "question_type": "derivation",
+        "solution_text": "1. Assumptions: The system is a balanced 3-phase Delta-connected source/load. The phase currents have equal magnitude (I_ph) and are displaced by 120 degrees. Kirchhoff's Current Law (KCL) is applied at the nodes.\n2. In a Delta connection, each line is connected to the junction of two phases. Therefore, a line current is the difference between two phase currents.\n3. Let the phase currents be I_ab, I_bc, and I_ca. By KCL at the node connected to line A, the line current I_L = I_ab - I_ca.\n4. Representing these as phasors, if I_ab = I_ph ∠0°, then I_ca = I_ph ∠120°.\n5. Using vector subtraction: I_L = I_ph ∠0° - I_ph ∠120°.\n6. Expanding the phasors: I_L = I_ph(1 + j0) - I_ph(-0.5 + j0.866) = I_ph(1.5 - j0.866).\n7. Converting to polar form: Magnitude = I_ph * sqrt(1.5^2 + (-0.866)^2) = I_ph * sqrt(2.25 + 0.75) = sqrt(3) * I_ph.\n8. Thus, I_L = sqrt(3) * I_ph.",
+        "solution_latex": "\\text{1. Assumptions: Balanced 3-phase } \\Delta \\text{ system, } I_{ab} = I_{ph}\\angle 0^{\\circ}, I_{bc} = I_{ph}\\angle -120^{\\circ}, I_{ca} = I_{ph}\\angle 120^{\\circ}. \\\\ \\text{2. Apply Kirchhoff's Current Law (KCL) at node A: } I_L = I_{ab} - I_{ca}. \\\\ \\text{3. Phasor subtraction: } I_L = I_{ph}(1\\angle 0^{\\circ} - 1\\angle 120^{\\circ}). \\\\ \\text{4. Convert to rectangular form: } I_L = I_{ph}[(1 + j0) - (-0.5 + j\\frac{\\sqrt{3}}{2})]. \\\\ \\text{5. Simplify: } I_L = I_{ph}(1.5 - j\\frac{\\sqrt{3}}{2}). \\\\ \\text{6. Calculate magnitude: } |I_L| = I_{ph}\\sqrt{(1.5)^2 + (-\\frac{\\sqrt{3}}{2})^2} = I_{ph}\\sqrt{2.25 + 0.75} = I_{ph}\\sqrt{3}. \\\\ \\text{7. Result: } I_L = \\sqrt{3}I_{ph}.",
+        "final_answer": "I_L = \\sqrt{3}I_{ph}",
+        "confidence_score": 1.0,
+        "generated_by": "gemini-3.1-flash-lite"
+    },
+    {
+        "question_uid": "98b21fa6969db71a03bb88f5e938cf0f6f8b6b1cebcf5b3995d30e7480e5f173",
+        "subject_code": "EE24101",
+        "question_type": "derivation",
+        "solution_text": "1. Consider two long, straight, parallel conductors separated by distance 'd', carrying currents I1 and I2 in the same direction. 2. According to the Ampere-Maxwell law, current I1 creates a magnetic field B1 at the position of the second conductor. 3. Using Ampere's circuital law for an infinite wire, B1 = (μ0 * I1) / (2 * pi * d). 4. The magnetic field B1 is perpendicular to the second conductor. 5. The force on a segment of length L of the second conductor is given by the Lorentz force law: F = I2 * (L x B1). 6. Since B1 is perpendicular to the wire, the magnitude of the force is F = I2 * L * B1. 7. Substituting the expression for B1, we get F = I2 * L * (μ0 * I1) / (2 * pi * d). 8. The force per unit length is f = F / L = (μ0 * I1 * I2) / (2 * pi * d).",
+        "solution_latex": "\\text{Step 1: Determine the magnetic field produced by conductor 1 at distance } d. \\text{ By Ampere's Law: } B_1 = \\frac{\\mu_0 I_1}{2 \\pi d}. \\text{ Step 2: Use the Lorentz force law for a current-carrying wire in a magnetic field: } \\vec{F} = I_2 \\vec{L} \\times \\vec{B}_1. \\text{ Step 3: Given } \\vec{L} \\perp \\vec{B}_1, \\text{ the magnitude is } F = I_2 L B_1. \\text{ Step 4: Substitute } B_1 \\text{ into the force equation: } F = I_2 L \\left( \\frac{\\mu_0 I_1}{2 \\pi d} \\right). \\text{ Step 5: Express force per unit length } f = \\frac{F}{L}: f = \\frac{\\mu_0 I_1 I_2}{2 \\pi d}.",
+        "final_answer": "f = \\frac{\\mu_0 I_1 I_2}{2 \\pi d}",
+        "confidence_score": 1.0,
+        "generated_by": "gemini-3.1-flash-lite"
     }
 ]

@@ -12,19 +12,23 @@
  *   @param {string}  href      - Navigation target URL when clicked
  *   @param {boolean} disabled  - If true, shows "Coming Soon" overlay instead of navigating
  *   @param {Function} onDisabledClick - Callback when a disabled card is clicked
+ *   @param {Function} onClick  - Callback when an active card is clicked (for React state transitions)
  */
 
 import { useCallback } from 'react';
 
-function CampusCard({ name, image, href, disabled = false, onDisabledClick }) {
+function CampusCard({ name, image, href, disabled = false, onDisabledClick, onClick }) {
   const handleClick = useCallback(
     (e) => {
       if (disabled) {
         e.preventDefault();
         if (onDisabledClick) onDisabledClick(name);
+      } else if (onClick) {
+        e.preventDefault();
+        onClick(name);
       }
     },
-    [disabled, onDisabledClick, name]
+    [disabled, onDisabledClick, onClick, name]
   );
 
   return (

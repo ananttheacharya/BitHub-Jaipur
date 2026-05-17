@@ -10,15 +10,29 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import CampusCard from './components/CampusCard';
 import Toast from './components/Toast';
+import JaipurDashboard from './components/JaipurDashboard';
 
 /* Import campus images from the images directory */
 import jaipurImg from '../images/jaipur.png';
 import mesraImg from '../images/mesra.png';
 
 function App() {
+  const [view, setView] = useState('landing'); // 'landing' or 'jaipur'
+  const [theme, setTheme] = useState('light'); // 'light' or 'dark'
+  
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const timerRef = useRef(null);
+
+  /* Synchronize html theme attribute with React state */
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+
+  /* Toggle Light / Dark Mode */
+  const toggleTheme = useCallback(() => {
+    setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
+  }, []);
 
   /* Show a toast notification when a disabled campus is clicked */
   const handleDisabledClick = useCallback((campusName) => {
@@ -40,6 +54,17 @@ function App() {
     };
   }, []);
 
+  // Render Jaipur Dashboard if selected
+  if (view === 'jaipur') {
+    return (
+      <JaipurDashboard 
+        theme={theme} 
+        onToggleTheme={toggleTheme} 
+        onBack={() => setView('landing')} 
+      />
+    );
+  }
+
   return (
     <main className="landing-page" id="landing-page">
       {/* BitHub Logo / Title */}
@@ -58,8 +83,8 @@ function App() {
           name="JAIPUR"
           image={jaipurImg}
           href="#"
-          disabled={true}
-          onDisabledClick={handleDisabledClick}
+          disabled={false}
+          onClick={() => setView('jaipur')}
         />
         <CampusCard
           name="MESRA"

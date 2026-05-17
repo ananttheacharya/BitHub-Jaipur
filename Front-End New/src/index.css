@@ -1,0 +1,426 @@
+/* ----- Google Font Import (must be first) ----- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ============================================================
+   BitHub Landing Page — Global Styles
+   Campus Selection Screen
+   ============================================================ */
+
+/* ----- Font Faces ----- */
+@font-face {
+  font-family: 'Advercase';
+  src: url('./fonts/Advercase-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Advercase';
+  src: url('./fonts/Advercase-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ----- CSS Custom Properties (Design Tokens) ----- */
+:root {
+  /* Color Palette */
+  --color-maroon: #4A0E0E;
+  --color-maroon-light: #6B2020;
+  --color-brown-dark: #5C2E0E;
+  --color-brown-button: #6B3A1F;
+  --color-brown-button-hover: #7D4A2C;
+  --color-subtitle: #5A3D2B;
+  --color-card-bg: #ffffff;
+  --color-card-shadow: rgba(120, 80, 50, 0.15);
+  --color-card-shadow-hover: rgba(120, 80, 50, 0.28);
+
+  /* Gradient colors */
+  --grad-1: #f2d4b8;
+  --grad-2: #e8c9a8;
+  --grad-3: #ddb895;
+  --grad-4: #d4ad84;
+  --grad-5: #e0c0a0;
+  --grad-6: #ecd4b8;
+
+  /* Typography */
+  --font-display: 'Advercase', 'Georgia', 'Times New Roman', serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* Spacing */
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2.5rem;
+  --space-xl: 4rem;
+
+  /* Transitions */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --transition-fast: 200ms var(--ease-out);
+  --transition-medium: 400ms var(--ease-out);
+}
+
+/* ----- Reset & Base ----- */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--font-body);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+
+  /* Warm peach/gold radial gradient — matches reference design */
+  background:
+    radial-gradient(ellipse at 20% 15%, #f5d8c0 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, #edd0b0 0%, transparent 45%),
+    radial-gradient(ellipse at 50% 80%, #d9b898 0%, transparent 55%),
+    radial-gradient(ellipse at 10% 70%, #e6c4a4 0%, transparent 40%),
+    radial-gradient(ellipse at 90% 85%, #dbb88c 0%, transparent 50%),
+    linear-gradient(
+      180deg,
+      #f0d4bc 0%,
+      #e8c8a8 20%,
+      #debb98 40%,
+      #d4ae88 60%,
+      #dbb898 80%,
+      #e2c4a4 100%
+    );
+  background-attachment: fixed;
+}
+
+/* Subtle texture overlay for depth */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 75% 30%, rgba(255, 255, 255, 0.08) 0%, transparent 45%);
+}
+
+/* Noise grain overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 128px 128px;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+}
+
+/* ----- Keyframe Animations ----- */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes subtleFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ----- Landing Page Layout ----- */
+.landing-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: var(--space-lg) var(--space-sm);
+  text-align: center;
+}
+
+/* ----- Title ----- */
+.landing-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(3.5rem, 8vw, 6rem);
+  color: var(--color-maroon);
+  letter-spacing: 1px;
+  line-height: 1.1;
+  margin-bottom: var(--space-sm);
+  animation: fadeInUp 800ms var(--ease-out) both;
+  animation-delay: 100ms;
+  /* Subtle text shadow for depth */
+  text-shadow: 0 2px 4px rgba(74, 14, 14, 0.08);
+}
+
+/* ----- Subtitle ----- */
+.landing-subtitle {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+  color: var(--color-subtitle);
+  letter-spacing: 0.5px;
+  margin-bottom: var(--space-xl);
+  animation: fadeInUp 800ms var(--ease-out) both;
+  animation-delay: 300ms;
+}
+
+/* ----- Campus Cards Grid ----- */
+.campus-grid {
+  display: flex;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  justify-content: center;
+  align-items: stretch;
+  flex-wrap: wrap;
+  animation: fadeInUp 800ms var(--ease-out) both;
+  animation-delay: 500ms;
+}
+
+/* ----- Campus Card ----- */
+.campus-card {
+  position: relative;
+  width: clamp(260px, 30vw, 340px);
+  background: var(--color-card-bg);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px var(--color-card-shadow);
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
+.campus-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 16px 48px var(--color-card-shadow-hover);
+}
+
+.campus-card:active {
+  transform: translateY(-2px) scale(1.005);
+}
+
+/* Card image wrapper */
+.campus-card__image-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 11;
+  overflow: hidden;
+}
+
+.campus-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 600ms var(--ease-out);
+}
+
+.campus-card:hover .campus-card__image {
+  transform: scale(1.06);
+}
+
+/* Card CTA button */
+.campus-card__cta {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 24px;
+  background: var(--color-brown-dark);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+  box-shadow: 0 4px 16px rgba(92, 46, 14, 0.3);
+  text-decoration: none;
+}
+
+.campus-card__cta:hover {
+  background: var(--color-brown-button-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(92, 46, 14, 0.4);
+}
+
+.campus-card__cta-arrow {
+  font-size: 1.1em;
+  transition: transform var(--transition-fast);
+}
+
+.campus-card:hover .campus-card__cta-arrow {
+  transform: translateX(3px);
+}
+
+/* ----- Disabled Card (Coming Soon) ----- */
+.campus-card--disabled {
+  cursor: default;
+}
+
+.campus-card--disabled .campus-card__cta {
+  cursor: default;
+}
+
+/* Coming soon overlay */
+.campus-card__coming-soon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity var(--transition-medium);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.campus-card--disabled:hover .campus-card__coming-soon {
+  opacity: 1;
+}
+
+.campus-card__coming-soon-text {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--color-maroon);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 8px 20px;
+  border: 2px solid var(--color-maroon);
+  border-radius: 8px;
+  animation: subtleFloat 3s ease-in-out infinite;
+}
+
+/* ----- Toast Notification ----- */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--color-maroon);
+  color: #fff;
+  padding: 12px 28px;
+  border-radius: 50px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  box-shadow: 0 8px 24px rgba(74, 14, 14, 0.3);
+  opacity: 0;
+  transition: all 400ms var(--ease-out);
+  z-index: 100;
+  pointer-events: none;
+}
+
+.toast--visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ----- Footer ----- */
+.landing-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  padding: var(--space-xs) var(--space-sm);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: rgba(90, 61, 43, 0.5);
+  letter-spacing: 0.3px;
+  z-index: 1;
+}
+
+/* ----- Responsive ----- */
+@media (max-width: 680px) {
+  .campus-grid {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-md);
+  }
+
+  .campus-card {
+    width: min(320px, 90vw);
+  }
+
+  .landing-page {
+    padding: var(--space-lg) var(--space-sm) calc(var(--space-xl) + 2rem);
+  }
+}
+
+@media (max-width: 380px) {
+  .campus-card {
+    width: 95vw;
+  }
+
+  .landing-title {
+    font-size: 3rem;
+  }
+}
+
+/* ----- Accessibility: Reduced Motion ----- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

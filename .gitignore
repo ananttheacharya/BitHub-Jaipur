@@ -1,3 +1,7 @@
 .env
 Front-End New/node_modules/
 Front-End New/dist/
+Backend/node_modules/
+.vscode/
+*.log
+.DS_Store

@@ -15,7 +15,8 @@ function SubjectSelector({ onSelectSubject, onBackToLanding, theme, onToggleThem
     { name: "Programming for Problem Solving", code: "CS24101", shortName: "Programming" },
     { name: "Mathematics 2", code: "MA24103" },
     { name: "Physics", code: "PH24101" },
-    { name: "Basics of Electrical Engineering", code: "EE24101", shortName: "Electrical" }
+    { name: "Basics of Electrical Engineering", code: "EE24101", shortName: "Electrical" },
+    { name: "Biological Science for Engineers", code: "BE24101", shortName: "Biology" }
   ];
 
   const closeDropdowns = () => {

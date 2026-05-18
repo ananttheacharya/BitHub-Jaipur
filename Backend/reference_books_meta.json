@@ -1,0 +1,173 @@
+{
+    "BE24101": {
+        "Biochemistry 5th Edition, Jeremy M. Berg.pdf": {
+            "title": "Biochemistry",
+            "author": "Jeremy M. Berg, John L. Tymoczko & Lubert Stryer",
+            "tags": [
+                "Biology",
+                "Biochemistry",
+                "Metabolism",
+                "Biomolecules"
+            ]
+        },
+        "Lehninger Principles of Biochemistry Fourth Edition.pdf": {
+            "title": "Principles of Biochemistry",
+            "author": "Albert L. Lehninger, David L. Nelson & Michael M. Cox",
+            "tags": [
+                "Biology",
+                "Biochemistry",
+                "Enzymes & Catalysis",
+                "Cell Metabolism"
+            ]
+        }
+    },
+    "CS24101": {
+        "Let us c - Yashwant Kanetkar.pdf": {
+            "title": "Let Us C",
+            "author": "Yashavant Kanetkar",
+            "tags": [
+                "Programming",
+                "C Language",
+                "Control Statements",
+                "Arrays & Pointers"
+            ]
+        },
+        "Programming-with-C-Byron-Gottfried.pdf": {
+            "title": "Programming with C (Schaum's Outlines)",
+            "author": "Byron S. Gottfried",
+            "tags": [
+                "Programming",
+                "C Language",
+                "Functions",
+                "Structures & Unions"
+            ]
+        },
+        "The.C.Programming.Language.2Nd.Ed Prentice.Hall.Brian.W.Kernighan.and.Dennis.M.Ritchie.pdf": {
+            "title": "The C Programming Language",
+            "author": "Brian W. Kernighan & Dennis M. Ritchie",
+            "tags": [
+                "Programming",
+                "C Language",
+                "Standard Library",
+                "Pointers & Arrays"
+            ]
+        }
+    },
+    "EE24101": {
+        "A Textbook of Electrical Engineering B.L Theraja.pdf": {
+            "title": "A Textbook of Electrical Technology",
+            "author": "B.L. Theraja & A.K. Theraja",
+            "tags": [
+                "Electrical Engineering",
+                "DC Circuits",
+                "AC Circuits",
+                "Magnetic Circuits"
+            ]
+        },
+        "Basics of Electrical Engineering Edward Hughes.pdf": {
+            "title": "Electrical and Electronic Technology",
+            "author": "Edward Hughes",
+            "tags": [
+                "Electrical Engineering",
+                "AC Circuits",
+                "Transformers",
+                "DC Machines"
+            ]
+        },
+        "Hayt Engineering Circuit Analysis 8th txtbk.pdf": {
+            "title": "Engineering Circuit Analysis",
+            "author": "William H. Hayt, Jack E. Kemmerly & Steven M. Durbin",
+            "tags": [
+                "Electrical Engineering",
+                "Circuit Analysis",
+                "Network Theorems",
+                "AC Steady State"
+            ]
+        }
+    },
+    "MA24103": {
+        "197-advanced-engineering-mathematics KA Stroud.pdf": {
+            "title": "Advanced Engineering Mathematics",
+            "author": "K.A. Stroud",
+            "tags": [
+                "Mathematics",
+                "Engineering Math",
+                "Differential Equations",
+                "Fourier Analysis"
+            ]
+        },
+        "Advanced Engineering Mathematics 9th Edition by ERWIN KREYSZIG.pdf": {
+            "title": "Advanced Engineering Mathematics",
+            "author": "Erwin Kreyszig",
+            "tags": [
+                "Mathematics",
+                "Advanced Calculus",
+                "Linear Algebra",
+                "Complex Analysis"
+            ]
+        },
+        "Complex Variables and Applications.pdf": {
+            "title": "Complex Variables and Applications",
+            "author": "James Ward Brown & Ruel V. Churchill",
+            "tags": [
+                "Complex Variables",
+                "Mathematics",
+                "Analytic Functions",
+                "Integration"
+            ]
+        },
+        "NumericalMethods.pdf": {
+            "title": "Numerical Methods for Engineers",
+            "author": "Steven C. Chapra & Raymond P. Canale",
+            "tags": [
+                "Numerical Methods",
+                "Mathematics",
+                "Root Finding",
+                "Interpolation"
+            ]
+        },
+        "Probability and Statistics for Engineers.pdf": {
+            "title": "Probability and Statistics for Engineers & Scientists",
+            "author": "Ronald E. Walpole & Raymond H. Myers",
+            "tags": [
+                "Probability",
+                "Statistics",
+                "Random Variables",
+                "Distributions"
+            ]
+        }
+    },
+    "PH24101": {
+        "Concepts of Modern Physics by Arthur Beiser.pdf": {
+            "title": "Concepts of Modern Physics",
+            "author": "Arthur Beiser",
+            "tags": [
+                "Physics",
+                "Modern Physics",
+                "Quantum Theory",
+                "Relativity"
+            ]
+        },
+        "emft_sadiku.pdf": {
+            "title": "Elements of Electromagnetics",
+            "author": "Matthew N.O. Sadiku",
+            "tags": [
+                "Physics",
+                "Electromagnetic Theory",
+                "Maxwell Equations",
+                "Vector Calculus"
+            ]
+        },
+        "OPTICS A GHATAK.pdf": {
+            "title": "Optics",
+            "author": "Ajoy Ghatak",
+            "tags": [
+                "Physics",
+                "Optics",
+                "Interference",
+                "Diffraction",
+                "Lasers"
+            ]
+        }
+    }
+}

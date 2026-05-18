@@ -1,4 +1,117 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
+import PracticeMode from './PracticeMode';
+
+// ============================================================
+// LOCAL REFERENCE BOOKS REGISTRY (MANUAL HIGH-FIDELITY BOOK DATA)
+// ============================================================
+const REFERENCE_BOOKS_REGISTRY = {
+  "BE24101": [
+    {
+      filename: "Biochemistry 5th Edition, Jeremy M. Berg.pdf",
+      title: "Biochemistry",
+      author: "Jeremy M. Berg, John L. Tymoczko & Lubert Stryer",
+      tags: ["Biology", "Biochemistry", "Metabolism", "Biomolecules"]
+    },
+    {
+      filename: "Lehninger Principles of Biochemistry Fourth Edition.pdf",
+      title: "Principles of Biochemistry",
+      author: "Albert L. Lehninger, David L. Nelson & Michael M. Cox",
+      tags: ["Biology", "Biochemistry", "Enzymes & Catalysis", "Cell Metabolism"]
+    }
+  ],
+  "CS24101": [
+    {
+      filename: "Let us c - Yashwant Kanetkar.pdf",
+      title: "Let Us C",
+      author: "Yashavant Kanetkar",
+      tags: ["Programming", "C Language", "Control Statements", "Arrays & Pointers"]
+    },
+    {
+      filename: "Programming-with-C-Byron-Gottfried.pdf",
+      title: "Programming with C (Schaum's Outlines)",
+      author: "Byron S. Gottfried",
+      tags: ["Programming", "C Language", "Functions", "Structures & Unions"]
+    },
+    {
+      filename: "The.C.Programming.Language.2Nd.Ed Prentice.Hall.Brian.W.Kernighan.and.Dennis.M.Ritchie.pdf",
+      title: "The C Programming Language",
+      author: "Brian W. Kernighan & Dennis M. Ritchie",
+      tags: ["Programming", "C Language", "Standard Library", "Pointers & Arrays"]
+    }
+  ],
+  "EE24101": [
+    {
+      filename: "A Textbook of Electrical Engineering B.L Theraja.pdf",
+      title: "A Textbook of Electrical Technology",
+      author: "B.L. Theraja & A.K. Theraja",
+      tags: ["Electrical Engineering", "DC Circuits", "AC Circuits", "Magnetic Circuits"]
+    },
+    {
+      filename: "Basics of Electrical Engineering Edward Hughes.pdf",
+      title: "Electrical and Electronic Technology",
+      author: "Edward Hughes",
+      tags: ["Electrical Engineering", "AC Circuits", "Transformers", "DC Machines"]
+    },
+    {
+      filename: "Hayt Engineering Circuit Analysis 8th txtbk.pdf",
+      title: "Engineering Circuit Analysis",
+      author: "William H. Hayt, Jack E. Kemmerly & Steven M. Durbin",
+      tags: ["Electrical Engineering", "Circuit Analysis", "Network Theorems", "AC Steady State"]
+    }
+  ],
+  "MA24103": [
+    {
+      filename: "197-advanced-engineering-mathematics KA Stroud.pdf",
+      title: "Advanced Engineering Mathematics",
+      author: "K.A. Stroud",
+      tags: ["Mathematics", "Engineering Math", "Differential Equations", "Fourier Analysis"]
+    },
+    {
+      filename: "Advanced Engineering Mathematics 9th Edition by ERWIN KREYSZIG.pdf",
+      title: "Advanced Engineering Mathematics",
+      author: "Erwin Kreyszig",
+      tags: ["Mathematics", "Advanced Calculus", "Linear Algebra", "Complex Analysis"]
+    },
+    {
+      filename: "Complex Variables and Applications.pdf",
+      title: "Complex Variables and Applications",
+      author: "James Ward Brown & Ruel V. Churchill",
+      tags: ["Complex Variables", "Mathematics", "Analytic Functions", "Integration"]
+    },
+    {
+      filename: "NumericalMethods.pdf",
+      title: "Numerical Methods for Engineers",
+      author: "Steven C. Chapra & Raymond P. Canale",
+      tags: ["Numerical Methods", "Mathematics", "Root Finding", "Interpolation"]
+    },
+    {
+      filename: "Probability and Statistics for Engineers.pdf",
+      title: "Probability and Statistics for Engineers & Scientists",
+      author: "Ronald E. Walpole & Raymond H. Myers",
+      tags: ["Probability", "Statistics", "Random Variables", "Distributions"]
+    }
+  ],
+  "PH24101": [
+    {
+      filename: "Concepts of Modern Physics by Arthur Beiser.pdf",
+      title: "Concepts of Modern Physics",
+      author: "Arthur Beiser",
+      tags: ["Physics", "Modern Physics", "Quantum Theory", "Relativity"]
+    },
+    {
+      filename: "emft_sadiku.pdf",
+      title: "Elements of Electromagnetics",
+      author: "Matthew N.O. Sadiku",
+      tags: ["Physics", "Electromagnetic Theory", "Maxwell Equations", "Vector Calculus"]
+    },
+    {
+      filename: "OPTICS A GHATAK.pdf",
+      title: "Optics",
+      author: "Ajoy Ghatak",
+      tags: ["Physics", "Optics", "Interference", "Diffraction", "Lasers"]
+    }
+  ]
+};
 
 // ============================================================
 // SUBJECTS REGISTRY & DATA INTEGRATION ENDPOINTS
@@ -128,10 +241,11 @@ const SUBJECTS_REGISTRY = {
     code: "CS24101",
     semester: "2nd Semester",
     modules: [
-      { id: 'Module-1', name: 'Module-1', title: 'Algorithms, Flowcharts & Basics of C' },
-      { id: 'Module-2', name: 'Module-2', title: 'Control Statements: Loops & Branches' },
-      { id: 'Module-3', name: 'Module-3', title: 'Arrays, Functions & String Handlings' },
-      { id: 'Module-4', name: 'Module-4', title: 'Pointers, Structures, Unions & Files' }
+      { id: 'Module-1', name: 'Module-1', title: 'Algorithms & Flowcharts' },
+      { id: 'Module-2', name: 'Module-2', title: 'C Program Structure, Variables & I/O' },
+      { id: 'Module-3', name: 'Module-3', title: 'Iterative Structures, Loops & Arrays' },
+      { id: 'Module-4', name: 'Module-4', title: 'Functions, Parameters & Recursion' },
+      { id: 'Module-5', name: 'Module-5', title: 'Structures, Pointers & Macros' }
     ],
     books: [
       { id: 'book1', title: 'Programming in ANSI C', author: 'E. Balagurusamy', size: '11.8 MB' },
@@ -148,10 +262,11 @@ const SUBJECTS_REGISTRY = {
     code: "MA24103",
     semester: "2nd Semester",
     modules: [
-      { id: 'Module-1', name: 'Module-1', title: 'Ordinary Differential Equations of First Order' },
-      { id: 'Module-2', name: 'Module-2', title: 'Linear Differential Equations of Higher Order' },
-      { id: 'Module-3', name: 'Module-3', title: 'Laplace & Fourier Integral Transforms' },
-      { id: 'Module-4', name: 'Module-4', title: 'Vector Calculus & Line Integrals' }
+      { id: 'Module-1', name: 'Module-1', title: 'Ordinary Differential Equations of 2nd & higher order' },
+      { id: 'Module-2', name: 'Module-2', title: 'Series Solutions & Special Functions (Bessel, Legendre)' },
+      { id: 'Module-3', name: 'Module-3', title: 'Fourier Series & Separation of Variables for PDEs' },
+      { id: 'Module-4', name: 'Module-4', title: 'Analytic functions, Complex Differentiation & Integration' },
+      { id: 'Module-5', name: 'Module-5', title: 'Applied Probability, Expectation, Random Variables & distributions' }
     ],
     books: [
       { id: 'book1', title: 'Higher Engineering Mathematics Vol II', author: 'B.S. Grewal', size: '15.4 MB' },
@@ -167,10 +282,11 @@ const SUBJECTS_REGISTRY = {
     code: "PH24101",
     semester: "2nd Semester",
     modules: [
-      { id: 'Module-1', name: 'Module-1', title: 'Wave Optics: Interference & Diffraction' },
-      { id: 'Module-2', name: 'Module-2', title: 'Quantum Theory & Wave-Particle Duality' },
-      { id: 'Module-3', name: 'Module-3', title: 'Maxwell Equations & Electromagnetic Waves' },
-      { id: 'Module-4', name: 'Module-4', title: 'Laser Physics & Optical Fibres' }
+      { id: 'Module-1', name: 'Module-1', title: 'Physical Optics & Wave Optics (Interference, Diffraction, Polarization)' },
+      { id: 'Module-2', name: 'Module-2', title: 'Gradient, Divergence, Curl & Electromagnetic Theory' },
+      { id: 'Module-3', name: 'Module-3', title: 'Special Theory of Relativity & Lorentz Transformations' },
+      { id: 'Module-4', name: 'Module-4', title: 'Planck Black-body radiation, Wave-particle Duality & Quantum Mechanics' },
+      { id: 'Module-5', name: 'Module-5', title: 'Lasers, Spontaneous & Stimulated emission, Nuclear & Plasma Physics' }
     ],
     books: [
       { id: 'book1', title: 'Fundamentals of Physics', author: 'Halliday, Resnick & Walker', size: '31.5 MB' },
@@ -186,10 +302,11 @@ const SUBJECTS_REGISTRY = {
     code: "EE24101",
     semester: "2nd Semester",
     modules: [
-      { id: 'Module-1', name: 'Module-1', title: 'DC Circuit Analysis & Network Theorems' },
-      { id: 'Module-2', name: 'Module-2', title: 'AC Fundamentals & Single Phase Circuits' },
-      { id: 'Module-3', name: 'Module-3', title: 'Three-Phase Balanced Systems' },
-      { id: 'Module-4', name: 'Module-4', title: 'Magnetic Circuits & Transformers' }
+      { id: 'Module-1', name: 'Module-1', title: 'Introduction to Electrical Elements & classification' },
+      { id: 'Module-2', name: 'Module-2', title: 'Steady State D.C. Circuit Analysis' },
+      { id: 'Module-3', name: 'Module-3', title: 'Sinusoidal Steady State Single-phase AC Circuits' },
+      { id: 'Module-4', name: 'Module-4', title: 'Three-Phase AC Balanced & Unbalanced Systems' },
+      { id: 'Module-5', name: 'Module-5', title: 'Magnetic Circuits & Eddy/Hysteresis losses' }
     ],
     books: [
       { id: 'book1', title: 'Basic Electrical Engineering', author: 'C.L. Wadhwa', size: '14.5 MB' },
@@ -199,6 +316,22 @@ const SUBJECTS_REGISTRY = {
       { id: 'paper1', year: '2024', term: 'Mid Term', solved: true, filename: 'Electrical_Mid_2024_Solved.pdf' },
       { id: 'paper2', year: '2023', term: 'End Term', solved: true, filename: 'Electrical_End_2023_Solved.pdf' }
     ]
+  },
+  "BE24101": {
+    name: "Biological Science for Engineers",
+    code: "BE24101",
+    semester: "2nd Semester",
+    modules: [
+      { id: 'Module-1', name: 'Module-1', title: 'Introduction to Biological Sciences' },
+      { id: 'Module-2', name: 'Module-2', title: 'Molecular Biology and Genetics' },
+      { id: 'Module-3', name: 'Module-3', title: 'Biochemistry' },
+      { id: 'Module-4', name: 'Module-4', title: 'Applications of Biological Sciences in Engineering' },
+      { id: 'Module-5', name: 'Module-5', title: 'Global Challenges and Ethical Considerations' }
+    ],
+    books: [
+      { id: 'book1', title: 'Biology for Engineers', author: 'Arthur T. Johnson', size: '21.0 MB' }
+    ],
+    papers: []
   },
   "LAB-SEM2": {
     name: "2nd Semester Labs",
@@ -309,11 +442,12 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
 
   // Page / Content States
   const [activeModule, setActiveModule] = useState(subjectData.modules[0].id);
-  const [selectedDifficulty, setSelectedDifficulty] = useState('Medium');
+  const [selectedDifficulties, setSelectedDifficulties] = useState(['Easy', 'Medium', 'Hard']);
+  const [selectedMarks, setSelectedMarks] = useState([2, 3, 5]);
+  const [selectedYears, setSelectedYears] = useState(['2022', '2023', '2024']);
   
   // Practice Mode Dropdowns
   const [modulesDropdownOpen, setModulesDropdownOpen] = useState(false);
-  const [difficultyDropdownOpen, setDifficultyDropdownOpen] = useState(false);
   const [selectedPracticeModules, setSelectedPracticeModules] = useState(['mod1']);
 
   // Filters for Previous Year Papers
@@ -328,6 +462,15 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
 
   // Active campus selection dropdown state
   const [campusDropdownOpen, setCampusDropdownOpen] = useState(false);
+
+  // Practice View State
+  const [isPracticing, setIsPracticing] = useState(false);
+
+  // Dynamic Subject Files from Backend
+  const [subjectFiles, setSubjectFiles] = useState(null);
+
+  // Multiple Notes Selector Modal State
+  const [activeNotesModal, setActiveNotesModal] = useState(null);
 
   // Interaction feedback states (Toasts/Alerts)
   const [toastMessage, setToastMessage] = useState('');
@@ -347,6 +490,15 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
   useEffect(() => {
     setActiveModule(subjectData.modules[0].id);
     setSelectedPracticeModules(['mod1']);
+    setIsPracticing(false);
+    
+    // Fetch dynamic files from backend
+    fetch(`http://localhost:3001/api/subjects/${subjectCode}/materials`)
+      .then(res => res.json())
+      .then(data => {
+        if (!data.error) setSubjectFiles(data);
+      })
+      .catch(err => console.error("Failed to fetch materials:", err));
   }, [subjectCode, subjectData]);
 
   useEffect(() => {
@@ -365,21 +517,51 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
   };
 
   const handleStartPractice = () => {
-    const activeModuleNames = selectedPracticeModules
-      .map(id => subjectData.modules.find((_, i) => `mod${i+1}` === id)?.title || '')
-      .filter(Boolean)
-      .join(', ');
-    
     if (selectedPracticeModules.length === 0) {
       showToast("Please select at least one module for practice!");
       return;
     }
+    if (selectedDifficulties.length === 0) {
+      showToast("Please select at least one difficulty level!");
+      return;
+    }
+    if (selectedMarks.length === 0) {
+      showToast("Please select at least one marks bracket!");
+      return;
+    }
+    if (selectedYears.length === 0) {
+      showToast("Please select at least one exam year!");
+      return;
+    }
 
-    showToast(`Starting Practice: Difficulty [${selectedDifficulty}]`);
+    showToast(`Starting Practice Mode session!`);
+    setIsPracticing(true);
   };
 
+  // Parse QPA files into the format expected by the UI
+  const dynamicPapers = subjectFiles?.qpa ? subjectFiles.qpa.map((filename, i) => {
+    // filename format: SP-25_END.pdf
+    let year = "2024";
+    let term = "Mid Term";
+    
+    // Quick regex to extract from SP-25_END
+    const match = filename.match(/(SP|MO)-(\d{2})_(MID|END)/i);
+    if (match) {
+      year = "20" + match[2];
+      term = match[3].toUpperCase() === "MID" ? "Mid Term" : "End Term";
+    }
+
+    return {
+      id: `qpa-${i}`,
+      year,
+      term,
+      solved: false, // Default to false for QPA
+      filename
+    };
+  }) : subjectData.papers;
+
   // Filter Previous Year Papers
-  const filteredPapers = subjectData.papers.filter(paper => {
+  const filteredPapers = dynamicPapers.filter(paper => {
     const matchYear = yearFilter === 'All' || paper.year === yearFilter;
     const matchTerm = termFilter === 'All' || paper.term === termFilter;
     const matchSolved = solvedFilter === 'All' || 
@@ -389,11 +571,11 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
   });
 
   const handleDownloadPaper = (filename) => {
-    showToast(`Downloading: ${filename}`);
+    window.open(`http://localhost:3001/study-material/${subjectCode}/QPA/${filename}`, '_blank');
   };
 
-  const handleDownloadBook = (title) => {
-    showToast(`Downloading Materials for: ${title}`);
+  const handleDownloadBook = (filename) => {
+    window.open(`http://localhost:3001/study-material/${subjectCode}/${filename}`, '_blank');
   };
 
   const handleResetFilters = () => {
@@ -406,12 +588,26 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
   // Close dropdowns on outside click helper
   const closeAllDropdowns = () => {
     setModulesDropdownOpen(false);
-    setDifficultyDropdownOpen(false);
     setYearDropdownOpen(false);
     setTermDropdownOpen(false);
     setSolvedDropdownOpen(false);
     setCampusDropdownOpen(false);
   };
+
+  if (isPracticing) {
+    return (
+      <PracticeMode 
+        subjectCode={subjectCode}
+        selectedModules={selectedPracticeModules}
+        difficulties={selectedDifficulties}
+        marks={selectedMarks}
+        years={selectedYears}
+        theme={theme}
+        onToggleTheme={onToggleTheme}
+        onBack={() => setIsPracticing(false)}
+      />
+    );
+  }
 
   return (
     <div className="dashboard-container" onClick={closeAllDropdowns} id="dashboard-container">
@@ -517,15 +713,28 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
 
           {/* Modules List */}
           <nav className="modules-nav" id="modules-nav">
-            {subjectData.modules.map(mod => {
+            {subjectData.modules.map((mod, index) => {
               const isSelected = activeModule === mod.id;
+              const modKey = `MOD${index + 1}`;
+              const modFiles = subjectFiles?.notes?.[modKey] || [];
+              
               return (
                 <button
                   key={mod.id}
                   className={`module-nav-item ${isSelected ? 'active' : ''}`}
                   onClick={() => {
                     setActiveModule(mod.id);
-                    showToast(`Switched: ${mod.name}`);
+                    if (modFiles.length === 1) {
+                      window.open(`http://localhost:3001/study-material/${subjectCode}/${modKey}/${modFiles[0]}`, '_blank');
+                    } else if (modFiles.length > 1) {
+                      setActiveNotesModal({
+                        modKey,
+                        modTitle: mod.title,
+                        files: modFiles
+                      });
+                    } else {
+                      showToast(`No notes uploaded yet for ${mod.name}`);
+                    }
                   }}
                   id={`module-btn-${mod.id.toLowerCase()}`}
                 >
@@ -550,7 +759,13 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
           {/* Syllabus Button */}
           <button 
             className="syllabus-btn" 
-            onClick={() => showToast("Syllabus view downloading...")}
+            onClick={() => {
+              if (subjectFiles?.syllabus) {
+                window.open(`http://localhost:3001/study-material/${subjectCode}/${subjectFiles.syllabus}`, '_blank');
+              } else {
+                showToast("Syllabus PDF not found on server.");
+              }
+            }}
             id="syllabus-view-button"
           >
             {subjectCode.startsWith('LAB') ? 'LAB INFO' : 'SYLLABUS'}
@@ -665,63 +880,121 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
                   )}
                 </div>
 
-                {/* Select Difficulty Dropdown Trigger */}
-                <div className="practice-field-container" onClick={(e) => e.stopPropagation()}>
-                  <button 
-                    className={`custom-select-trigger ${difficultyDropdownOpen ? 'open' : ''}`}
-                    onClick={() => { closeAllDropdowns(); setDifficultyDropdownOpen(!difficultyDropdownOpen); }}
-                    id="select-difficulty-dropdown-btn"
-                  >
-                    <span>Select Difficulty: <strong>{selectedDifficulty}</strong></span>
-                    <svg className="trigger-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <polyline points="6 9 12 15 18 9" />
-                    </svg>
-                  </button>
-
-                  {difficultyDropdownOpen && (
-                    <div className="custom-dropdown-popover popover-list" id="select-difficulty-popover">
-                      {['Easy', 'Medium', 'Hard'].map(diff => (
-                        <div 
-                          key={diff} 
-                          className={`popover-list-item ${selectedDifficulty === diff ? 'active' : ''}`}
+                {/* 1. Difficulty Multi-Select */}
+                <div className="practice-filter-section" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.2rem' }}>
+                  <span className="practice-filter-title" style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--dash-text-color)', fontFamily: 'var(--font-body)' }}>
+                    Difficulty:
+                  </span>
+                  <div className="practice-filter-pills" style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
+                    {['Easy', 'Medium', 'Hard'].map(diff => {
+                      const isSelected = selectedDifficulties.includes(diff);
+                      return (
+                        <button
+                          key={diff}
                           onClick={() => {
-                            setSelectedDifficulty(diff);
-                            setDifficultyDropdownOpen(false);
-                            showToast(`Difficulty synced to: ${diff}`);
+                            setSelectedDifficulties(prev => 
+                              prev.includes(diff) 
+                                ? prev.filter(d => d !== diff) 
+                                : [...prev, diff]
+                            );
+                          }}
+                          className={`practice-filter-pill ${isSelected ? 'active' : ''}`}
+                          style={{
+                            padding: '0.6rem 1.2rem',
+                            borderRadius: '20px',
+                            border: isSelected ? '1.5px solid var(--dash-active-module-bg)' : '1px solid rgba(0,0,0,0.1)',
+                            background: isSelected ? 'var(--dash-active-module-bg)' : 'rgba(255,255,255,0.4)',
+                            color: isSelected ? '#fff' : 'var(--dash-text-color)',
+                            fontSize: '0.85rem',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            transition: 'all 0.25s ease',
+                            fontFamily: 'var(--font-body)'
                           }}
                         >
                           {diff}
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
 
-                {/* Radio Buttons for Difficulty Selector */}
-                <div className="difficulty-radio-group" id="difficulty-radio-group">
-                  {['Easy', 'Medium', 'Hard'].map(diff => {
-                    const isSelected = selectedDifficulty === diff;
-                    return (
-                      <label 
-                        key={diff} 
-                        className={`radio-label ${isSelected ? 'selected' : ''}`}
-                        onClick={() => setSelectedDifficulty(diff)}
-                        id={`difficulty-radio-${diff.toLowerCase()}`}
-                      >
-                        <input 
-                          type="radio" 
-                          name="difficulty-selection"
-                          value={diff}
-                          checked={isSelected}
-                          onChange={() => setSelectedDifficulty(diff)}
-                        />
-                        <span className="radio-custom-circle">
-                          {isSelected && <span className="radio-custom-circle-inner" />}
-                        </span>
-                        <span className="radio-label-text">{diff}</span>
-                      </label>
-                    );
-                  })}
+                {/* 2. Marks Multi-Select */}
+                <div className="practice-filter-section" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.2rem' }}>
+                  <span className="practice-filter-title" style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--dash-text-color)', fontFamily: 'var(--font-body)' }}>
+                    Marks Bracket:
+                  </span>
+                  <div className="practice-filter-pills" style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
+                    {[2, 3, 5].map(mark => {
+                      const isSelected = selectedMarks.includes(mark);
+                      return (
+                        <button
+                          key={mark}
+                          onClick={() => {
+                            setSelectedMarks(prev => 
+                              prev.includes(mark) 
+                                ? prev.filter(m => m !== mark) 
+                                : [...prev, mark]
+                            );
+                          }}
+                          className={`practice-filter-pill ${isSelected ? 'active' : ''}`}
+                          style={{
+                            padding: '0.6rem 1.2rem',
+                            borderRadius: '20px',
+                            border: isSelected ? '1.5px solid var(--dash-active-module-bg)' : '1px solid rgba(0,0,0,0.1)',
+                            background: isSelected ? 'var(--dash-active-module-bg)' : 'rgba(255,255,255,0.4)',
+                            color: isSelected ? '#fff' : 'var(--dash-text-color)',
+                            fontSize: '0.85rem',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            transition: 'all 0.25s ease',
+                            fontFamily: 'var(--font-body)'
+                          }}
+                        >
+                          {mark} Marks
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 3. Year Multi-Select */}
+                <div className="practice-filter-section" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.5rem' }}>
+                  <span className="practice-filter-title" style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--dash-text-color)', fontFamily: 'var(--font-body)' }}>
+                    Exam Years:
+                  </span>
+                  <div className="practice-filter-pills" style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
+                    {['2022', '2023', '2024'].map(year => {
+                      const isSelected = selectedYears.includes(year);
+                      return (
+                        <button
+                          key={year}
+                          onClick={() => {
+                            setSelectedYears(prev => 
+                              prev.includes(year) 
+                                ? prev.filter(y => y !== year) 
+                                : [...prev, year]
+                            );
+                          }}
+                          className={`practice-filter-pill ${isSelected ? 'active' : ''}`}
+                          style={{
+                            padding: '0.6rem 1.2rem',
+                            borderRadius: '20px',
+                            border: isSelected ? '1.5px solid var(--dash-active-module-bg)' : '1px solid rgba(0,0,0,0.1)',
+                            background: isSelected ? 'var(--dash-active-module-bg)' : 'rgba(255,255,255,0.4)',
+                            color: isSelected ? '#fff' : 'var(--dash-text-color)',
+                            fontSize: '0.85rem',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            transition: 'all 0.25s ease',
+                            fontFamily: 'var(--font-body)'
+                          }}
+                        >
+                          {year}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
 
                 {/* START Quiz / Practice Button */}
@@ -754,11 +1027,30 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
                 </div>
 
                 <div className="materials-list-container">
-                  {subjectData.books.map(book => (
+                  {(subjectFiles?.referenceBooks ? subjectFiles.referenceBooks.map((item, i) => {
+                    // Handle both fully populated objects or simple filename strings
+                    const filename = typeof item === 'object' && item !== null ? (item.filename || '') : item;
+                    const titleVal = typeof item === 'object' && item !== null ? item.title : undefined;
+                    const authorVal = typeof item === 'object' && item !== null ? item.author : undefined;
+                    const tagsVal = typeof item === 'object' && item !== null ? item.tags : undefined;
+
+                    // Try to match metadata in local registry
+                    const subjectRegistry = REFERENCE_BOOKS_REGISTRY[subjectCode];
+                    const matchedBook = subjectRegistry?.find(b => b.filename === filename);
+                    
+                    return {
+                      id: `ref-${i}`,
+                      title: titleVal || matchedBook?.title || filename.replace('.pdf', '').replace(/_/g, ' '),
+                      author: authorVal || matchedBook?.author || 'Unknown Author',
+                      tags: tagsVal || matchedBook?.tags || ['Reference Book'],
+                      size: 'PDF',
+                      filename: filename
+                    };
+                  }) : subjectData.books).map(book => (
                     <div 
                       key={book.id} 
                       className="material-file-item" 
-                      onClick={() => handleDownloadBook(book.title)}
+                      onClick={() => handleDownloadBook(book.filename || book.title)}
                       title="Click to access study file"
                     >
                       <div className="file-item-left">
@@ -769,6 +1061,15 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
                         <div className="file-info-text">
                           <span className="file-title">{book.title}</span>
                           <span className="file-author">by {book.author || 'Department'}</span>
+                          {book.tags && (
+                            <div className="book-tags-row" style={{ display: 'flex', gap: '6px', marginTop: '6px', flexWrap: 'wrap' }}>
+                              {book.tags.map((t, idx) => (
+                                <span key={idx} style={{ fontSize: '0.65rem', background: 'rgba(198, 85, 117, 0.08)', color: 'var(--dash-active-module-bg)', padding: '2px 6px', borderRadius: '4px', fontWeight: '600', textTransform: 'uppercase' }}>
+                                  {t}
+                                </span>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       </div>
                       <span className="file-size-badge">{book.size}</span>
@@ -781,7 +1082,7 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                     <polyline points="14 2 14 8 20 8" />
                   </svg>
-                  <span>{subjectData.books.length} Files</span>
+                  <span>{subjectFiles?.referenceBooks ? subjectFiles.referenceBooks.length : subjectData.books.length} Files</span>
                 </div>
               </section>
 
@@ -945,6 +1246,54 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
           </div>
         </main>
       </div>
+
+      {/* Multiple Notes Selection Modal popup */}
+      {activeNotesModal && (
+        <div className="notes-modal-overlay" onClick={() => setActiveNotesModal(null)}>
+          <div className="notes-modal-container" onClick={(e) => e.stopPropagation()}>
+            <div className="notes-modal-header">
+              <div className="notes-modal-title">
+                <h3>{activeNotesModal.modKey}: Notes Selector</h3>
+                <span className="notes-modal-subtitle">{activeNotesModal.modTitle}</span>
+              </div>
+              <button className="btn-close-modal" onClick={() => setActiveNotesModal(null)}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ width: '18px', height: '18px' }}>
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+            <div className="notes-modal-body">
+              <div className="notes-grid">
+                {activeNotesModal.files.map((file, idx) => (
+                  <div 
+                    key={idx} 
+                    className="note-card-item"
+                    onClick={() => window.open(`http://localhost:3001/study-material/${subjectCode}/${activeNotesModal.modKey}/${file}`, '_blank')}
+                  >
+                    <div className="note-card-top">
+                      <div className="note-card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ width: '22px', height: '22px' }}>
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                          <polyline points="14 2 14 8 20 8" />
+                        </svg>
+                      </div>
+                      <span className="note-card-title">{file.replace('.pdf', '').replace(/_/g, ' ')}</span>
+                    </div>
+                    <button className="note-card-action-btn">
+                      <span>Open Note</span>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ width: '14px', height: '14px' }}>
+                        <polyline points="15 3 21 3 21 9" />
+                        <line x1="10" y1="14" x2="21" y2="3" />
+                      </svg>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

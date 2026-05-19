@@ -1,5 +1,5 @@
 import React from 'react';
-import anantImg from '../../ProfilePics/Anant/anant.jpeg';
+import anantImg from '../../ProfilePics/Anant/anant.JPG';
 import minishaImg from '../../ProfilePics/Minisha/minisha.jpeg';
 import krishnaImg from '../../ProfilePics/Krishna/Krishna.jpeg';
 import garimaImg from '../../ProfilePics/Garima/Garima.jpeg';
@@ -73,8 +73,7 @@ function CreatorsSection() {
   return (
     <section className="creators-section" id="creators-section">
       <div className="creators-section-header">
-        <h2 className="creators-section-title">Meet the Creators</h2>
-        <div className="creators-section-subtitle">The innovative team behind BitHub's design and intelligence</div>
+        <h2 className="creators-section-title">The Campus Team</h2>
       </div>
       <div className="creators-grid">
         {team.map((member, idx) => (

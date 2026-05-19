@@ -213,6 +213,18 @@ function PracticeMode({ subjectCode, selectedModules, difficulties = ['Easy', 'M
   const [codeOutput, setCodeOutput] = useState({});
   const [codeRunning, setCodeRunning] = useState(false);
 
+  // Mobile state & expand toggle
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [navigatorExpanded, setNavigatorExpanded] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const currentQ = questions[currentIndex];
   
   // 4-mode question routing
@@ -245,7 +257,7 @@ function PracticeMode({ subjectCode, selectedModules, difficulties = ['Easy', 'M
         
         for (const mod of selectedModules) {
           const modNumber = mod.replace('mod', '');
-          const res = await fetch(`http://localhost:3001/api/practice/questions?subject=${subjectCode}&module=${modNumber}&difficulty=${diffsStr}&year=${yearsStr}&marks=${marksStr}`);
+          const res = await fetch(`/api/practice/questions?subject=${subjectCode}&module=${modNumber}&difficulty=${diffsStr}&year=${yearsStr}&marks=${marksStr}`);
           const data = await res.json();
           if (data.questions) {
             allQs = [...allQs, ...data.questions];
@@ -322,7 +334,7 @@ function PracticeMode({ subjectCode, selectedModules, difficulties = ['Easy', 'M
           </h2>
           
           <p style={{ color: 'var(--dash-text-muted)', textAlign: 'center', margin: 0, fontSize: '0.98rem', lineHeight: '1.6' }}>
-            We failed to establish a connection to the backend database service at <code style={{ background: 'rgba(0,0,0,0.05)', padding: '2px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>http://localhost:3001</code>.
+            We failed to establish a connection to the backend database service via the <code style={{ background: 'rgba(0,0,0,0.05)', padding: '2px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>/api</code> proxy.
           </p>
 
           <div style={{ width: '100%', background: 'var(--dash-panel-bg)', border: '1px solid var(--dash-panel-border)', borderRadius: '12px', padding: '1.2rem', display: 'flex', flexDirection: 'column', gap: '0.8rem', fontSize: '0.9rem', color: 'var(--dash-text-color)' }}>
@@ -407,7 +419,7 @@ function PracticeMode({ subjectCode, selectedModules, difficulties = ['Easy', 'M
 
     setLoadingCheck(true);
     try {
-      const res = await fetch('http://localhost:3001/api/practice/check', {
+      const res = await fetch('/api/practice/check', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ uid: currentQ.uid, answer })
@@ -432,7 +444,7 @@ function PracticeMode({ subjectCode, selectedModules, difficulties = ['Easy', 'M
 
     setLoadingCheck(true);
     try {
-      const res = await fetch('http://localhost:3001/api/practice/check', {
+      const res = await fetch('/api/practice/check', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ uid: currentQ.uid })
@@ -452,7 +464,7 @@ function PracticeMode({ subjectCode, selectedModules, difficulties = ['Easy', 'M
     if (!code.trim()) return;
     setCodeRunning(true);
     try {
-      const res = await fetch('http://localhost:3001/api/practice/compile', {
+      const res = await fetch('/api/practice/compile', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code, language: 'c' })
@@ -464,6 +476,334 @@ function PracticeMode({ subjectCode, selectedModules, difficulties = ['Easy', 'M
     }
     setCodeRunning(false);
   };
+
+  if (isMobile) {
+    return (
+      <div className="mobile-practice-root">
+        {/* Compact Header */}
+        <header className="mobile-practice-header">
+          <button className="mobile-practice-back-btn" onClick={onBack}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ width: '16px', height: '16px' }}>
+              <line x1="19" y1="12" x2="5" y2="12" />
+              <polyline points="12 19 5 12 12 5" />
+            </svg>
+            <span>Exit Practice</span>
+          </button>
+          
+          <span className="mobile-practice-subject-title">
+            Practice: {subjectCode}
+          </span>
+          
+          <button className="mobile-practice-theme-btn" onClick={onToggleTheme}>
+            {theme === 'light' ? '🌙' : '☀️'}
+          </button>
+        </header>
+
+        {/* Active Question Box Card */}
+        <div className="mobile-practice-card">
+          
+          {/* Metadata badges row */}
+          <div className="mobile-practice-meta-row">
+            <span className="badge-practice" style={{ fontSize: '0.65rem', padding: '3px 8px' }}>
+              Q {currentIndex + 1} of {totalQuestions}
+            </span>
+            <span className="badge-practice" style={{ fontSize: '0.65rem', padding: '3px 8px' }}>
+              Mod {currentQ.module}
+            </span>
+            <span className={`badge-practice badge-difficulty-${currentQ.difficulty.toLowerCase()}`} style={{ fontSize: '0.65rem', padding: '3px 8px' }}>
+              {currentQ.difficulty}
+            </span>
+            <span className="badge-practice" style={{ fontSize: '0.65rem', padding: '3px 8px' }}>
+              {currentQ.marks}M
+            </span>
+            {currentQ.exam && (
+              <span className="badge-practice" style={{ fontSize: '0.65rem', padding: '3px 8px', borderColor: 'var(--dash-active-module-bg)', color: 'var(--dash-active-module-bg)', background: 'rgba(198, 85, 117, 0.05)' }}>
+                {currentQ.exam}
+              </span>
+            )}
+          </div>
+
+          {/* Question Text / LaTeX Area - Fully visible at the top */}
+          <div className="mobile-practice-question-text">
+            {renderLatex(currentQ.question_latex || currentQ.question_text)}
+          </div>
+
+          {/* Divider */}
+          <hr style={{ border: 'none', borderTop: '1px solid var(--dash-panel-border)', margin: '4px 0' }} />
+
+          {/* Interactive Input/Options Area */}
+          <div className="mobile-practice-interactive-area">
+            
+            {/* Keyboard input mode */}
+            {questionMode === 'keyboard' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <input 
+                  type="text" 
+                  className="pq-input-premium"
+                  placeholder="Type your final answer..."
+                  value={userAnswers[currentIndex] || ''}
+                  onChange={(e) => setUserAnswers(prev => ({ ...prev, [currentIndex]: e.target.value }))}
+                  onKeyDown={(e) => { if (e.key === 'Enter') handleCheckAnswer(); }}
+                  style={{ width: '100%', boxSizing: 'border-box', height: '44px', borderRadius: '12px', fontSize: '0.9rem', padding: '0 12px' }}
+                />
+                {!feedbacks[currentIndex] && (
+                  <button className="pq-btn-submit" onClick={handleCheckAnswer}
+                    disabled={loadingCheck || !(userAnswers[currentIndex] || '').trim()}
+                    style={{ width: '100%', height: '42px', borderRadius: '12px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '750', background: 'var(--dash-active-module-bg)' }}>
+                    {loadingCheck ? 'Checking...' : 'Check Answer'}
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* MCQ Options Grid (2x2) */}
+            {questionMode === 'mcq' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div className="mobile-mcq-options-grid">
+                  {mcqChoices.map((choice, idx) => {
+                    const letter = String.fromCharCode(65 + idx);
+                    const isSelected = userAnswers[currentIndex] === choice;
+                    const isChecked = feedbacks[currentIndex];
+                    const isCorrectChoice = choice === currentQ.final_answer;
+                    
+                    let choiceClass = "mobile-mcq-option-btn";
+                    if (isSelected) choiceClass += " selected";
+                    if (isChecked) {
+                      if (isCorrectChoice) choiceClass += " correct-choice";
+                      else if (isSelected) choiceClass += " incorrect-choice";
+                    }
+
+                    return (
+                      <button key={idx} className={choiceClass}
+                        onClick={() => { if (!feedbacks[currentIndex]) setUserAnswers(prev => ({ ...prev, [currentIndex]: choice })); }}
+                      >
+                        {/* Option letter badge */}
+                        <div className="mobile-mcq-option-letter">
+                          {letter}
+                        </div>
+                        {/* LaTeX content */}
+                        <div className="mobile-mcq-option-text">
+                          {renderLatex(choice)}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+                {!feedbacks[currentIndex] && (
+                  <button className="pq-btn-submit" onClick={handleCheckAnswer}
+                    disabled={loadingCheck || !userAnswers[currentIndex]}
+                    style={{ width: '100%', height: '42px', borderRadius: '12px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '750', background: 'var(--dash-active-module-bg)', marginTop: '4px' }}>
+                    {loadingCheck ? 'Checking...' : 'Check Answer'}
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Study Question mode */}
+            {questionMode === 'study' && !feedbacks[currentIndex] && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '10px 12px', background: 'rgba(198,85,117,0.04)', borderRadius: '14px', border: '1px dashed rgba(198,85,117,0.2)' }}>
+                <span style={{ fontWeight: '800', fontSize: '0.85rem', color: 'var(--dash-text-color)' }}>
+                  📖 Study &amp; Reveal Mode
+                </span>
+                <p style={{ fontSize: '0.78rem', color: 'var(--dash-text-muted)', margin: 0, lineHeight: '1.4' }}>
+                  Solve this on paper, then click the button below to check your work against the model solution.
+                </p>
+                <button className="pq-btn-submit" onClick={() => {
+                  setFeedbacks(prev => ({ ...prev, [currentIndex]: 'revealed' }));
+                  setStatuses(prev => ({ ...prev, [currentIndex]: 'correct' }));
+                  handleRevealSolution();
+                }} style={{ width: '100%', height: '40px', borderRadius: '12px', fontSize: '0.85rem', fontWeight: '750', background: 'var(--dash-active-module-bg)' }}>
+                  📖 Reveal Model Answer
+                </button>
+              </div>
+            )}
+
+            {/* Programming Code mode */}
+            {questionMode === 'code' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <span style={{ fontWeight: '800', fontSize: '0.85rem', color: 'var(--dash-text-color)' }}>
+                  💻 C Programming Environment
+                </span>
+                <textarea
+                  value={codeText[currentIndex] || '#include <stdio.h>\n\nint main() {\n    // Code here\n    return 0;\n}'}
+                  onChange={(e) => setCodeText(prev => ({ ...prev, [currentIndex]: e.target.value }))}
+                  spellCheck={false}
+                  style={{ width: '100%', minHeight: '160px', fontFamily: "'JetBrains Mono', monospace", fontSize: '0.8rem', lineHeight: '1.4', padding: '10px', borderRadius: '10px', background: '#1e1e2e', color: '#cdd6f4', border: '1px solid rgba(198,85,117,0.2)', resize: 'vertical', outline: 'none', boxSizing: 'border-box' }}
+                />
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button className="pq-btn-submit" onClick={handleCompileCode} disabled={codeRunning} style={{ flex: 1, height: '38px', borderRadius: '10px', fontSize: '0.8rem', background: '#2ecc71', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {codeRunning ? 'Running...' : '▶ Run Code'}
+                  </button>
+                  <button className="pq-btn-submit" onClick={() => {
+                    setFeedbacks(prev => ({ ...prev, [currentIndex]: 'revealed' }));
+                    setStatuses(prev => ({ ...prev, [currentIndex]: 'correct' }));
+                    handleRevealSolution();
+                  }} style={{ flex: 1, height: '38px', borderRadius: '10px', fontSize: '0.8rem', background: 'var(--dash-active-module-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    📖 Reveal Solution
+                  </button>
+                </div>
+                {codeOutput[currentIndex] && (
+                  <div style={{ background: '#1e1e2e', borderRadius: '10px', padding: '8px', fontFamily: "'JetBrains Mono', monospace", fontSize: '0.75rem', color: '#cdd6f4', border: codeOutput[currentIndex].success ? '1px solid rgba(46,204,113,0.3)' : '1px solid rgba(231,76,60,0.3)' }}>
+                    {codeOutput[currentIndex].runOutput && <pre style={{ whiteSpace: 'pre-wrap', margin: 0 }}>{codeOutput[currentIndex].runOutput}</pre>}
+                    {codeOutput[currentIndex].compileError && <pre style={{ color: '#e74c3c', whiteSpace: 'pre-wrap', margin: 0 }}>{codeOutput[currentIndex].compileError}</pre>}
+                    {codeOutput[currentIndex].runError && <pre style={{ color: '#e74c3c', whiteSpace: 'pre-wrap', margin: 0 }}>{codeOutput[currentIndex].runError}</pre>}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Answer Feedback Banner */}
+            {feedbacks[currentIndex] && feedbacks[currentIndex] !== 'revealed' && (
+              <div className={`banner-feedback-premium ${feedbacks[currentIndex]}`} style={{ padding: '8px 12px', fontSize: '0.78rem', borderRadius: '12px', margin: 0, gap: '6px' }}>
+                {feedbacks[currentIndex] === 'correct' ? (
+                  <>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ width: '16px', height: '16px', flexShrink: 0 }}>
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span>Spot on! Correct answer.</span>
+                  </>
+                ) : (
+                  <>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ width: '16px', height: '16px', flexShrink: 0 }}>
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                    <span>Incorrect. Check derivation steps below.</span>
+                  </>
+                )}
+              </div>
+            )}
+
+            {/* Show Solution Section */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <button 
+                className="btn-nav-premium"
+                onClick={handleRevealSolution}
+                disabled={loadingCheck}
+                style={{ width: '100%', height: '36px', background: 'rgba(0,0,0,0.03)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontSize: '0.8rem', padding: 0 }}
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ width: '14px', height: '14px' }}>
+                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+                <span>{showSolutionPanel[currentIndex] ? 'Hide Explanation' : 'View Step-by-Step Solution'}</span>
+              </button>
+
+              {showSolutionPanel[currentIndex] && solutions[currentIndex] && (
+                <div className="solution-container-premium" style={{ padding: '12px', borderRadius: '14px', fontSize: '0.8rem' }}>
+                  <h4 style={{ margin: '0 0 6px 0', fontSize: '0.85rem' }}>Detailed LaTeX Solution</h4>
+                  <div className="solution-content-math" style={{ fontSize: '0.8rem', overflowX: 'auto' }}>
+                    {renderLatex(solutions[currentIndex].solutionLatex || solutions[currentIndex].solutionText)}
+                  </div>
+                  {solutions[currentIndex].correctAnswer && (
+                    <div className="solution-final-ans-pill" style={{ marginTop: '8px', padding: '6px 10px', borderRadius: '8px', fontSize: '0.78rem' }}>
+                      <strong>Expected: </strong> 
+                      <span style={{ marginLeft: '4px' }}>
+                        {renderLatex(solutions[currentIndex].correctAnswer)}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+          </div>
+
+          {/* Compact Counter Block & Connected Collapsible Navigator */}
+          <div className="mobile-practice-dashboard-connected-block">
+            
+            {/* 3-Part Stats Counter Row */}
+            <div className="mobile-practice-compact-counter">
+              <div className="mobile-practice-counter-col">
+                <div className="num-val">{attemptedCount}</div>
+                <div className="lbl-desc">Attempted</div>
+              </div>
+              <div className="mobile-practice-counter-col">
+                <div className="num-val" style={{ color: '#2ecc71' }}>{correctCount}</div>
+                <div className="lbl-desc" style={{ color: '#2ecc71' }}>Correct</div>
+              </div>
+              <div className="mobile-practice-counter-col">
+                <div className="num-val" style={{ color: '#e74c3c' }}>{incorrectCount}</div>
+                <div className="lbl-desc" style={{ color: '#e74c3c' }}>Incorrect</div>
+              </div>
+            </div>
+
+            {/* Expand / Collapse Button connected to Counter */}
+            <button className="mobile-practice-expand-btn" onClick={() => setNavigatorExpanded(prev => !prev)}>
+              <span>{navigatorExpanded ? 'Collapse Navigator Panel' : 'Expand Navigator Grid'}</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ width: '12px', height: '12px', transform: navigatorExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+
+            {/* Collapsible Question Navigation Grid inside connected block */}
+            {navigatorExpanded && (
+              <div className="mobile-practice-collapsible-nav">
+                <div className="questions-circles-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '6px' }}>
+                  {questions.map((_, idx) => {
+                    const qStatus = statuses[idx] || 'unattempted';
+                    const isActive = currentIndex === idx;
+                    
+                    let btnClass = 'circle-nav-node';
+                    if (isActive) btnClass += ' active';
+                    if (qStatus === 'correct') btnClass += ' correct';
+                    else if (qStatus === 'incorrect') btnClass += ' incorrect';
+                    else if (qStatus === 'unattempted') btnClass += ' not-visited';
+
+                    return (
+                      <button 
+                        key={idx}
+                        className={btnClass}
+                        onClick={() => setCurrentIndex(idx)}
+                        style={{
+                          width: '32px',
+                          height: '32px',
+                          fontSize: '0.75rem',
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontWeight: '800',
+                          border: isActive ? '2px solid var(--dash-active-module-bg)' : '1px solid var(--dash-panel-border)',
+                          background: qStatus === 'correct' ? '#2ecc71' : qStatus === 'incorrect' ? '#e74c3c' : 'var(--dash-panel-bg)',
+                          color: qStatus === 'correct' || qStatus === 'incorrect' ? '#fff' : isActive ? 'var(--dash-active-module-bg)' : 'var(--dash-text-color)',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {idx + 1}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+          </div>
+
+        </div>
+
+        {/* Floating / Bottom-aligned Action Row for Next / Prev */}
+        <div className="mobile-practice-footer-controls">
+          <button 
+            className="btn-nav-premium"
+            onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
+            disabled={currentIndex === 0}
+            style={{ flex: 1, height: '42px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem', fontWeight: '750', padding: 0 }}
+          >
+            ← Previous
+          </button>
+          <button 
+            className="btn-nav-premium"
+            onClick={() => setCurrentIndex(prev => Math.min(totalQuestions - 1, prev + 1))}
+            disabled={currentIndex === totalQuestions - 1}
+            style={{ flex: 1, height: '42px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem', fontWeight: '750', padding: 0 }}
+          >
+            Next →
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="dashboard-container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>

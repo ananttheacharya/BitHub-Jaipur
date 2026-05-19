@@ -1,5 +1,5 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
-import PracticeMode from './PracticeMode';
+import { useState, useCallback, useRef, useEffect, lazy, Suspense } from 'react';
+const PracticeMode = lazy(() => import('./PracticeMode'));
 import CreatorsSection from './CreatorsSection';
 
 // ============================================================
@@ -441,6 +441,22 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
   // Retrieve specific subject dataset or fallback safely to Mathematics-1
   const subjectData = SUBJECTS_REGISTRY[subjectCode] || SUBJECTS_REGISTRY["MA24101"];
 
+  // Detect real mobile screen
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Mobile drawer trigger states
+  const [mobileBooksOpen, setMobileBooksOpen] = useState(false);
+  const [mobilePyqsOpen, setMobilePyqsOpen] = useState(false);
+  const [mobilePracticeOpen, setMobilePracticeOpen] = useState(false);
+
   // Page / Content States
   const [activeModule, setActiveModule] = useState(subjectData.modules[0].id);
   const [selectedDifficulties, setSelectedDifficulties] = useState(['easy', 'medium', 'hard']);
@@ -498,7 +514,7 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
     setPracticeMeta(null);
     
     // Fetch dynamic files from backend
-    fetch(`http://localhost:3001/api/subjects/${subjectCode}/materials`)
+    fetch(`/api/subjects/${subjectCode}/materials`)
       .then(res => res.json())
       .then(data => {
         if (!data.error) setSubjectFiles(data);
@@ -506,7 +522,7 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
       .catch(err => console.error("Failed to fetch materials:", err));
 
     // Fetch Practice Meta
-    fetch(`http://localhost:3001/api/practice/meta?subject=${subjectCode}`)
+    fetch(`/api/practice/meta?subject=${subjectCode}`)
       .then(res => res.json())
       .then(data => {
         if (!data.error) {
@@ -592,11 +608,11 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
   });
 
   const handleDownloadPaper = (filename) => {
-    window.open(`http://localhost:3001/study-material/${subjectCode}/QPA/${filename}`, '_blank');
+    window.open(`/study-material/${subjectCode}/QPA/${filename}`, '_blank');
   };
 
   const handleDownloadBook = (filename) => {
-    window.open(`http://localhost:3001/study-material/${subjectCode}/${filename}`, '_blank');
+    window.open(`/study-material/${subjectCode}/${filename}`, '_blank');
   };
 
   const handleResetFilters = () => {
@@ -617,16 +633,528 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
 
   if (isPracticing) {
     return (
-      <PracticeMode 
-        subjectCode={subjectCode}
-        selectedModules={selectedPracticeModules}
-        difficulties={selectedDifficulties}
-        marks={selectedMarks}
-        years={selectedYears}
-        theme={theme}
-        onToggleTheme={onToggleTheme}
-        onBack={() => setIsPracticing(false)}
-      />
+      <Suspense fallback={<div className="practice-loader-container"><div className="practice-spinner"></div></div>}>
+        <PracticeMode 
+          subjectCode={subjectCode}
+          selectedModules={selectedPracticeModules}
+          difficulties={selectedDifficulties}
+          marks={selectedMarks}
+          years={selectedYears}
+          theme={theme}
+          onToggleTheme={onToggleTheme}
+          onBack={() => setIsPracticing(false)}
+        />
+      </Suspense>
+    );
+  }
+
+  if (isMobile) {
+    return (
+      <div className="mobile-dashboard-root" id="mobile-dashboard-root">
+        {/* Toast popup */}
+        <div className={`dashboard-toast ${toastVisible ? 'dashboard-toast--visible' : ''}`} id="mobile-dashboard-toast">
+          {toastMessage}
+        </div>
+
+        {/* 1. Header */}
+        <header className="mobile-dash-header">
+          <button className="mobile-back-btn" onClick={onBack}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+            <span>Back</span>
+          </button>
+          
+          <div className="mobile-header-title-box">
+            <span className="mobile-code-badge">{subjectData.code}</span>
+            <h2 className="mobile-subject-title">{subjectData.name}</h2>
+          </div>
+
+          <button 
+            className="mobile-theme-toggle"
+            onClick={(e) => { e.stopPropagation(); onToggleTheme(); }}
+            title="Toggle theme"
+          >
+            {theme === 'light' ? (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{width: 20, height: 20}}>
+                <circle cx="12" cy="12" r="4" />
+                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{width: 20, height: 20}}>
+                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+              </svg>
+            )}
+          </button>
+        </header>
+
+        {/* 2. Main Content Area */}
+        <div className="mobile-dash-scroll-container">
+          {/* Notes Section: Primary Option */}
+          <section className="mobile-notes-section">
+            <div className="mobile-section-header">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="section-icon">
+                <path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+              </svg>
+              <h3>{subjectCode.startsWith('LAB') ? 'Experiments / Practicals' : 'Study Notes'}</h3>
+            </div>
+
+            <div className="mobile-modules-list">
+              {subjectData.modules.map((mod, index) => {
+                const modKey = `MOD${index + 1}`;
+                const modFiles = subjectFiles?.notes?.[modKey] || [];
+                return (
+                  <button
+                    key={mod.id}
+                    className="mobile-module-row-btn"
+                    onClick={() => {
+                      if (modFiles.length === 1) {
+                        window.open(`/study-material/${subjectCode}/${modKey}/${modFiles[0]}`, '_blank');
+                      } else if (modFiles.length > 1) {
+                        setActiveNotesModal({
+                          modKey,
+                          modTitle: mod.title,
+                          files: modFiles
+                        });
+                      } else {
+                        showToast(`No notes uploaded yet for ${mod.name}`);
+                      }
+                    }}
+                  >
+                    <div className="mobile-mod-left">
+                      <div className="mobile-mod-number-icon">{index + 1}</div>
+                      <div className="mobile-mod-texts">
+                        <span className="mobile-mod-name">{mod.name}</span>
+                        <span className="mobile-mod-title-detail">{mod.title}</span>
+                      </div>
+                    </div>
+                    <div className="mobile-mod-right">
+                      {modFiles.length > 0 ? (
+                        <span className="mobile-mod-file-badge">{modFiles.length} file{modFiles.length > 1 ? 's' : ''}</span>
+                      ) : (
+                        <span className="mobile-mod-empty-badge">Empty</span>
+                      )}
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="chevron-icon">
+                        <polyline points="9 18 15 12 9 6" />
+                      </svg>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* Syllabus Button below the primary Notes list */}
+          <section className="mobile-syllabus-section">
+            <button 
+              className="mobile-syllabus-main-btn"
+              onClick={() => {
+                if (subjectFiles?.syllabus) {
+                  window.open(`/study-material/${subjectCode}/${subjectFiles.syllabus}`, '_blank');
+                } else {
+                  showToast("Syllabus PDF not found on server.");
+                }
+              }}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="btn-icon">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+              </svg>
+              <span>{subjectCode.startsWith('LAB') ? 'VIEW LAB MANUAL / INFO' : 'VIEW SUBJECT SYLLABUS'}</span>
+            </button>
+          </section>
+
+          {/* Action Zone - Bottom Stack */}
+          <section className="mobile-actions-zone">
+            {/* View Reference Books and Materials */}
+            <button className="mobile-action-card-btn" onClick={() => setMobileBooksOpen(true)}>
+              <div className="mobile-action-left">
+                <div className="mobile-action-icon-bg maroon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M4 19.5V15a2 2 0 0 1 2-2h14" />
+                    <path d="M20 17v-4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2Z" />
+                    <path d="M12 6V2h8v4" />
+                  </svg>
+                </div>
+                <div className="mobile-action-titles">
+                  <h4>{subjectCode.startsWith('LAB') ? 'Lab Manuals & Practical Guides' : 'Reference Books & Materials'}</h4>
+                  <p>Access textbook PDFs and guides</p>
+                </div>
+              </div>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="chevron-right">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </button>
+
+            {/* View PYQs */}
+            <button className="mobile-action-card-btn" onClick={() => setMobilePyqsOpen(true)}>
+              <div className="mobile-action-left">
+                <div className="mobile-action-icon-bg purple">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                  </svg>
+                </div>
+                <div className="mobile-action-titles">
+                  <h4>{subjectCode.startsWith('LAB') ? 'Previous Practical Papers' : 'View Previous Year Papers (PYQs)'}</h4>
+                  <p>Solved & unsolved exam papers</p>
+                </div>
+              </div>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="chevron-right">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </button>
+
+            {/* Start Practice Mode */}
+            <button className="mobile-action-card-btn start-practice" onClick={() => setMobilePracticeOpen(true)}>
+              <div className="mobile-action-left">
+                <div className="mobile-action-icon-bg pink">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <circle cx="12" cy="12" r="10" />
+                    <circle cx="12" cy="12" r="6" />
+                    <circle cx="12" cy="12" r="2" />
+                  </svg>
+                </div>
+                <div className="mobile-action-titles">
+                  <h4>{subjectCode.startsWith('LAB') ? 'Start Lab Viva Mode' : 'Start Practice Mode'}</h4>
+                  <p>Interactive questions & answers session</p>
+                </div>
+              </div>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="chevron-right">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </button>
+          </section>
+        </div>
+
+        {/* ==========================================
+            MOBILE BOTTOM SHEETS / DRAWERS
+            ========================================== */}
+
+        {/* 1. Reference Books Bottom Sheet */}
+        {mobileBooksOpen && (
+          <div className="mobile-bottom-sheet-overlay" onClick={() => setMobileBooksOpen(false)}>
+            <div className="mobile-bottom-sheet-panel" onClick={(e) => e.stopPropagation()}>
+              <div className="mobile-sheet-drag-handle" />
+              <div className="mobile-sheet-header">
+                <h3>{subjectCode.startsWith('LAB') ? 'Practical Guides' : 'Reference Books'}</h3>
+                <button className="mobile-sheet-close-btn" onClick={() => setMobileBooksOpen(false)}>Close</button>
+              </div>
+              <div className="mobile-sheet-body scrollable">
+                <div className="mobile-books-list">
+                  {(subjectFiles?.referenceBooks ? subjectFiles.referenceBooks.map((item, i) => {
+                    const filename = typeof item === 'object' && item !== null ? (item.filename || '') : item;
+                    const titleVal = typeof item === 'object' && item !== null ? item.title : undefined;
+                    const authorVal = typeof item === 'object' && item !== null ? item.author : undefined;
+                    const tagsVal = typeof item === 'object' && item !== null ? item.tags : undefined;
+                    const subjectRegistry = REFERENCE_BOOKS_REGISTRY[subjectCode];
+                    const matchedBook = subjectRegistry?.find(b => b.filename === filename);
+                    return {
+                      id: `ref-${i}`,
+                      title: titleVal || matchedBook?.title || filename.replace('.pdf', '').replace(/_/g, ' '),
+                      author: authorVal || matchedBook?.author || 'Unknown Author',
+                      tags: tagsVal || matchedBook?.tags || ['Reference Book'],
+                      size: 'PDF',
+                      filename: filename
+                    };
+                  }) : subjectData.books).map(book => (
+                    <div 
+                      key={book.id} 
+                      className="mobile-book-item"
+                      onClick={() => {
+                        handleDownloadBook(book.filename || book.title);
+                        setMobileBooksOpen(false);
+                      }}
+                    >
+                      <div className="book-item-left">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="pdf-icon">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                          <polyline points="14 2 14 8 20 8" />
+                        </svg>
+                        <div className="book-item-info">
+                          <span className="book-title">{book.title}</span>
+                          <span className="book-author">by {book.author || 'Department'}</span>
+                        </div>
+                      </div>
+                      <span className="download-badge">OPEN</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 2. PYQs Bottom Sheet */}
+        {mobilePyqsOpen && (
+          <div className="mobile-bottom-sheet-overlay" onClick={() => setMobilePyqsOpen(false)}>
+            <div className="mobile-bottom-sheet-panel" onClick={(e) => e.stopPropagation()}>
+              <div className="mobile-sheet-drag-handle" />
+              <div className="mobile-sheet-header">
+                <h3>{subjectCode.startsWith('LAB') ? 'Practical Papers' : 'Previous Year Papers (PYQs)'}</h3>
+                <button className="mobile-sheet-close-btn" onClick={() => setMobilePyqsOpen(false)}>Close</button>
+              </div>
+              
+              {/* Filters for PYQs */}
+              <div className="mobile-pyq-filters">
+                <div className="mobile-filter-selectors-grid">
+                  <div className="filter-group">
+                    <label>Year</label>
+                    <select value={yearFilter} onChange={(e) => setYearFilter(e.target.value)}>
+                      <option value="All">All Years</option>
+                      <option value="2024">2024</option>
+                      <option value="2023">2023</option>
+                      <option value="2022">2022</option>
+                    </select>
+                  </div>
+
+                  <div className="filter-group">
+                    <label>Term</label>
+                    <select value={termFilter} onChange={(e) => setTermFilter(e.target.value)}>
+                      <option value="All">All Terms</option>
+                      <option value="Mid Term">Mid Term</option>
+                      <option value="End Term">End Term</option>
+                    </select>
+                  </div>
+
+                  <div className="filter-group">
+                    <label>Status</label>
+                    <select value={solvedFilter} onChange={(e) => setSolvedFilter(e.target.value)}>
+                      <option value="All">All Status</option>
+                      <option value="Solved">Solved</option>
+                      <option value="Unsolved">Unsolved</option>
+                    </select>
+                  </div>
+                </div>
+                <button className="mobile-pyq-reset-btn" onClick={handleResetFilters}>Reset Filters</button>
+              </div>
+
+              <div className="mobile-sheet-body scrollable">
+                <div className="mobile-pyqs-list">
+                  {filteredPapers.length > 0 ? (
+                    filteredPapers.map(paper => (
+                      <div 
+                        key={paper.id} 
+                        className="mobile-pyq-item"
+                        onClick={() => {
+                          handleDownloadPaper(paper.filename);
+                          setMobilePyqsOpen(false);
+                        }}
+                      >
+                        <div className="pyq-item-left">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="pdf-icon">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                          </svg>
+                          <div className="pyq-item-info">
+                            <span className="pyq-title">{subjectData.name}</span>
+                            <span className="pyq-sub">{paper.term || 'Lab'} • {paper.year}</span>
+                          </div>
+                        </div>
+                        <span className={`solved-badge ${paper.solved ? 'solved' : 'unsolved'}`}>
+                          {paper.solved ? 'Solved' : 'Unsolved'}
+                        </span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="mobile-pyqs-empty">
+                      <p>No papers match filters.</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 3. Practice Config Bottom Sheet */}
+        {mobilePracticeOpen && (
+          <div className="mobile-bottom-sheet-overlay" onClick={() => setMobilePracticeOpen(false)}>
+            <div className="mobile-bottom-sheet-panel" onClick={(e) => e.stopPropagation()}>
+              <div className="mobile-sheet-drag-handle" />
+              <div className="mobile-sheet-header">
+                <h3>{subjectCode.startsWith('LAB') ? 'Viva Mode Config' : 'Practice Mode Config'}</h3>
+                <button className="mobile-sheet-close-btn" onClick={() => setMobilePracticeOpen(false)}>Close</button>
+              </div>
+
+              <div className="mobile-sheet-body scrollable practice-config-body">
+                {/* 1. Modules Selection */}
+                <div className="config-section">
+                  <label className="section-label">{subjectCode.startsWith('LAB') ? 'Select Experiments' : 'Select Modules'}</label>
+                  <div className="mobile-modules-checkbox-grid">
+                    {subjectData.modules.map((mod, index) => {
+                      const practiceId = `mod${index + 1}`;
+                      const isChecked = selectedPracticeModules.includes(practiceId);
+                      return (
+                        <label key={mod.id} className="mobile-checkbox-label">
+                          <input 
+                            type="checkbox" 
+                            checked={isChecked}
+                            onChange={() => togglePracticeModule(practiceId)}
+                          />
+                          <span className="mobile-checkbox-custom" />
+                          <span className="mobile-checkbox-text">{mod.name}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 2. Difficulties Selection */}
+                <div className="config-section">
+                  <label className="section-label">Difficulty Level</label>
+                  <div className="mobile-pills-row">
+                    {(practiceMeta?.difficulties || ['easy', 'medium', 'hard']).map(diff => {
+                      const isSelected = selectedDifficulties.includes(diff.toLowerCase());
+                      return (
+                        <button
+                          key={diff}
+                          onClick={() => {
+                            setSelectedDifficulties(prev => 
+                              prev.includes(diff.toLowerCase()) 
+                                ? prev.filter(d => d !== diff.toLowerCase()) 
+                                : [...prev, diff.toLowerCase()]
+                            );
+                          }}
+                          className={`mobile-pill-btn ${isSelected ? 'active' : ''}`}
+                        >
+                          {diff.charAt(0).toUpperCase() + diff.slice(1)}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 3. Marks Selection */}
+                <div className="config-section">
+                  <label className="section-label">Marks Bracket</label>
+                  <div className="mobile-pills-row">
+                    {(practiceMeta?.marks || [2, 3, 5]).map(mark => {
+                      const isSelected = selectedMarks.includes(mark);
+                      return (
+                        <button
+                          key={mark}
+                          onClick={() => {
+                            setSelectedMarks(prev => 
+                              prev.includes(mark) 
+                                ? prev.filter(m => m !== mark) 
+                                : [...prev, mark]
+                            );
+                          }}
+                          className={`mobile-pill-btn ${isSelected ? 'active' : ''}`}
+                        >
+                          {mark} Marks
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 4. Years Selection */}
+                <div className="config-section">
+                  <label className="section-label">Exam Years</label>
+                  <div className="mobile-pills-row">
+                    {(practiceMeta?.years?.map(String) || ['2022', '2023', '2024']).map(year => {
+                      const isSelected = selectedYears.includes(year);
+                      return (
+                        <button
+                          key={year}
+                          onClick={() => {
+                            setSelectedYears(prev => 
+                              prev.includes(year) 
+                                ? prev.filter(y => y !== year) 
+                                : [...prev, year]
+                            );
+                          }}
+                          className={`mobile-pill-btn ${isSelected ? 'active' : ''}`}
+                        >
+                          {year}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Info Text */}
+                {practiceMeta && (
+                  <div className="mobile-practice-meta-info">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="12" y1="8" x2="12" y2="12" />
+                      <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                    <span>Total available: <strong>{practiceMeta.total_count}</strong> questions.</span>
+                  </div>
+                )}
+
+                {/* START PRACTICE MODE BUTTON */}
+                <button 
+                  className="mobile-start-practice-btn"
+                  onClick={() => {
+                    handleStartPractice();
+                    if (selectedPracticeModules.length > 0 && selectedDifficulties.length > 0 && selectedMarks.length > 0 && selectedYears.length > 0) {
+                      setMobilePracticeOpen(false);
+                    }
+                  }}
+                >
+                  START PRACTICE
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Multiple Notes Modal Modal Picker */}
+        {activeNotesModal && (
+          <div className="notes-modal-overlay" onClick={() => setActiveNotesModal(null)}>
+            <div className="notes-modal-container mobile-notes-picker" onClick={(e) => e.stopPropagation()}>
+              <div className="notes-modal-header">
+                <div className="notes-modal-title">
+                  <h3>{activeNotesModal.modKey}: Select Note</h3>
+                  <span className="notes-modal-subtitle">{activeNotesModal.modTitle}</span>
+                </div>
+                <button className="btn-close-modal" onClick={() => setActiveNotesModal(null)}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ width: '18px', height: '18px' }}>
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
+              <div className="notes-modal-body">
+                <div className="notes-grid mobile-notes-grid">
+                  {activeNotesModal.files.map((file, idx) => (
+                    <div 
+                      key={idx} 
+                      className="note-card-item mobile-note-card"
+                      onClick={() => {
+                        window.open(`/study-material/${subjectCode}/${activeNotesModal.modKey}/${file}`, '_blank');
+                        setActiveNotesModal(null);
+                      }}
+                    >
+                      <div className="note-card-top">
+                        <div className="note-card-icon">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ width: '20px', height: '20px' }}>
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                          </svg>
+                        </div>
+                        <span className="note-card-title">{file.replace('.pdf', '').replace(/_/g, ' ')}</span>
+                      </div>
+                      <button className="note-card-action-btn">
+                        <span>Open Note</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ width: '14px', height: '14px' }}>
+                          <polyline points="15 3 21 3 21 9" />
+                          <line x1="10" y1="14" x2="21" y2="3" />
+                        </svg>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     );
   }
 
@@ -746,7 +1274,7 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
                   onClick={() => {
                     setActiveModule(mod.id);
                     if (modFiles.length === 1) {
-                      window.open(`http://localhost:3001/study-material/${subjectCode}/${modKey}/${modFiles[0]}`, '_blank');
+                      window.open(`/study-material/${subjectCode}/${modKey}/${modFiles[0]}`, '_blank');
                     } else if (modFiles.length > 1) {
                       setActiveNotesModal({
                         modKey,
@@ -782,7 +1310,7 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
             className="syllabus-btn" 
             onClick={() => {
               if (subjectFiles?.syllabus) {
-                window.open(`http://localhost:3001/study-material/${subjectCode}/${subjectFiles.syllabus}`, '_blank');
+                window.open(`/study-material/${subjectCode}/${subjectFiles.syllabus}`, '_blank');
               } else {
                 showToast("Syllabus PDF not found on server.");
               }
@@ -1306,7 +1834,7 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
                   <div 
                     key={idx} 
                     className="note-card-item"
-                    onClick={() => window.open(`http://localhost:3001/study-material/${subjectCode}/${activeNotesModal.modKey}/${file}`, '_blank')}
+                    onClick={() => window.open(`/study-material/${subjectCode}/${activeNotesModal.modKey}/${file}`, '_blank')}
                   >
                     <div className="note-card-top">
                       <div className="note-card-icon">

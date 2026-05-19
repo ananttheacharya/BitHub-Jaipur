@@ -33,6 +33,15 @@ export default defineConfig({
         assetFileNames: 'assets/[name]-[hash][extname]',
         chunkFileNames: 'assets/[name]-[hash].js',
         entryFileNames: 'assets/[name]-[hash].js',
+        /* Advanced Code Splitting */
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react')) return 'react-vendor';
+            if (id.includes('katex')) return 'katex-vendor';
+            if (id.includes('canvas-confetti')) return 'utils-vendor';
+            return 'vendor';
+          }
+        }
       },
     },
 
@@ -46,5 +55,11 @@ export default defineConfig({
     /* Dev server port */
     port: 3000,
     open: true,
+    allowedHosts: ["unpicked-mignon-unlawyerlike.ngrok-free.dev"],
+    /* Proxy backend requests to bypass PNA popup and CORS */
+    proxy: {
+      '/api': 'http://localhost:3001',
+      '/study-material': 'http://localhost:3001'
+    }
   },
 });

@@ -1,8 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import CreatorsSection from './CreatorsSection';
 
 function SubjectSelector({ onSelectSubject, onBackToLanding, theme, onToggleTheme }) {
   const [campusDropdownOpen, setCampusDropdownOpen] = useState(false);
+  const [activeSemester, setActiveSemester] = useState(1);
+
+  // Detect real mobile screen
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const semester1Subjects = [
     { name: "Mathematics 1", code: "MA24101" },
@@ -116,93 +128,165 @@ function SubjectSelector({ onSelectSubject, onBackToLanding, theme, onToggleThem
       <main className="selector-main-content" id="selector-main-content">
         <h1 className="selector-main-title">Select Course Material</h1>
         
-        <div className="semester-columns-grid">
-          
-          {/* COLUMN 1: SEMESTER 1 */}
-          <section className="semester-column-card" id="semester-1-column">
-            <div className="semester-pill-header">
-              <span>Semester 1</span>
-            </div>
+        {isMobile ? (
+          <div className="mobile-semester-selector">
+            <p className="mobile-semester-prompt">Select your semester</p>
             
-            <div className="subjects-button-list">
-              {semester1Subjects.map(sub => (
-                <button 
-                  key={sub.code} 
-                  className="subject-selection-btn"
-                  onClick={() => onSelectSubject(sub.code)}
-                  id={`btn-${sub.code.toLowerCase()}`}
-                >
-                  <div className="btn-content-left">
-                    <span className="btn-primary-title">{sub.shortName || sub.name}</span>
-                    <span className="btn-secondary-code">{sub.code}</span>
-                  </div>
-                  <svg className="btn-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <polyline points="9 18 15 12 9 6" />
-                  </svg>
-                </button>
-              ))}
-
-              {/* Bottom Extra Labs Button */}
+            {/* Segmented Control */}
+            <div className="semester-segmented-control">
               <button 
-                className="subject-selection-btn labs-btn-accent"
-                onClick={() => onSelectSubject("LAB-SEM1")}
-                id="btn-labs-sem1"
+                className={`segmented-btn ${activeSemester === 1 ? 'active' : ''}`}
+                onClick={() => setActiveSemester(1)}
               >
-                <div className="btn-content-left">
-                  <span className="btn-primary-title">LABS (Semester 1)</span>
-                  <span className="btn-secondary-code">Practical Guides & Viva voice</span>
+                Semester 1
+              </button>
+              <button 
+                className={`segmented-btn ${activeSemester === 2 ? 'active' : ''}`}
+                onClick={() => setActiveSemester(2)}
+              >
+                Semester 2
+              </button>
+            </div>
+
+            {/* Redesigned Slimmer Subjects List */}
+            <div className="mobile-subjects-list">
+              {(activeSemester === 1 ? semester1Subjects : semester2Subjects).map(sub => {
+                // Generate a beautiful 2-letter badge for the subject
+                const badgeText = sub.code.substring(0, 2);
+                return (
+                  <button 
+                    key={sub.code} 
+                    className="mobile-subject-btn"
+                    onClick={() => onSelectSubject(sub.code)}
+                    id={`btn-mobile-${sub.code.toLowerCase()}`}
+                  >
+                    <div className="mobile-btn-left">
+                      <div className={`mobile-subject-badge badge-${badgeText.toLowerCase()}`}>
+                        {badgeText}
+                      </div>
+                      <div className="mobile-btn-info">
+                        <span className="mobile-subject-name">{sub.name}</span>
+                        <span className="mobile-subject-code">{sub.code}</span>
+                      </div>
+                    </div>
+                    <svg className="mobile-btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                  </button>
+                );
+              })}
+
+              {/* Labs Button (Redesigned for Mobile) */}
+              <button 
+                className="mobile-subject-btn mobile-labs-btn"
+                onClick={() => onSelectSubject(activeSemester === 1 ? "LAB-SEM1" : "LAB-SEM2")}
+                id={`btn-mobile-labs-sem${activeSemester}`}
+              >
+                <div className="mobile-btn-left">
+                  <div className="mobile-subject-badge badge-labs">
+                    LB
+                  </div>
+                  <div className="mobile-btn-info">
+                    <span className="mobile-subject-name">LABS (Semester {activeSemester})</span>
+                    <span className="mobile-subject-code">Practical Guides & Viva Voice</span>
+                  </div>
                 </div>
                 <div className="labs-indicator-dot" />
-                <svg className="btn-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <svg className="mobile-btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <polyline points="9 18 15 12 9 6" />
                 </svg>
               </button>
             </div>
-          </section>
+          </div>
+        ) : (
+          <div className="semester-columns-grid">
+            
+            {/* COLUMN 1: SEMESTER 1 */}
+            <section className="semester-column-card" id="semester-1-column">
+              <div className="semester-pill-header">
+                <span>Semester 1</span>
+              </div>
+              
+              <div className="subjects-button-list">
+                {semester1Subjects.map(sub => (
+                  <button 
+                    key={sub.code} 
+                    className="subject-selection-btn"
+                    onClick={() => onSelectSubject(sub.code)}
+                    id={`btn-${sub.code.toLowerCase()}`}
+                  >
+                    <div className="btn-content-left">
+                      <span className="btn-primary-title">{sub.shortName || sub.name}</span>
+                      <span className="btn-secondary-code">{sub.code}</span>
+                    </div>
+                    <svg className="btn-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                  </button>
+                ))}
 
-          {/* COLUMN 2: SEMESTER 2 */}
-          <section className="semester-column-card" id="semester-2-column">
-            <div className="semester-pill-header">
-              <span>Semester 2</span>
-            </div>
-
-            <div className="subjects-button-list">
-              {semester2Subjects.map(sub => (
+                {/* Bottom Extra Labs Button */}
                 <button 
-                  key={sub.code} 
-                  className="subject-selection-btn"
-                  onClick={() => onSelectSubject(sub.code)}
-                  id={`btn-${sub.code.toLowerCase()}`}
+                  className="subject-selection-btn labs-btn-accent"
+                  onClick={() => onSelectSubject("LAB-SEM1")}
+                  id="btn-labs-sem1"
                 >
                   <div className="btn-content-left">
-                    <span className="btn-primary-title">{sub.shortName || sub.name}</span>
-                    <span className="btn-secondary-code">{sub.code}</span>
+                    <span className="btn-primary-title">LABS (Semester 1)</span>
+                    <span className="btn-secondary-code">Practical Guides & Viva voice</span>
                   </div>
+                  <div className="labs-indicator-dot" />
                   <svg className="btn-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <polyline points="9 18 15 12 9 6" />
                   </svg>
                 </button>
-              ))}
+              </div>
+            </section>
 
-              {/* Bottom Extra Labs Button */}
-              <button 
-                className="subject-selection-btn labs-btn-accent"
-                onClick={() => onSelectSubject("LAB-SEM2")}
-                id="btn-labs-sem2"
-              >
-                <div className="btn-content-left">
-                  <span className="btn-primary-title">LABS (Semester 2)</span>
-                  <span className="btn-secondary-code">Practical Guides & Viva voice</span>
-                </div>
-                <div className="labs-indicator-dot" />
-                <svg className="btn-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <polyline points="9 18 15 12 9 6" />
-                </svg>
-              </button>
-            </div>
-          </section>
+            {/* COLUMN 2: SEMESTER 2 */}
+            <section className="semester-column-card" id="semester-2-column">
+              <div className="semester-pill-header">
+                <span>Semester 2</span>
+              </div>
 
-        </div>
+              <div className="subjects-button-list">
+                {semester2Subjects.map(sub => (
+                  <button 
+                    key={sub.code} 
+                    className="subject-selection-btn"
+                    onClick={() => onSelectSubject(sub.code)}
+                    id={`btn-${sub.code.toLowerCase()}`}
+                  >
+                    <div className="btn-content-left">
+                      <span className="btn-primary-title">{sub.shortName || sub.name}</span>
+                      <span className="btn-secondary-code">{sub.code}</span>
+                    </div>
+                    <svg className="btn-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                  </button>
+                ))}
+
+                {/* Bottom Extra Labs Button */}
+                <button 
+                  className="subject-selection-btn labs-btn-accent"
+                  onClick={() => onSelectSubject("LAB-SEM2")}
+                  id="btn-labs-sem2"
+                >
+                  <div className="btn-content-left">
+                    <span className="btn-primary-title">LABS (Semester 2)</span>
+                    <span className="btn-secondary-code">Practical Guides & Viva voice</span>
+                  </div>
+                  <div className="labs-indicator-dot" />
+                  <svg className="btn-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
+                </button>
+              </div>
+            </section>
+
+          </div>
+        )}
       </main>
 
       <CreatorsSection />

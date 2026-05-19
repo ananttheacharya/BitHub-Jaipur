@@ -78,205 +78,154 @@ const parseMixedLatex = (str) => {
   return result;
 };
 
-// Robust and premium mixed LaTeX/Text renderer with auto-wrap
+// ============================================================
+// CORE LATEX RENDERER — Clean, simple, correct
+// ============================================================
+const LATEX_CMD_RE = /\\(text|frac|begin|end|sin|cos|tan|sec|log|ln|sum|prod|int|oint|left|right|pi|alpha|beta|gamma|delta|theta|sigma|phi|omega|infty|partial|nabla|sqrt|prime|quad|dots|cdot|times|div|pm|mp|vec|hat|bar|tilde|overline|underline|displaystyle|mathrm|mathbf|operatorname|binom|equiv|approx|neq|leq|geq|le|ge|langle|rangle|pmod|mod|det|max|min|lim|exp|Gamma|Delta|Theta|Lambda|Pi|Sigma|Phi|Psi|Omega)/;
+
 const renderLatex = (textVal) => {
   if (textVal === undefined || textVal === null) return null;
   let text = String(textVal).trim();
+  if (!text) return null;
 
-  // If it already contains explicit delimiters, parse as is
+  // Category 1: Has $ delimiters → parse mixed inline/block math
   if (text.includes('$')) {
-    const hasBlockEnvironment = /\\begin\{array\}|\\begin\{matrix\}|\\begin\{enumerate\}|\\begin\{align\}/.test(text);
-    if (hasBlockEnvironment) {
-      let cleaned = text.replace(/\\\\\\\\/g, '\\\\').replace(/\\\\newline/g, '\\\\');
-      cleaned = cleaned.replace(/\\\\/g, '\\');
-      return (
-        <div className="katex-block-wrapper" style={{ overflowX: 'auto', maxWidth: '100%', whiteSpace: 'normal' }}>
-          <BlockMath math={cleaned} />
-        </div>
-      );
-    }
-    return parseMixedLatex(text).map((part, idx) => {
-      if (part.isMath) {
-        return part.isBlock ? (
-          <BlockMath key={idx} math={part.content} />
-        ) : (
-          <InlineMath key={idx} math={part.content} />
-        );
-      }
-      return <span key={idx}>{part.content}</span>;
-    });
-  }
-
-  // Smart LaTeX auto-wrapper: wrap ONLY mathematical expressions in '$' delimiters
-  if (text.includes('\\') || text.includes('_') || text.includes('^')) {
-    const tokens = text.split(/(\s+)/);
-    const processed = tokens.map(token => {
-      if (/^\s+$/.test(token)) return token;
-      if (token.includes('\\text{')) return token;
-
-      const hasMathIndicator = token.includes('\\') || token.includes('^') || token.includes('_') || token.includes('=') || token.includes('<') || token.includes('>');
-      
-      if (hasMathIndicator) {
-        // Strip LaTeX command names and check if it contains actual plain English words of length 3 or more
-        const cleanToken = token.replace(/\\[a-zA-Z]+/g, '').replace(/text/g, '');
-        const hasWord = /[a-zA-Z]{3,}/.test(cleanToken);
-        if (!hasWord) {
-          return `$${token}$`;
-        }
-      }
-      return token;
-    });
-
-    text = processed.join('');
-  }
-
-  const hasBlockEnvironment = /\\begin\{array\}|\\begin\{matrix\}|\\begin\{enumerate\}|\\begin\{align\}/.test(text);
-
-  if (hasBlockEnvironment) {
-    let cleaned = text.replace(/\\\\\\\\/g, '\\\\').replace(/\\\\newline/g, '\\\\');
-    cleaned = cleaned.replace(/\\\\/g, '\\');
+    const parts = parseMixedLatex(text);
+    if (parts.length === 0) return <span>{text}</span>;
     return (
-      <div className="katex-block-wrapper" style={{ overflowX: 'auto', maxWidth: '100%', whiteSpace: 'normal' }}>
-        <BlockMath math={cleaned} />
+      <div style={{ whiteSpace: 'normal', wordBreak: 'break-word', lineHeight: '1.8' }}>
+        {parts.map((part, i) => {
+          if (!part.isMath) return <span key={i}>{part.content}</span>;
+          try {
+            return part.isBlock
+              ? <div key={i} style={{ overflowX: 'auto', maxWidth: '100%', margin: '0.5rem 0' }}><BlockMath math={part.content.trim()} /></div>
+              : <InlineMath key={i} math={part.content.trim()} />;
+          } catch { return <span key={i} style={{ color: '#c65575' }}>{part.content}</span>; }
+        })}
       </div>
     );
   }
 
-  const parts = parseMixedLatex(text);
-  
-  if (parts.length === 0) {
-    return <span style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>{text}</span>;
+  // Category 2: Pure LaTeX expression (no $, but has LaTeX commands) — render as block math
+  if (LATEX_CMD_RE.test(text)) {
+    try {
+      const hasBlock = /\\begin\{/.test(text);
+      return hasBlock
+        ? <div style={{ overflowX: 'auto', maxWidth: '100%' }}><BlockMath math={text} /></div>
+        : <div style={{ lineHeight: '1.8' }}><InlineMath math={text} /></div>;
+    } catch {
+      return <span style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>{text}</span>;
+    }
   }
 
-  return (
-    <div className="katex-line-block" style={{ whiteSpace: 'normal', wordBreak: 'break-word', lineHeight: '1.6' }}>
-      {parts.map((part, index) => {
-        if (part.isMath) {
-          if (part.isBlock) {
-            return (
-              <div className="katex-block-wrapper" key={index} style={{ overflowX: 'auto', maxWidth: '100%', margin: '0.5rem 0' }}>
-                <BlockMath math={part.content.trim()} />
-              </div>
-            );
-          }
-          return <InlineMath key={index} math={part.content.trim()} />;
-        }
-        return <span key={index}>{part.content}</span>;
-      })}
-    </div>
-  );
+  // Category 3: Plain text — render as HTML
+  return <span style={{ whiteSpace: 'normal', wordBreak: 'break-word', lineHeight: '1.6' }}>{text}</span>;
 };
 
-// Check if expected answer is simple/numerical
-const isSimpleAnswer = (ans) => {
-  if (ans === undefined || ans === null) return true;
-  const cleanAns = String(ans).trim();
-  const hasLaTeX = /\\|\^|_|\{|\}/.test(cleanAns);
-  const isShort = cleanAns.length < 15;
-  const isNumericExpression = /^[+-]?\d+(\.\d+)?(\/\d+)?$/.test(cleanAns);
-  
-  return (!hasLaTeX && (isShort || isNumericExpression));
+// ============================================================
+// QUESTION MODE CLASSIFICATION
+// ============================================================
+// Returns: 'keyboard' | 'mcq' | 'study' | 'code'
+const getQuestionMode = (q) => {
+  if (!q) return 'study';
+  const qType = (q.question_type || '').toLowerCase();
+  const answer = String(q.final_answer || '').trim();
+
+  // Programming questions → code editor
+  if (qType === 'programming') return 'code';
+
+  // Theoretical / conceptual / proof / derivation → study & reveal
+  if (/theoretical|conceptual|proof|derivation/.test(qType) && !/numerical/.test(qType)) return 'study';
+
+  // Long descriptive text answers → study & reveal
+  const wordCount = answer.split(/\s+/).length;
+  if (wordCount > 15) return 'study';
+
+  // If answer is empty or null → study & reveal
+  if (!answer || answer === 'null' || answer === 'NULL' || answer === 'undefined') return 'study';
+
+  // Short numeric / simple alphanumeric answers → keyboard input
+  const isSimple = /^[+-]?\d+(\.\d+)?(\s*\/\s*\d+)?$/.test(answer) ||
+    (answer.length < 20 && !/\\(frac|sum|int|prod|sqrt|begin)/.test(answer) && !/[{}]/.test(answer));
+  if (isSimple) return 'keyboard';
+
+  // Complex LaTeX formula answers → MCQ
+  return 'mcq';
 };
 
-// Seeded deterministic MCQ choices generator
+// Seeded deterministic MCQ distractor generator (improved — no more "answer + 1" fallback)
 const generateDistractors = (correctAnswerVal, questionUid) => {
   if (correctAnswerVal === undefined || correctAnswerVal === null) return [];
   const correctAnswer = String(correctAnswerVal);
-  
+
   let seed = 0;
   if (questionUid) {
-    for (let i = 0; i < questionUid.length; i++) {
-      seed += questionUid.charCodeAt(i);
-    }
+    for (let i = 0; i < questionUid.length; i++) seed += questionUid.charCodeAt(i);
   }
-  
   const pseudoRandom = (offset) => {
     const x = Math.sin(seed + offset) * 10000;
     return x - Math.floor(x);
   };
 
   const distractors = [];
-  
-  // Pattern 1: Fractions, e.g. \frac{a}{b}
-  if (correctAnswer.includes('\\frac')) {
-    for (let i = 1; i <= 3; i++) {
-      let opt = correctAnswer;
-      opt = opt.replace(/(\d+)/g, (match) => {
+
+  // Strategy 1: Fraction manipulation
+  if (correctAnswer.includes('\\frac') || correctAnswer.includes('frac{')) {
+    for (let i = 1; i <= 5 && distractors.length < 3; i++) {
+      let opt = correctAnswer.replace(/(?<![a-zA-Z_])(\d+)/g, (match) => {
         const val = parseInt(match);
         const change = Math.floor(pseudoRandom(i + val) * 4) + 1;
         return String(pseudoRandom(i) > 0.5 ? val + change : Math.max(1, val - change));
       });
       if (pseudoRandom(i + 10) > 0.5) {
-        opt = opt.replace(/\+/g, 'TEMP_MINUS').replace(/-/g, '+').replace(/TEMP_MINUS/g, '-');
+        opt = opt.replace(/\+/g, 'T_M').replace(/-/g, '+').replace(/T_M/g, '-');
       }
-      if (opt !== correctAnswer && !distractors.includes(opt)) {
-        distractors.push(opt);
-      }
-    }
-  }
-  
-  // Pattern 2: Differential Equations (having c_1, c_2, x^r)
-  if (correctAnswer.includes('c_1') || correctAnswer.includes('c_2') || correctAnswer.includes('^')) {
-    const powerRegex = /\^\{?(-?\d+\/?\d*)\}?/g;
-    for (let i = 1; i <= 3; i++) {
-      let opt = correctAnswer;
-      opt = opt.replace(powerRegex, (match, p1) => {
-        if (p1.includes('/')) {
-          const [num, den] = p1.split('/').map(Number);
-          const newNum = pseudoRandom(i) > 0.5 ? num + 2 : Math.max(1, num - 2);
-          return `^{${newNum}/${den}}`;
-        } else {
-          const val = parseInt(p1);
-          const newVal = pseudoRandom(i) > 0.5 ? val + 1 : val - 1;
-          return `^{${newVal}}`;
-        }
-      });
-      if (pseudoRandom(i + 20) > 0.5) {
-        opt = opt.replace(/c_1/g, 'TEMP_C').replace(/c_2/g, 'c_1').replace(/TEMP_C/g, 'c_2');
-      }
-      if (opt !== correctAnswer && !distractors.includes(opt)) {
-        distractors.push(opt);
-      }
+      if (opt !== correctAnswer && !distractors.includes(opt)) distractors.push(opt);
     }
   }
 
-  // Backup rules
+  // Strategy 2: Power/exponent tweaking
+  if (correctAnswer.includes('^') || correctAnswer.includes('c_1') || correctAnswer.includes('c_2')) {
+    for (let i = 1; i <= 5 && distractors.length < 3; i++) {
+      let opt = correctAnswer.replace(/\^{?(-?\d+\/?\.?\d*)}?/g, (match, p1) => {
+        const val = parseFloat(p1);
+        if (isNaN(val)) return match;
+        const newVal = pseudoRandom(i) > 0.5 ? val + 1 : val - 1;
+        return p1.includes('/') ? `^{${newVal}}` : `^{${newVal}}`;
+      });
+      if (pseudoRandom(i + 20) > 0.5 && opt.includes('c_1')) {
+        opt = opt.replace(/c_1/g, 'C_T').replace(/c_2/g, 'c_1').replace(/C_T/g, 'c_2');
+      }
+      if (opt !== correctAnswer && !distractors.includes(opt)) distractors.push(opt);
+    }
+  }
+
+  // Strategy 3: Numeric coefficient tweaking
   let attempts = 0;
-  while (distractors.length < 3 && attempts < 15) {
+  while (distractors.length < 3 && attempts < 20) {
     attempts++;
-    let opt = correctAnswer;
-    
-    opt = opt.replace(/(\d+)/g, (match) => {
+    let opt = correctAnswer.replace(/(?<![a-zA-Z_])(\d+)/g, (match) => {
       const val = parseInt(match);
       const delta = Math.floor(pseudoRandom(attempts + val) * 3) + 1;
       return String(pseudoRandom(attempts) > 0.5 ? val + delta : Math.max(0, val - delta));
     });
-    
-    if (pseudoRandom(attempts + 30) > 0.5) {
-      opt = opt.replace(/\+/g, 'TEMP_MINUS').replace(/-/g, '+').replace(/TEMP_MINUS/g, '-');
+    if (pseudoRandom(attempts + 30) > 0.6) {
+      opt = opt.replace(/\+/g, 'T_M').replace(/-/g, '+').replace(/T_M/g, '-');
     }
-    
-    if (opt !== correctAnswer && !distractors.includes(opt)) {
-      distractors.push(opt);
-    }
+    if (opt !== correctAnswer && !distractors.includes(opt)) distractors.push(opt);
   }
-  
-  while (distractors.length < 3) {
-    const i = distractors.length;
-    distractors.push(`${correctAnswer} + ${i + 1}`);
-  }
-  
-  const allChoices = [correctAnswer, ...distractors];
-  const shuffledChoices = [];
-  const choiceIndices = [0, 1, 2, 3];
-  
+
+  // If we still can't generate 3 distractors, return empty (caller should fallback to study mode)
+  if (distractors.length < 3) return [];
+
+  const allChoices = [correctAnswer, ...distractors.slice(0, 3)];
+  const shuffled = [];
+  const indices = [0, 1, 2, 3];
   for (let i = 3; i >= 0; i--) {
     const r = Math.floor(pseudoRandom(i) * (i + 1));
-    const targetIdx = choiceIndices.splice(r, 1)[0];
-    shuffledChoices.push(allChoices[targetIdx]);
+    shuffled.push(allChoices[indices.splice(r, 1)[0]]);
   }
-  
-  return shuffledChoices;
+  return shuffled;
 };
 
 function PracticeMode({ subjectCode, selectedModules, difficulties = ['Easy', 'Medium', 'Hard'], marks = [2, 3, 5], years = ['2022', '2023', '2024'], onBack, theme, onToggleTheme }) {
@@ -294,14 +243,29 @@ function PracticeMode({ subjectCode, selectedModules, difficulties = ['Easy', 'M
   const [loadingCheck, setLoadingCheck] = useState(false);
   const [showSolutionPanel, setShowSolutionPanel] = useState({});
 
+  // Code editor state
+  const [codeText, setCodeText] = useState({});
+  const [codeOutput, setCodeOutput] = useState({});
+  const [codeRunning, setCodeRunning] = useState(false);
+
   const currentQ = questions[currentIndex];
-  const isMcq = currentQ && !isSimpleAnswer(currentQ.final_answer);
-  const isNumerical = currentQ && isSimpleAnswer(currentQ.final_answer);
+  
+  // 4-mode question routing
+  const questionMode = React.useMemo(() => {
+    if (!currentQ) return 'study';
+    let mode = getQuestionMode(currentQ);
+    // If MCQ but distractors fail, fallback to study
+    if (mode === 'mcq') {
+      const choices = generateDistractors(currentQ.final_answer, currentQ.uid);
+      if (choices.length === 0) mode = 'study';
+    }
+    return mode;
+  }, [currentQ]);
 
   const mcqChoices = React.useMemo(() => {
-    if (!currentQ || !isMcq) return [];
+    if (!currentQ || questionMode !== 'mcq') return [];
     return generateDistractors(currentQ.final_answer, currentQ.uid);
-  }, [currentQ, isMcq]);
+  }, [currentQ, questionMode]);
 
   useEffect(() => {
     // Fetch questions for all selected modules
@@ -438,6 +402,25 @@ function PracticeMode({ subjectCode, selectedModules, difficulties = ['Easy', 'M
     setLoadingCheck(false);
   };
 
+  // C code compilation handler
+  const handleCompileCode = async () => {
+    const code = codeText[currentIndex] || '';
+    if (!code.trim()) return;
+    setCodeRunning(true);
+    try {
+      const res = await fetch('http://localhost:3001/api/practice/compile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, language: 'c' })
+      });
+      const data = await res.json();
+      setCodeOutput(prev => ({ ...prev, [currentIndex]: data }));
+    } catch (err) {
+      setCodeOutput(prev => ({ ...prev, [currentIndex]: { runError: 'Compilation service unavailable.', success: false } }));
+    }
+    setCodeRunning(false);
+  };
+
   return (
     <div className="dashboard-container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* Practice Header */}
@@ -494,11 +477,11 @@ function PracticeMode({ subjectCode, selectedModules, difficulties = ['Easy', 'M
               {renderLatex(currentQ.question_latex || currentQ.question_text)}
             </div>
 
-            {/* User Interaction Zone */}
+            {/* User Interaction Zone — 4 Modes */}
             <div className="interactive-action-zone">
               
-              {/* Numerical/Short-Answer Input Form */}
-              {isNumerical && (
+              {/* MODE: Keyboard Input (numerical/short answers) */}
+              {questionMode === 'keyboard' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   <div className="numerical-input-group">
                     <input 
@@ -506,118 +489,144 @@ function PracticeMode({ subjectCode, selectedModules, difficulties = ['Easy', 'M
                       className="pq-input-premium"
                       placeholder="Type your final answer here..."
                       value={userAnswers[currentIndex] || ''}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        setUserAnswers(prev => ({ ...prev, [currentIndex]: val }));
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') handleCheckAnswer();
-                      }}
+                      onChange={(e) => setUserAnswers(prev => ({ ...prev, [currentIndex]: e.target.value }))}
+                      onKeyDown={(e) => { if (e.key === 'Enter') handleCheckAnswer(); }}
                     />
-                    <button 
-                      className="pq-btn-submit"
-                      onClick={handleCheckAnswer}
-                      disabled={loadingCheck || !(userAnswers[currentIndex] || '').trim()}
-                    >
+                    <button className="pq-btn-submit" onClick={handleCheckAnswer}
+                      disabled={loadingCheck || !(userAnswers[currentIndex] || '').trim()}>
                       {loadingCheck ? 'Checking...' : 'Check Answer'}
                     </button>
                   </div>
                   <p style={{ fontSize: '0.8rem', color: 'var(--dash-text-muted)', margin: '0' }}>
-                    Note: Answers are case-insensitive and normalized for mathematical formatting.
+                    Answers are case-insensitive and allow ±1% tolerance for numeric values.
                   </p>
                 </div>
               )}
 
-              {/* MCQ Options Selector Grid */}
-              {isMcq && (
-                <div className="mcq-options-container" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {/* MODE: MCQ (complex formula answers) */}
+              {questionMode === 'mcq' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   <p style={{ fontSize: '0.95rem', fontWeight: '600', color: 'var(--dash-text-color)', margin: '0' }}>
                     Select the correct option:
                   </p>
                   <div className="mcq-options-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
                     {mcqChoices.map((choice, idx) => {
-                      const letter = String.fromCharCode(65 + idx); // A, B, C, D
+                      const letter = String.fromCharCode(65 + idx);
                       const isSelected = userAnswers[currentIndex] === choice;
                       const isChecked = feedbacks[currentIndex];
                       const isCorrectChoice = choice === currentQ.final_answer;
-                      
                       let choiceClass = "mcq-option-btn";
                       if (isSelected) choiceClass += " selected";
                       if (isChecked) {
                         if (isCorrectChoice) choiceClass += " correct-choice";
                         else if (isSelected) choiceClass += " incorrect-choice";
                       }
-                      
                       return (
-                        <button
-                          key={idx}
-                          className={choiceClass}
-                          onClick={() => {
-                            if (feedbacks[currentIndex]) return;
-                            setUserAnswers(prev => ({ ...prev, [currentIndex]: choice }));
-                          }}
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '1rem',
-                            padding: '1rem',
-                            background: isSelected 
-                              ? 'var(--dash-active-module-bg)' 
-                              : 'var(--dash-card-bg)',
-                            border: isSelected 
-                              ? '1.5px solid var(--dash-active-module-bg)' 
-                              : '1px solid rgba(0,0,0,0.08)',
-                            color: isSelected ? '#fff' : 'var(--dash-text-color)',
-                            borderRadius: '12px',
-                            textAlign: 'left',
-                            cursor: feedbacks[currentIndex] ? 'not-allowed' : 'pointer',
-                            transition: 'all 0.25s ease',
-                            boxShadow: '0 4px 10px rgba(0,0,0,0.01)',
-                            backdropFilter: 'blur(10px)',
-                            fontFamily: 'var(--font-body)'
-                          }}
-                        >
-                          <div 
-                            className="mcq-letter-badge"
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              width: '32px',
-                              height: '32px',
-                              borderRadius: '50%',
-                              background: isSelected ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.05)',
-                              color: isSelected ? '#fff' : 'var(--dash-text-color)',
-                              fontWeight: '700',
-                              fontSize: '0.9rem',
-                              flexShrink: 0
-                            }}
-                          >
+                        <button key={idx} className={choiceClass}
+                          onClick={() => { if (!feedbacks[currentIndex]) setUserAnswers(prev => ({ ...prev, [currentIndex]: choice })); }}
+                          style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem',
+                            background: isSelected ? 'var(--dash-active-module-bg)' : 'var(--dash-card-bg)',
+                            border: isSelected ? '1.5px solid var(--dash-active-module-bg)' : '1px solid rgba(0,0,0,0.08)',
+                            color: isSelected ? '#fff' : 'var(--dash-text-color)', borderRadius: '12px', textAlign: 'left',
+                            cursor: feedbacks[currentIndex] ? 'not-allowed' : 'pointer', transition: 'all 0.25s ease',
+                            fontFamily: 'var(--font-body)' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '32px',
+                            borderRadius: '50%', background: isSelected ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.05)',
+                            color: isSelected ? '#fff' : 'var(--dash-text-color)', fontWeight: '700', fontSize: '0.9rem', flexShrink: 0 }}>
                             {letter}
                           </div>
-                          <div className="mcq-choice-text" style={{ flexGrow: 1, fontSize: '0.95rem' }}>
-                            {renderLatex(choice)}
-                          </div>
+                          <div style={{ flexGrow: 1, fontSize: '0.95rem' }}>{renderLatex(choice)}</div>
                         </button>
                       );
                     })}
                   </div>
-                  
                   {!feedbacks[currentIndex] && (
-                    <button 
-                      className="pq-btn-submit"
-                      onClick={handleCheckAnswer}
-                      disabled={loadingCheck || !userAnswers[currentIndex]}
-                      style={{ width: 'fit-content', marginTop: '0.5rem' }}
-                    >
+                    <button className="pq-btn-submit" onClick={handleCheckAnswer}
+                      disabled={loadingCheck || !userAnswers[currentIndex]} style={{ width: 'fit-content', marginTop: '0.5rem' }}>
                       {loadingCheck ? 'Checking...' : 'Check Answer'}
                     </button>
                   )}
                 </div>
               )}
 
+              {/* MODE: Study & Reveal (theoretical/conceptual/proof/derivation) */}
+              {questionMode === 'study' && !feedbacks[currentIndex] && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', padding: '1.5rem', background: 'rgba(198,85,117,0.04)',
+                  borderRadius: '16px', border: '1px dashed rgba(198,85,117,0.2)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: '24px', height: '24px', color: 'var(--dash-active-module-bg)' }}>
+                      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" /><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                    </svg>
+                    <span style={{ fontWeight: '700', fontSize: '1.05rem', color: 'var(--dash-text-color)', fontFamily: 'var(--font-display)' }}>
+                      Study Question
+                    </span>
+                    <span className={`badge-practice badge-difficulty-${(currentQ.question_type || '').toLowerCase().split('/')[0]}`}
+                      style={{ marginLeft: 'auto', fontSize: '0.75rem' }}>
+                      {currentQ.question_type}
+                    </span>
+                  </div>
+                  <p style={{ fontSize: '0.9rem', color: 'var(--dash-text-muted)', margin: '0', lineHeight: '1.6' }}>
+                    This is a {currentQ.question_type} question. Take a moment to work through your answer mentally or on paper, then reveal the model solution below.
+                  </p>
+                  <button className="pq-btn-submit" onClick={() => {
+                    setFeedbacks(prev => ({ ...prev, [currentIndex]: 'revealed' }));
+                    setStatuses(prev => ({ ...prev, [currentIndex]: 'correct' }));
+                    handleRevealSolution();
+                  }} style={{ width: 'fit-content', background: 'var(--dash-active-module-bg)' }}>
+                    📖 Reveal Model Answer
+                  </button>
+                </div>
+              )}
+
+              {/* MODE: Code Editor (programming questions) */}
+              {questionMode === 'code' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '0.5rem' }}>
+                    <span style={{ fontWeight: '700', fontSize: '1rem', color: 'var(--dash-text-color)', fontFamily: 'var(--font-display)' }}>
+                      💻 C Programming Editor
+                    </span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--dash-text-muted)', background: 'rgba(0,0,0,0.05)',
+                      padding: '0.25rem 0.8rem', borderRadius: '20px' }}>Powered by Piston API</span>
+                  </div>
+                  <textarea
+                    className="pq-code-editor"
+                    value={codeText[currentIndex] || '#include <stdio.h>\n\nint main() {\n    // Write your code here\n    \n    return 0;\n}'}
+                    onChange={(e) => setCodeText(prev => ({ ...prev, [currentIndex]: e.target.value }))}
+                    spellCheck={false}
+                    style={{ width: '100%', minHeight: '260px', fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+                      fontSize: '0.88rem', lineHeight: '1.6', padding: '1.2rem', borderRadius: '12px',
+                      background: '#1e1e2e', color: '#cdd6f4', border: '1px solid rgba(198,85,117,0.2)',
+                      resize: 'vertical', outline: 'none', tabSize: 4 }}
+                  />
+                  <div style={{ display: 'flex', gap: '0.8rem' }}>
+                    <button className="pq-btn-submit" onClick={handleCompileCode} disabled={codeRunning}
+                      style={{ background: '#2ecc71' }}>
+                      {codeRunning ? '⏳ Compiling...' : '▶ Compile & Run'}
+                    </button>
+                    <button className="pq-btn-submit" onClick={() => {
+                      setFeedbacks(prev => ({ ...prev, [currentIndex]: 'revealed' }));
+                      setStatuses(prev => ({ ...prev, [currentIndex]: 'correct' }));
+                      handleRevealSolution();
+                    }} style={{ background: 'var(--dash-active-module-bg)' }}>
+                      📖 View Model Solution
+                    </button>
+                  </div>
+                  {codeOutput[currentIndex] && (
+                    <div style={{ background: '#1e1e2e', borderRadius: '12px', padding: '1rem', fontFamily: "'JetBrains Mono', monospace",
+                      fontSize: '0.85rem', color: '#cdd6f4', border: codeOutput[currentIndex].success ? '1px solid rgba(46,204,113,0.3)' : '1px solid rgba(231,76,60,0.3)' }}>
+                      <div style={{ color: codeOutput[currentIndex].success ? '#2ecc71' : '#e74c3c', fontWeight: '600', marginBottom: '0.5rem' }}>
+                        {codeOutput[currentIndex].success ? '✓ Compilation Successful' : '✗ Error'}
+                      </div>
+                      {codeOutput[currentIndex].compileError && <pre style={{ color: '#e74c3c', whiteSpace: 'pre-wrap', margin: 0 }}>{codeOutput[currentIndex].compileError}</pre>}
+                      {codeOutput[currentIndex].runOutput && <pre style={{ whiteSpace: 'pre-wrap', margin: 0 }}>{codeOutput[currentIndex].runOutput}</pre>}
+                      {codeOutput[currentIndex].runError && <pre style={{ color: '#e74c3c', whiteSpace: 'pre-wrap', margin: 0 }}>{codeOutput[currentIndex].runError}</pre>}
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Feedback Banner */}
-              {feedbacks[currentIndex] && (
+              {feedbacks[currentIndex] && feedbacks[currentIndex] !== 'revealed' && (
                 <div className={`banner-feedback-premium ${feedbacks[currentIndex]}`}>
                   {feedbacks[currentIndex] === 'correct' ? (
                     <>

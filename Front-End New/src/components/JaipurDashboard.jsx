@@ -442,10 +442,13 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
 
   // Page / Content States
   const [activeModule, setActiveModule] = useState(subjectData.modules[0].id);
-  const [selectedDifficulties, setSelectedDifficulties] = useState(['Easy', 'Medium', 'Hard']);
-  const [selectedMarks, setSelectedMarks] = useState([2, 3, 5]);
-  const [selectedYears, setSelectedYears] = useState(['2022', '2023', '2024']);
+  const [selectedDifficulties, setSelectedDifficulties] = useState(['easy', 'medium', 'hard']);
+  const [selectedMarks, setSelectedMarks] = useState([]);
+  const [selectedYears, setSelectedYears] = useState([]);
   
+  // Practice Meta Data from DB
+  const [practiceMeta, setPracticeMeta] = useState(null);
+
   // Practice Mode Dropdowns
   const [modulesDropdownOpen, setModulesDropdownOpen] = useState(false);
   const [selectedPracticeModules, setSelectedPracticeModules] = useState(['mod1']);
@@ -491,6 +494,7 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
     setActiveModule(subjectData.modules[0].id);
     setSelectedPracticeModules(['mod1']);
     setIsPracticing(false);
+    setPracticeMeta(null);
     
     // Fetch dynamic files from backend
     fetch(`http://localhost:3001/api/subjects/${subjectCode}/materials`)
@@ -499,6 +503,22 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
         if (!data.error) setSubjectFiles(data);
       })
       .catch(err => console.error("Failed to fetch materials:", err));
+
+    // Fetch Practice Meta
+    fetch(`http://localhost:3001/api/practice/meta?subject=${subjectCode}`)
+      .then(res => res.json())
+      .then(data => {
+        if (!data.error) {
+          setPracticeMeta(data);
+          if (data.years) setSelectedYears(data.years.map(String));
+          if (data.marks) setSelectedMarks(data.marks);
+          if (data.difficulties) {
+             const diffs = data.difficulties.filter(Boolean).map(d => d.toLowerCase());
+             if (diffs.length > 0) setSelectedDifficulties(diffs);
+          }
+        }
+      })
+      .catch(err => console.error("Failed to fetch practice meta:", err));
   }, [subjectCode, subjectData]);
 
   useEffect(() => {
@@ -886,16 +906,18 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
                     Difficulty:
                   </span>
                   <div className="practice-filter-pills" style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
-                    {['Easy', 'Medium', 'Hard'].map(diff => {
-                      const isSelected = selectedDifficulties.includes(diff);
+                    {(practiceMeta?.difficulties || ['easy', 'medium', 'hard']).map(diff => {
+                      // Capitalize first letter for display
+                      const displayDiff = diff.charAt(0).toUpperCase() + diff.slice(1);
+                      const isSelected = selectedDifficulties.includes(diff.toLowerCase());
                       return (
                         <button
                           key={diff}
                           onClick={() => {
                             setSelectedDifficulties(prev => 
-                              prev.includes(diff) 
-                                ? prev.filter(d => d !== diff) 
-                                : [...prev, diff]
+                              prev.includes(diff.toLowerCase()) 
+                                ? prev.filter(d => d !== diff.toLowerCase()) 
+                                : [...prev, diff.toLowerCase()]
                             );
                           }}
                           className={`practice-filter-pill ${isSelected ? 'active' : ''}`}
@@ -912,7 +934,7 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
                             fontFamily: 'var(--font-body)'
                           }}
                         >
-                          {diff}
+                          {displayDiff}
                         </button>
                       );
                     })}
@@ -925,7 +947,7 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
                     Marks Bracket:
                   </span>
                   <div className="practice-filter-pills" style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
-                    {[2, 3, 5].map(mark => {
+                    {(practiceMeta?.marks || [2, 3, 5]).map(mark => {
                       const isSelected = selectedMarks.includes(mark);
                       return (
                         <button
@@ -964,7 +986,7 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
                     Exam Years:
                   </span>
                   <div className="practice-filter-pills" style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
-                    {['2022', '2023', '2024'].map(year => {
+                    {(practiceMeta?.years?.map(String) || ['2022', '2023', '2024']).map(year => {
                       const isSelected = selectedYears.includes(year);
                       return (
                         <button
@@ -996,6 +1018,20 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
                     })}
                   </div>
                 </div>
+
+                {/* 4. Question Count Preview */}
+                {practiceMeta && (
+                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--dash-text-muted)', fontSize: '0.85rem' }}>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: '16px', height: '16px' }}>
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                      </svg>
+                      <span>
+                        Total available in bank: <strong>{practiceMeta.total_count}</strong> questions.
+                      </span>
+                   </div>
+                )}
 
                 {/* START Quiz / Practice Button */}
                 <button 

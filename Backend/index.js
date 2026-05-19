@@ -11,7 +11,47 @@ app.use(express.json());
 const STUDY_MATERIAL_DIR = path.resolve(__dirname, '../Study Material');
 app.use('/study-material', express.static(STUDY_MATERIAL_DIR));
 
+// ============================================================
+// UTILITY: Normalize double-escaped LaTeX from SSH/JSON pipeline
+// ============================================================
+function normalizeLatex(str) {
+    if (!str || typeof str !== 'string') return str;
+    // The SSH tunnel + JSON serialization doubles backslashes.
+    // \\\\text → \\text → \text after two rounds of unescaping.
+    // In JS memory, the raw DB value has \\text (two chars: \ and t).
+    // We need \text (the actual LaTeX command).
+    // But by the time JSON.parse runs on the SSH output, we get \\text in JS.
+    // So we normalize: replace \\\\ with \\ only for known LaTeX patterns.
+    let result = str;
+    // Collapse quadruple backslashes to double (for \\\\  → \\)
+    result = result.replace(/\\\\\\\\/g, '\\\\');
+    // Now collapse double backslashes to single for LaTeX commands
+    result = result.replace(/\\\\(text|frac|begin|end|sin|cos|tan|sec|csc|cot|log|ln|exp|lim|sum|prod|int|oint|iint|iiint|left|right|pi|alpha|beta|gamma|delta|epsilon|zeta|eta|theta|iota|kappa|lambda|mu|nu|xi|rho|sigma|tau|upsilon|phi|chi|psi|omega|Gamma|Delta|Theta|Lambda|Xi|Pi|Sigma|Upsilon|Phi|Psi|Omega|infty|partial|nabla|forall|exists|in|notin|subset|supset|cup|cap|vee|wedge|neg|implies|iff|to|rightarrow|leftarrow|Rightarrow|Leftarrow|uparrow|downarrow|mapsto|sqrt|cbrt|overline|underline|hat|tilde|bar|vec|dot|ddot|prime|circ|times|div|pm|mp|cdot|cdots|ldots|vdots|ddots|dots|quad|qquad|hspace|vspace|space|newline|displaystyle|textstyle|scriptstyle|mathrm|mathbf|mathit|mathcal|mathbb|mathfrak|operatorname|binom|choose|pmod|equiv|approx|sim|simeq|cong|neq|leq|geq|le|ge|ll|gg|prec|succ|perp|parallel|angle|triangle|square|langle|rangle|lceil|rceil|lfloor|rfloor|mod|gcd|det|ker|dim|hom|arg|deg|max|min|sup|inf|limsup|liminf|Pr|exp)/g, '\\$1');
+    // Handle \\ (line break in LaTeX) — but only when it's truly \\\\
+    // Don't touch already-correct single backslashes
+    return result;
+}
+
+// Normalize all LaTeX fields in a question object
+function normalizeQuestionLatex(q) {
+    if (!q) return q;
+    if (q.question_latex) q.question_latex = normalizeLatex(q.question_latex);
+    if (q.solution_latex) q.solution_latex = normalizeLatex(q.solution_latex);
+    if (q.final_answer) q.final_answer = normalizeLatex(String(q.final_answer));
+    if (q.solution_text) q.solution_text = normalizeLatex(q.solution_text);
+    return q;
+}
+
+// ============================================================
+// DIAGRAM EXCLUSION FILTER
+// ============================================================
+const DIAGRAM_EXCLUSION_CLAUSE = `
+    AND LOWER(question_text) NOT REGEXP 'draw |sketch |plot the graph|draw the circuit|draw the block diagram|draw the flowchart|draw the figure|draw the diagram|draw the energy|draw the mo |draw the molecular|draw the shapes|draw the wave|draw the born|draw and explain the splitting'
+`;
+
+// ============================================================
 // API 1: Get list of subjects
+// ============================================================
 app.get('/api/subjects', async (req, res) => {
     try {
         const items = await fs.readdir(STUDY_MATERIAL_DIR, { withFileTypes: true });
@@ -22,7 +62,9 @@ app.get('/api/subjects', async (req, res) => {
     }
 });
 
+// ============================================================
 // API 2: Get materials for a specific subject
+// ============================================================
 app.get('/api/subjects/:code/materials', async (req, res) => {
     const { code } = req.params;
     const subjectDir = path.join(STUDY_MATERIAL_DIR, code);
@@ -94,15 +136,22 @@ app.get('/api/subjects/:code/materials', async (req, res) => {
     }
 });
 
-// Practice Mode Config
-app.get('/api/practice/config', async (req, res) => {
+// ============================================================
+// API: Practice Mode Metadata (dynamic filter values)
+// ============================================================
+app.get('/api/practice/meta', async (req, res) => {
     try {
+        const { subject } = req.query;
+        const subjectClause = subject ? `AND subject_code = '${subject}'` : '';
+
         const sql = `SELECT JSON_OBJECT(
-            'subjects', (SELECT JSON_ARRAYAGG(sub) FROM (SELECT DISTINCT subject_code AS sub FROM questions WHERE subject_code IS NOT NULL) t1),
-            'modules', (SELECT JSON_ARRAYAGG(mo) FROM (SELECT DISTINCT module AS mo FROM questions WHERE module IS NOT NULL) t2),
-            'years', (SELECT JSON_ARRAYAGG(yr) FROM (SELECT DISTINCT year AS yr FROM questions WHERE year IS NOT NULL) t3),
-            'difficulties', (SELECT JSON_ARRAYAGG(diff) FROM (SELECT DISTINCT difficulty AS diff FROM questions WHERE difficulty IS NOT NULL) t4)
+            'years', (SELECT JSON_ARRAYAGG(yr) FROM (SELECT DISTINCT year AS yr FROM questions WHERE year IS NOT NULL ${subjectClause} ORDER BY year) t1),
+            'marks', (SELECT JSON_ARRAYAGG(mk) FROM (SELECT DISTINCT marks AS mk FROM questions WHERE marks IS NOT NULL ${subjectClause} ORDER BY marks) t2),
+            'difficulties', (SELECT JSON_ARRAYAGG(df) FROM (SELECT DISTINCT difficulty AS df FROM questions WHERE difficulty IS NOT NULL ${subjectClause}) t3),
+            'question_types', (SELECT JSON_ARRAYAGG(JSON_OBJECT('type', qt, 'count', cnt)) FROM (SELECT question_type AS qt, COUNT(question_uid) AS cnt FROM questions WHERE question_type IS NOT NULL ${subjectClause} GROUP BY question_type ORDER BY cnt DESC) t4),
+            'total_count', (SELECT COUNT(question_uid) FROM questions WHERE 1=1 ${subjectClause})
         );`;
+
         const result = await queryDB(sql);
         res.json(result);
     } catch (err) {
@@ -110,10 +159,12 @@ app.get('/api/practice/config', async (req, res) => {
     }
 });
 
-// Practice Mode Questions
+// ============================================================
+// API: Practice Mode Questions (with diagram exclusion + LaTeX normalization)
+// ============================================================
 app.get('/api/practice/questions', async (req, res) => {
     try {
-        const { subject, module, year, difficulty, marks } = req.query;
+        const { subject, module, year, difficulty, marks, questionTypes } = req.query;
         let whereClauses = [];
         if (subject) whereClauses.push(`subject_code = '${subject}'`);
         if (module) whereClauses.push(`module = '${module}'`);
@@ -130,10 +181,13 @@ app.get('/api/practice/questions', async (req, res) => {
             const marksList = marks.split(',').map(m => parseInt(m.trim())).filter(Number).join(',');
             if (marksList) whereClauses.push(`marks IN (${marksList})`);
         }
+        if (questionTypes) {
+            const typesList = questionTypes.split(',').map(t => `'${t.trim()}'`).join(',');
+            if (typesList) whereClauses.push(`question_type IN (${typesList})`);
+        }
 
-        const where = whereClauses.length > 0 ? 'WHERE ' + whereClauses.join(' AND ') : '';
+        const where = whereClauses.length > 0 ? 'WHERE ' + whereClauses.join(' AND ') + DIAGRAM_EXCLUSION_CLAUSE : 'WHERE 1=1 ' + DIAGRAM_EXCLUSION_CLAUSE;
         
-        // We do not send solution text/latex to prevent cheating on frontend
         const sql = `SELECT JSON_ARRAYAGG(JSON_OBJECT(
             'uid', question_uid,
             'exam', exam,
@@ -149,14 +203,22 @@ app.get('/api/practice/questions', async (req, res) => {
             'final_answer', final_answer
         )) FROM questions ${where} LIMIT 50;`;
         
-        const result = await queryDB(sql);
+        let result = await queryDB(sql);
+        
+        // Normalize LaTeX in all returned questions
+        if (Array.isArray(result)) {
+            result = result.map(normalizeQuestionLatex);
+        }
+        
         res.json({ questions: result || [] });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-// Practice Mode Solution & Check
+// ============================================================
+// API: Practice Mode Solution & Check (with LaTeX normalization)
+// ============================================================
 app.post('/api/practice/check', async (req, res) => {
     try {
         const { uid, answer } = req.body;
@@ -169,11 +231,14 @@ app.post('/api/practice/check', async (req, res) => {
             'question_type', question_type
         ) FROM questions WHERE question_uid = '${uid}';`;
         
-        const result = await queryDB(sql);
+        let result = await queryDB(sql);
         
         if (!result) {
             return res.status(404).json({ error: 'Question not found' });
         }
+
+        // Normalize LaTeX fields
+        result = normalizeQuestionLatex(result);
         
         const dbAnswer = result.final_answer;
         let isCorrect = false;
@@ -189,8 +254,9 @@ app.post('/api/practice/check', async (req, res) => {
                     isCorrect = true;
                 }
             } else {
-                // String comparison
-                isCorrect = String(answer).trim().toLowerCase() === String(dbAnswer).trim().toLowerCase();
+                // String comparison (normalized)
+                const normalize = (s) => String(s).trim().toLowerCase().replace(/\s+/g, ' ');
+                isCorrect = normalize(answer) === normalize(dbAnswer);
             }
         }
         
@@ -198,14 +264,57 @@ app.post('/api/practice/check', async (req, res) => {
             isCorrect,
             correctAnswer: result.final_answer,
             solutionLatex: result.solution_latex,
-            solutionText: result.solution_text
+            solutionText: result.solution_text,
+            questionType: result.question_type
         });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
+// ============================================================
+// API: C Code Compilation via Piston API
+// ============================================================
+app.post('/api/practice/compile', async (req, res) => {
+    try {
+        const { code, language = 'c', stdin = '' } = req.body;
+        
+        if (!code || !code.trim()) {
+            return res.status(400).json({ error: 'No code provided' });
+        }
+
+        // Use Piston API (free, no auth required)
+        const response = await fetch('https://emkc.org/api/v2/piston/execute', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                language: language,
+                version: '*',
+                files: [{ name: 'main.c', content: code }],
+                stdin: stdin,
+                compile_timeout: 10000,
+                run_timeout: 5000
+            })
+        });
+
+        const data = await response.json();
+        
+        res.json({
+            success: !data.compile?.stderr && !data.run?.stderr,
+            compileOutput: data.compile?.output || '',
+            compileError: data.compile?.stderr || '',
+            runOutput: data.run?.output || data.run?.stdout || '',
+            runError: data.run?.stderr || '',
+            exitCode: data.run?.code ?? -1
+        });
+    } catch (err) {
+        res.status(500).json({ error: 'Compilation service unavailable: ' + err.message });
+    }
+});
+
+// ============================================================
 // Start the server
+// ============================================================
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Backend server running on http://localhost:${PORT}`);

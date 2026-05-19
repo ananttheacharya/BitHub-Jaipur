@@ -29,7 +29,6 @@ const parseInlineDollars = (str) => {
   return parts;
 };
 
-// Robust mixed LaTeX and plain text parser (extracts \text{} and inline $)
 const parseMixedLatex = (str) => {
   if (!str) return [];
   
@@ -39,43 +38,7 @@ const parseMixedLatex = (str) => {
   cleaned = cleaned.replace(/\\\\newline/g, '\\\\');
   cleaned = cleaned.replace(/\\\\/g, '\\');
   
-  const result = [];
-  let index = 0;
-  
-  while (index < cleaned.length) {
-    const textStart = cleaned.indexOf('\\text{', index);
-    
-    if (textStart === -1) {
-      const remaining = cleaned.substring(index);
-      if (remaining) {
-        const subParts = parseInlineDollars(remaining);
-        result.push(...subParts);
-      }
-      break;
-    }
-    
-    if (textStart > index) {
-      const beforeText = cleaned.substring(index, textStart);
-      const subParts = parseInlineDollars(beforeText);
-      result.push(...subParts);
-    }
-    
-    // Find matching closing bracket for \text{
-    let bracketCount = 1;
-    let scanIndex = textStart + 6;
-    while (scanIndex < cleaned.length && bracketCount > 0) {
-      if (cleaned[scanIndex] === '{') bracketCount++;
-      else if (cleaned[scanIndex] === '}') bracketCount--;
-      scanIndex++;
-    }
-    
-    const textContent = cleaned.substring(textStart + 6, scanIndex - 1);
-    result.push({ isMath: false, content: textContent });
-    
-    index = scanIndex;
-  }
-  
-  return result;
+  return parseInlineDollars(cleaned);
 };
 
 // ============================================================

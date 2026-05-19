@@ -20,7 +20,7 @@ function queryDB(sqlQuery) {
         sshClient.on('ready', () => {
             // We use -B (batch), -N (no column names), and -e (execute)
             // The query must select a JSON string.
-            const command = `echo "${process.env.DB_SSH_PASS}" | sudo -S mysql ${process.env.DB_NAME} -B -N -e "${sqlQuery.replace(/"/g, '\\"')}"`;
+            const command = `echo "${process.env.DB_SSH_PASS}" | sudo -S mysql ${process.env.DB_NAME} -r -B -N -e "${sqlQuery.replace(/"/g, '\\"')}"`;
             
             sshClient.exec(command, (err, stream) => {
                 if (err) {

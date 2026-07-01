@@ -13,6 +13,7 @@ import Toast from './components/Toast';
 
 const SubjectSelector = lazy(() => import('./components/SubjectSelector'));
 const JaipurDashboard = lazy(() => import('./components/JaipurDashboard'));
+const LabDashboard = lazy(() => import('./components/LabDashboard'));
 import confetti from 'canvas-confetti';
 
 /* Import campus images from the images directory */
@@ -179,6 +180,19 @@ function App() {
   // PAGE VIEW ROUTER
   const renderContent = () => {
     if (view === 'subject-dashboard' && selectedSubjectCode) {
+      if (selectedSubjectCode.startsWith('LAB-')) {
+        return (
+          <Suspense fallback={<div className="practice-loader-container"><div className="practice-spinner"></div></div>}>
+            <LabDashboard 
+              subjectCode={selectedSubjectCode}
+              theme={theme} 
+              onToggleTheme={toggleTheme} 
+              onBack={() => setView('subject-selector')} 
+            />
+          </Suspense>
+        );
+      }
+
       return (
         <Suspense fallback={<div className="practice-loader-container"><div className="practice-spinner"></div></div>}>
           <JaipurDashboard 

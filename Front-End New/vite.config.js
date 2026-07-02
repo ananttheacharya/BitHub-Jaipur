@@ -59,7 +59,8 @@ export default defineConfig({
     /* Proxy backend requests to bypass PNA popup and CORS */
     proxy: {
       '/api': 'http://localhost:3001',
-      '/study-material': 'http://localhost:3001'
+      '/study-material': 'http://localhost:3001',
+      '/dev-root': 'http://localhost:3001'
     }
   },
 });

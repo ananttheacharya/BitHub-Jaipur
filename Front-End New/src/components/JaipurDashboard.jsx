@@ -1260,7 +1260,7 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
             {campusDropdownOpen && (
               <div className="campus-dropdown-menu" id="campus-dropdown-menu">
                 <div className="campus-dropdown-item active">Jaipur Campus (Active)</div>
-                <div className="campus-dropdown-item disabled" onClick={() => showToast("Mesra Campus dashboard is coming soon!")}>
+                <div className="campus-dropdown-item" onClick={() => window.location.href = "../index.html"}>
                   Mesra Campus
                 </div>
               </div>

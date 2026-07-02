@@ -20,38 +20,48 @@ const OnlineJudge = ({ problem, theme, onBack }) => {
 
     // For evaluationType: stdout or return_value
     // We send code + first test case input if available
-    let testInput = "";
-    if (problem.testCases && problem.testCases.length > 0) {
-      testInput = (problem.testCases[0].input || []).join(" ");
-    }
-
+    setOutput('');
     try {
-      // In production, we'd send multiple requests or a batch to evaluate against all test cases.
-      // For MVP, we'll just run it once and output the result.
       const res = await fetch('/api/practice/compile', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          code: code,
-          language: 'c',
-          stdin: testInput
+        body: JSON.stringify({ 
+          code: code, 
+          problem: problem
         })
       });
-      
+
       const data = await res.json();
-      setLoading(false);
-      
-      if (data.success) {
-        setStatus("success");
-        setOutput(data.runOutput || "Execution finished with no output.");
-      } else {
+      if (!data.success) {
         setStatus("error");
-        setOutput(data.compileError || data.runError || "Unknown error occurred.");
+        setOutput(`[COMPILE ERROR]\n${data.compileError || data.runError}`);
+        return;
       }
+      
+      setStatus("success");
+      let outStr = "";
+      if (data.compileOutput) outStr += `[Compiler Warnings/Logs]\n${data.compileOutput}\n\n`;
+      
+      outStr += data.runOutput || "Execution finished with no output.";
+      if (data.runError) {
+        setStatus("error");
+        outStr += `\n[RUNTIME ERROR]\n${data.runError}`;
+      }
+      
+      setOutput(outStr);
     } catch (err) {
-      setLoading(false);
       setStatus("error");
-      setOutput(`Error connecting to compiler: ${err.message}`);
+      setOutput(`Error connecting to compiler service: ${err.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const viewSampleCode = () => {
+    if (problem.solutionCode) {
+      setCode(problem.solutionCode);
+    } else {
+      setOutput("No sample code available for this problem.");
     }
   };
 
@@ -119,14 +129,23 @@ const OnlineJudge = ({ problem, theme, onBack }) => {
             </svg>
             <span style={{ color: 'var(--dash-text-color)', fontWeight: 'bold', fontSize: '1.1rem' }}>C Compiler (gcc)</span>
           </div>
-          <button 
-            className="subject-selection-btn" 
-            style={{ padding: '0.5rem 1.5rem', minHeight: 'auto', borderRadius: '6px', fontSize: '0.9rem', fontWeight: 'bold' }}
-            onClick={runCode}
-            disabled={loading}
-          >
-            {loading ? "Running..." : "Run Code"}
-          </button>
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <button 
+              className="subject-selection-btn" 
+              style={{ padding: '0.5rem 1.5rem', minHeight: 'auto', borderRadius: '6px', fontSize: '0.9rem', fontWeight: 'bold', background: 'transparent', border: '1px solid var(--primary-accent)', color: 'var(--primary-accent)' }}
+              onClick={viewSampleCode}
+            >
+              View Sample Code
+            </button>
+            <button 
+              className="subject-selection-btn" 
+              style={{ padding: '0.5rem 1.5rem', minHeight: 'auto', borderRadius: '6px', fontSize: '0.9rem', fontWeight: 'bold' }}
+              onClick={runCode}
+              disabled={loading}
+            >
+              {loading ? "Running..." : "Run Code"}
+            </button>
+          </div>
         </div>
         
         <div style={{ flex: 1 }}>

@@ -79,7 +79,8 @@ The output MUST exactly match this JSON schema:
       "expected_return": 3,
       "expected_stdout": ""
     }
-  ]
+  ],
+  "solutionCode": "A complete, working C function that solves the problem. Do NOT include #include <stdio.h> or int main(), ONLY the function definition."
 }
 
 Rules for evaluationType:
@@ -89,6 +90,7 @@ Rules for evaluationType:
 - If evaluationType is "return_value", "expected_return" must contain the expected result, and "expected_stdout" can be "".
 
 Generate 2 diverse test cases per problem.
+The solutionCode MUST be valid C code implementing the functionName.
 Return ONLY valid JSON.
 """
 
@@ -115,6 +117,15 @@ def call_gemini(question_text: str) -> tuple[dict | None, str | None]:
             raw_text = raw_text.strip()
 
             parsed = json.loads(raw_text)
+            if isinstance(parsed, list):
+                if len(parsed) > 0:
+                    parsed = parsed[0]
+                else:
+                    raise ValueError("Empty list returned")
+            
+            if not isinstance(parsed, dict):
+                raise ValueError(f"Expected dict, got {type(parsed)}")
+                
             return parsed, None
             
         except Exception as e:

@@ -283,10 +283,49 @@ app.post('/api/practice/check', async (req, res) => {
 // ============================================================
 app.post('/api/practice/compile', async (req, res) => {
     try {
-        const { code, language = 'c', stdin = '' } = req.body;
+        const { code, language = 'c', stdin = '', problem } = req.body;
         
         if (!code || !code.trim()) {
             return res.status(400).json({ error: 'No code provided' });
+        }
+
+        let finalCode = code;
+        
+        // Dynamically build a C wrapper if it's an online judge problem
+        if (problem && problem.testCases && problem.testCases.length > 0) {
+            // Check if user accidentally included their own main
+            const hasMain = code.includes("int main(") || code.includes("void main(");
+            
+            if (!hasMain && problem.evaluationType === "return_value") {
+                let wrapper = `\n\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nint main() {\n    printf("Running %d Test Cases...\\n\\n", ${problem.testCases.length});\n`;
+                
+                problem.testCases.forEach((tc, idx) => {
+                    let args = tc.input ? tc.input.map(arg => typeof arg === "string" ? `"${arg}"` : arg).join(', ') : "";
+                    let expected = typeof tc.expected_return === "string" ? `"${tc.expected_return}"` : tc.expected_return;
+                    
+                    wrapper += `    ${problem.returnType} res${idx} = ${problem.functionName}(${args});\n`;
+                    if (problem.returnType === "int" || problem.returnType === "float" || problem.returnType === "double" || problem.returnType === "char") {
+                        let fmt = problem.returnType === "int" ? "%d" : (problem.returnType === "char" ? "%c" : "%f");
+                        wrapper += `    if (res${idx} == ${expected}) { printf("✅ [TEST_PASS] Test %d Passed\\n"); } else { printf("❌ [TEST_FAIL] Test %d Failed: Expected ${expected}, got ${fmt}\\n", res${idx}); }\n`;
+                    } else if (problem.returnType === "char*") {
+                        wrapper += `    if (strcmp(res${idx}, ${expected}) == 0) { printf("✅ [TEST_PASS] Test %d Passed\\n"); } else { printf("❌ [TEST_FAIL] Test %d Failed: Expected %s, got %s\\n", ${expected}, res${idx}); }\n`;
+                    } else {
+                        wrapper += `    printf("🔹 [TEST_LOG] Executed Test %d\\n");\n`;
+                    }
+                });
+                wrapper += `    return 0;\n}\n`;
+                finalCode = code + wrapper;
+            } else if (!hasMain && problem.evaluationType === "stdout" && problem.functionName && problem.functionName !== "main") {
+                let wrapper = `\n\n#include <stdio.h>\n\nint main() {\n`;
+                problem.testCases.forEach((tc, idx) => {
+                    let args = tc.input ? tc.input.map(arg => typeof arg === "string" ? `"${arg}"` : arg).join(', ') : "";
+                    wrapper += `    printf("--- Test Case %d ---\\n");\n`;
+                    wrapper += `    ${problem.functionName}(${args});\n`;
+                    wrapper += `    printf("\\n");\n`;
+                });
+                wrapper += `    return 0;\n}\n`;
+                finalCode = code + wrapper;
+            }
         }
 
         try {
@@ -297,7 +336,7 @@ app.post('/api/practice/compile', async (req, res) => {
                 body: JSON.stringify({
                     language: language,
                     version: '*',
-                    files: [{ name: 'main.c', content: code }],
+                    files: [{ name: 'main.c', content: finalCode }],
                     stdin: stdin,
                     compile_timeout: 10000,
                     run_timeout: 5000
@@ -399,7 +438,8 @@ app.get('/api/cs-problems', async (req, res) => {
             'functionName', functionName,
             'returnType', returnType,
             'parameters', parameters,
-            'testCases', testCases
+            'testCases', testCases,
+            'solutionCode', solutionCode
         )) FROM cs_problems ORDER BY question_number ASC;`;
         
         const result = await queryDB(sql);

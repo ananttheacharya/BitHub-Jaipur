@@ -37,7 +37,8 @@ def main():
         problems = json.load(f)
         
     lines = [
-        "CREATE TABLE IF NOT EXISTS cs_problems (",
+        "DROP TABLE IF EXISTS cs_problems;",
+        "CREATE TABLE cs_problems (",
         "  problem_id VARCHAR(50) PRIMARY KEY,",
         "  question_number INT,",
         "  title VARCHAR(255),",
@@ -46,14 +47,15 @@ def main():
         "  functionName VARCHAR(100),",
         "  returnType VARCHAR(50),",
         "  parameters JSON,",
-        "  testCases JSON",
+        "  testCases JSON,",
+        "  solutionCode TEXT",
         ");",
         ""
     ]
     
     for p in problems:
         lines.append(
-            "INSERT INTO cs_problems (problem_id, question_number, title, question_text, evaluationType, functionName, returnType, parameters, testCases) VALUES ("
+            "INSERT INTO cs_problems (problem_id, question_number, title, question_text, evaluationType, functionName, returnType, parameters, testCases, solutionCode) VALUES ("
             f"{esc(p['problem_id'])}, "
             f"{p['question_number']}, "
             f"{esc(p.get('title', ''))}, "
@@ -62,11 +64,12 @@ def main():
             f"{esc(p.get('functionName', ''))}, "
             f"{esc(p.get('returnType', 'void'))}, "
             f"{esc(json.dumps(p.get('parameters', [])))}, "
-            f"{esc(json.dumps(p.get('testCases', [])))}"
+            f"{esc(json.dumps(p.get('testCases', [])))}, "
+            f"{esc(p.get('solutionCode', ''))}"
             ") ON DUPLICATE KEY UPDATE "
             "title=VALUES(title), question_text=VALUES(question_text), "
             "evaluationType=VALUES(evaluationType), functionName=VALUES(functionName), "
-            "returnType=VALUES(returnType), parameters=VALUES(parameters), testCases=VALUES(testCases);"
+            "returnType=VALUES(returnType), parameters=VALUES(parameters), testCases=VALUES(testCases), solutionCode=VALUES(solutionCode);"
         )
         
     SQL_PATH.write_text("\n".join(lines), encoding="utf-8")

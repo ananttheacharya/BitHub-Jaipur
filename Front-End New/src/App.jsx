@@ -291,29 +291,6 @@ function App() {
     return (
       <>
         {content}
-        {/* Floating Mobile Mode Toggle for Debugging */}
-        <div className="mobile-toggle-floating-btn">
-          <button onClick={toggleMobileMode} title="Toggle Mobile UI Preview">
-            {isMobileMode ? (
-              <>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                  <line x1="8" y1="21" x2="16" y2="21"></line>
-                  <line x1="12" y1="17" x2="12" y2="21"></line>
-                </svg>
-                Desktop
-              </>
-            ) : (
-              <>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
-                  <line x1="12" y1="18" x2="12.01" y2="18"></line>
-                </svg>
-                Mobile View
-              </>
-            )}
-          </button>
-        </div>
       </>
     );
   };

@@ -1,0 +1,35 @@
+{
+  "name": "front-end-new",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "preview:host": "vite preview --host",
+    "tunnel": "ngrok http --domain=unpicked-mignon-unlawyerlike.ngrok-free.dev 3000"
+  },
+  "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
+    "canvas-confetti": "^1.9.4",
+    "esbuild": "^0.28.0",
+    "katex": "^0.16.47",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "react-katex": "^3.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "eslint": "^10.3.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.6.0",
+    "ngrok": "^5.0.0-beta.2",
+    "vite": "^8.0.12"
+  }
+}

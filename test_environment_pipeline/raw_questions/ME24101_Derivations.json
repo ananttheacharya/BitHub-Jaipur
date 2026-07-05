@@ -1,0 +1,61 @@
+[
+    {
+        "question_number": "Q.1(a)",
+        "module_number": 1,
+        "source_exam": "End Semester",
+        "source_year": 2024,
+        "marks": 5,
+        "question_text": "Using vector analysis, prove that the moment of a force F in 3D space, with respect to an arbitrary axis defined in the Cartesian coordinate system, remains constant regardless of the point chosen on the arbitrary axis.",
+        "question_latex": "\\text{Using vector analysis, prove that the moment of a force } \\mathbf{F} \\text{ in 3D space, with respect to an arbitrary axis defined in the Cartesian coordinate system, remains constant regardless of the point chosen on the arbitrary axis.}",
+        "question_type": "derivation",
+        "question_uid": "f47ac10b58f6b0c3db7e5967f3957b649d261e479a0d8e20257e84931a293540",
+        "tags": [
+            "Statics",
+            "Vectors",
+            "Moment"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "answer": "Let an arbitrary axis $L$ be defined by a unit vector $\\mathbf{n}$ passing through two points $A$ and $B$ on the axis. Let a force $\\mathbf{F}$ act at point $P$. The moment of $\\mathbf{F}$ about point $A$ is $\\mathbf{M}_A = \\mathbf{r}_{AP} \\times \\mathbf{F}$. The projection of this moment onto the axis $L$ is $M_L = \\mathbf{n} \\cdot (\\mathbf{r}_{AP} \\times \\mathbf{F})$. If we choose point $B$ instead of $A$, the moment about the axis is $M'_L = \\mathbf{n} \\cdot (\\mathbf{r}_{BP} \\times \\mathbf{F})$. Since $\\mathbf{r}_{AP} = \\mathbf{r}_{AB} + \\mathbf{r}_{BP}$, we substitute: $M_L = \\mathbf{n} \\cdot ((\\mathbf{r}_{AB} + \\mathbf{r}_{BP}) \\times \\mathbf{F}) = \\mathbf{n} \\cdot (\\mathbf{r}_{AB} \\times \\mathbf{F}) + \\mathbf{n} \\cdot (\\mathbf{r}_{BP} \\times \\mathbf{F})$. Because the vector $\\mathbf{r}_{AB}$ lies exactly along the axis $L$, it is parallel to the unit vector $\\mathbf{n}$. Therefore, the scalar triple product $\\mathbf{n} \\cdot (\\mathbf{r}_{AB} \\times \\mathbf{F}) = 0$. Thus, $M_L = M'_L$, proving the moment about an axis is independent of the point selected on that axis."
+    },
+    {
+        "question_number": "Q.1(a)",
+        "module_number": 1,
+        "source_exam": "End Semester",
+        "source_year": 2024,
+        "marks": 4,
+        "question_text": "Discuss the transformation of a determinate truss into an indeterminate one, accompanied by mathematical reasoning. Additionally, illustrate the process with appropriate diagrams.",
+        "question_latex": "\\text{Discuss the transformation of a determinate truss into an indeterminate one, accompanied by mathematical reasoning.}",
+        "question_type": "theoretical/derivation",
+        "question_uid": "d8e3f9a1c2b3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9",
+        "tags": [
+            "Trusses",
+            "Indeterminacy"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "answer": "A plane truss is statically determinate when the number of unknown forces (members $m$ and reactions $r$) equals the available equilibrium equations ($2j$, where $j$ is the number of joints). Mathematical Condition: $m + r = 2j$. Transformation to an indeterminate truss occurs when $m + r > 2j$. This is achieved by: 1) Internal Indeterminacy: Adding extra members beyond what is required for rigidity (e.g., adding a second diagonal to a rectangular panel). 2) External Indeterminacy: Adding extra support constraints (e.g., changing a roller to a pin support). The degree of indeterminacy is given by $D = (m + r) - 2j$."
+    },
+    {
+        "question_number": "Q.3(a)",
+        "module_number": 3,
+        "source_exam": "End Semester",
+        "source_year": 2023,
+        "marks": 5,
+        "question_text": "For a simple screw jack, derive the expressions for effort applied at the circumference of spindle and force applied at the end of the lever, when the load is hoisted upwards.",
+        "question_latex": "\\text{For a simple screw jack, derive the expressions for effort applied at the circumference of spindle (P) and force applied at the end of the lever (P}_1\\text{) when the load (W) is hoisted upwards.}",
+        "question_type": "derivation",
+        "question_uid": "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1",
+        "tags": [
+            "Screw Jack",
+            "Friction",
+            "Mechanics"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "answer": "Consider the screw thread as an inclined plane. Let $\\alpha$ be the helix angle ($\\tan \\alpha = p / \\pi d$) and $\\phi$ be the friction angle ($\\mu = \\tan \\phi$). To hoist a load $W$, the horizontal effort $P$ at the mean diameter $d$ must overcome both gravity and friction. From the equilibrium of a block on an incline: $P = W \\tan(\\alpha + \\phi)$. Expanding this: $P = W \\left( \\frac{\\tan \\alpha + \\tan \\phi}{1 - \\tan \\alpha \\tan \\phi} \\right)$. Substituting $\\tan \\alpha = p / \\pi d$ and $\\tan \\phi = \\mu$, we get $P = W \\left( \\frac{p + \\mu \\pi d}{\\pi d - \\mu p} \\right)$. If the effort $P_1$ is applied at the end of a lever of length $L$, by the principle of moments: $P_1 \\times L = P \\times (d/2)$. Thus, $P_1 = \\frac{W d}{2L} \\tan(\\alpha + \\phi)$."
+    }
+]

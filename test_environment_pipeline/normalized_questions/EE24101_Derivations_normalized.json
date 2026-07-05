@@ -1,0 +1,103 @@
+[
+    {
+        "question_number": "Q.2(a)",
+        "module_number": 1,
+        "source_exam": "Mid Semester",
+        "source_year": 2024,
+        "marks": 5,
+        "question_text": "Derive the expression for the equivalent resistance of three resistors connected in parallel and show that the total conductance is the sum of individual conductances.",
+        "question_latex": "\\text{Derive the expression for the equivalent resistance of three resistors connected in parallel.}",
+        "question_type": "derivation",
+        "question_uid": "a7610db6abd6b79b439943e00f52b488e3892fdb97c11eb8c1670ed133bea091",
+        "tags": [
+            "DC Circuits",
+            "Resistors"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "subject": "Basics of Electrical Engineering",
+        "subject_code": "EE24101"
+    },
+    {
+        "question_number": "Q.4(b)",
+        "module_number": 2,
+        "source_exam": "End Semester",
+        "source_year": 2023,
+        "marks": 5,
+        "question_text": "Derive the expression for the energy stored in a magnetic field of an inductor with inductance L and current I.",
+        "question_latex": "\\text{Derive the expression for the energy stored in a magnetic field of an inductor.}",
+        "question_type": "derivation",
+        "question_uid": "d4a2a0fa72886e813f2c30aa2769c24190f458ca944d33dcda0965480ad5486c",
+        "tags": [
+            "Inductance",
+            "Magnetic Circuits"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "subject": "Basics of Electrical Engineering",
+        "subject_code": "EE24101"
+    },
+    {
+        "question_number": "Q.3(b)",
+        "module_number": 3,
+        "source_exam": "Mid Semester",
+        "source_year": 2024,
+        "marks": 3,
+        "question_text": "For a series R-L-C circuit, derive the condition for resonance and find the expression for resonant frequency.",
+        "question_latex": "\\text{Derive the condition for resonance and resonant frequency for a series R-L-C circuit.}",
+        "question_type": "derivation",
+        "question_uid": "e58b60fe5204c333cbe990aa78d6be9bdcce45c09943efaaa8e8e8ca7e70a69d",
+        "tags": [
+            "AC Circuits",
+            "Circuit Analysis",
+            "Resonance"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "subject": "Basics of Electrical Engineering",
+        "subject_code": "EE24101"
+    },
+    {
+        "question_number": "Q.5(a)",
+        "module_number": 4,
+        "source_exam": "End Semester",
+        "source_year": 2022,
+        "marks": 6,
+        "question_text": "In a 3-phase balanced Delta (Δ) connection, derive the relationship between line current and phase current.",
+        "question_latex": "\\text{Derive the relationship between line current } (I_L) \\text{ and phase current } (I_{ph}) \\text{ for a balanced Delta connection.}",
+        "question_type": "derivation",
+        "question_uid": "f68c3dc6faa2cdc24e2eac4277d11eb2f1432488af814b06ab4f0a4e9e799bb6",
+        "tags": [
+            "Delta Connection",
+            "Three-Phase Systems"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "subject": "Basics of Electrical Engineering",
+        "subject_code": "EE24101"
+    },
+    {
+        "question_number": "Q.2(b)",
+        "module_number": 5,
+        "source_exam": "End Semester",
+        "source_year": 2024,
+        "marks": 5,
+        "question_text": "Derive the expression for the force between two parallel current-carrying conductors.",
+        "question_latex": "\\text{Derive the expression for the force between two parallel current-carrying conductors.}",
+        "question_type": "derivation",
+        "question_uid": "98b21fa6969db71a03bb88f5e938cf0f6f8b6b1cebcf5b3995d30e7480e5f173",
+        "tags": [
+            "Magnetic Forces",
+            "Magnetostatics"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "subject": "Basics of Electrical Engineering",
+        "subject_code": "EE24101"
+    }
+]

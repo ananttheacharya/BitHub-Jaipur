@@ -1,0 +1,83 @@
+[
+    {
+        "question_number": "Q.3(a)",
+        "module_number": 3,
+        "source_exam": "End Semester",
+        "source_year": 2025,
+        "marks": 5,
+        "question_text": "In a temperature-jump experiment, derive the expression for the relaxation time t of a reversible reaction A ⇌ B in terms of the forward and reverse rate constants.",
+        "question_latex": "\\text{In a temperature-jump experiment, derive the expression for the relaxation time } \\tau \\text{ of a reversible reaction } A \\xrightleftharpoons[k_r]{k_f} B \\text{ in terms of the forward and reverse rate constants.}",
+        "question_type": "derivation",
+        "question_uid": "df39f8162a7657a686a616bc48758288696fcbd5981a7fb7150f94788e91049e",
+        "tags": [
+            "Chemical Kinetics",
+            "Relaxation Methods"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "subject": "Chemistry",
+        "subject_code": "CH24101"
+    },
+    {
+        "question_number": "Q.3(b)",
+        "module_number": 3,
+        "source_exam": "End Semester",
+        "source_year": 2025,
+        "marks": 5,
+        "question_text": "Derive Michaelis-Menten equation.",
+        "question_latex": "\\text{Derive Michaelis-Menten equation.}",
+        "question_type": "derivation",
+        "question_uid": "dff0da379c4a1f51409dc3865b2b8e6285b1060854668c5a7a3f87623905a432",
+        "tags": [
+            "Biochemistry",
+            "Enzyme Kinetics"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "subject": "Chemistry",
+        "subject_code": "CH24101"
+    },
+    {
+        "question_number": "Q.3(a)",
+        "module_number": 3,
+        "source_exam": "End Semester",
+        "source_year": 2024,
+        "marks": 5,
+        "question_text": "Derive the kinetics of consecutive reaction and show the graphical representation of variation of concentration of A, B, C.",
+        "question_latex": "\\text{Derive the kinetics of consecutive reaction } A \\xrightarrow{k_1} B \\xrightarrow{k_2} C \\text{ and show the graphical representation.}",
+        "question_type": "derivation",
+        "question_uid": "afce95637fcb1bc7f940f3005793e3c529980255f034cbf14c2d9068686f1869",
+        "tags": [
+            "Chemical Kinetics",
+            "Consecutive Reactions"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "subject": "Chemistry",
+        "subject_code": "CH24101"
+    },
+    {
+        "question_number": "Q.1(a)",
+        "module_number": 1,
+        "source_exam": "End Semester",
+        "source_year": 2023,
+        "marks": 5,
+        "question_text": "Draw Born-Haber cycle for the formation of KCL. What are the applications of Born-Haber cycle?",
+        "question_latex": "\\text{Draw Born-Haber cycle for the formation of } KCl \\text{. What are the applications of Born-Haber cycle?}",
+        "question_type": "derivation",
+        "question_uid": "1337d28a3e7c1206a9f8bd1a433db528b2f8ccde6fb05bb86c1a1b147cfd13ad",
+        "tags": [
+            "Born-Haber Cycle",
+            "Chemical Bonding",
+            "Thermodynamics"
+        ],
+        "is_normalized": true,
+        "is_verified": false,
+        "latex_valid": true,
+        "subject": "Chemistry",
+        "subject_code": "CH24101"
+    }
+]

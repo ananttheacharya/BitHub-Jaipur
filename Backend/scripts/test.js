@@ -1,12 +1,16 @@
-fetch('https://emkc.org/api/v2/piston/execute', {
-    method: 'POST', 
-    headers: {'Content-Type': 'application/json'}, 
-    body: JSON.stringify({
-        language: 'c', 
-        version: '*', 
-        files: [{name: 'main.c', content: '#include <stdio.h>\nint main(){printf("Hello");return 0;}'}], 
-        stdin: '', 
-        compile_timeout: 10000, 
-        run_timeout: 5000
-    })
-}).then(r => r.json()).then(console.log).catch(console.error);
+const mysql = require('mysql2/promise');
+async function test() {
+    const pool = mysql.createPool({
+        host: 'hayabusa.proxy.rlwy.net',
+        port: 33968,
+        user: 'root',
+        password: 'IQcKGgDgoShBXKQRjzWzVNAsTXZGczjL',
+        database: 'railway'
+    });
+    const [rows] = await pool.query("SELECT JSON_ARRAYAGG(JSON_OBJECT('id', question_uid)) FROM questions LIMIT 2;");
+    const val = rows[0][Object.keys(rows[0])[0]];
+    console.log(typeof val);
+    console.log(val.substring(0, 50));
+    process.exit(0);
+}
+test();

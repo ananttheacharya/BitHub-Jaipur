@@ -50,7 +50,7 @@ const OnlineJudge = ({ problem, theme, onBack }) => {
     setIsDrawerOpen(false);
 
     try {
-      const res = await fetch('/api/practice/compile', {
+      const res = await fetch((import.meta.env.VITE_API_BASE_URL || '') + '/api/practice/compile', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 

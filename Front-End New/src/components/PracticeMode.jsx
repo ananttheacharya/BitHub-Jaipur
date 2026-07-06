@@ -257,7 +257,7 @@ function PracticeMode({ subjectCode, selectedModules, difficulties = ['Easy', 'M
         
         for (const mod of selectedModules) {
           const modNumber = mod.replace('mod', '');
-          const res = await fetch(`/api/practice/questions?subject=${subjectCode}&module=${modNumber}&difficulty=${diffsStr}&year=${yearsStr}&marks=${marksStr}`);
+          const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || ''}/api/practice/questions?subject=${subjectCode}&module=${modNumber}&difficulty=${diffsStr}&year=${yearsStr}&marks=${marksStr}`);
           const data = await res.json();
           if (data.questions) {
             allQs = [...allQs, ...data.questions];
@@ -419,7 +419,7 @@ function PracticeMode({ subjectCode, selectedModules, difficulties = ['Easy', 'M
 
     setLoadingCheck(true);
     try {
-      const res = await fetch('/api/practice/check', {
+      const res = await fetch((import.meta.env.VITE_API_BASE_URL || '') + '/api/practice/check', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ uid: currentQ.uid, answer })
@@ -444,7 +444,7 @@ function PracticeMode({ subjectCode, selectedModules, difficulties = ['Easy', 'M
 
     setLoadingCheck(true);
     try {
-      const res = await fetch('/api/practice/check', {
+      const res = await fetch((import.meta.env.VITE_API_BASE_URL || '') + '/api/practice/check', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ uid: currentQ.uid })
@@ -464,7 +464,7 @@ function PracticeMode({ subjectCode, selectedModules, difficulties = ['Easy', 'M
     if (!code.trim()) return;
     setCodeRunning(true);
     try {
-      const res = await fetch('/api/practice/compile', {
+      const res = await fetch((import.meta.env.VITE_API_BASE_URL || '') + '/api/practice/compile', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code, language: 'c' })

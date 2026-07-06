@@ -736,7 +736,7 @@ const ME24102Modal = ({ activeMEModal, setActiveMEModal, renderImageIcon }) => {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`/api/study-material/files?folder=ME24102/${encodeURIComponent(activeMEModal)}`)
+    fetch(`${import.meta.env.VITE_API_BASE_URL || ''}/api/study-material/files?folder=ME24102/${encodeURIComponent(activeMEModal)}`)
       .then(res => res.json())
       .then(data => {
         setFiles(data.files || []);

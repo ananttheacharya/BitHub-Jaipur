@@ -1,9 +1,17 @@
 @echo off
-title BitHuB Production Server
+title BitHuB Production Server (Local Backend & Frontend)
 
 echo ==========================================
 echo Starting BitHuB Production Services...
 echo ==========================================
+echo.
+echo [VERIFICATION] Configuration:
+echo - Frontend: Localhost (Port 3000)
+echo - Backend:  Localhost (Port 3001)
+echo - Database: Railway (Primary) / Aiven (Fallback)
+echo.
+echo ==========================================
+echo.
 
 :: Start the Backend in a new window
 echo Starting Node.js Backend on port 3001...
@@ -14,7 +22,7 @@ timeout /t 3 /nobreak >nul
 
 :: Start the Frontend in a new window
 echo Starting React Frontend on port 3000...
-start "BitHuB Frontend" cmd /k "cd Front-End New && npm.cmd run dev"
+start "BitHuB Frontend" cmd /k "cd ""Front-End New"" && npm.cmd run dev"
 
 :: Wait a few seconds for the frontend to initialize
 timeout /t 5 /nobreak >nul

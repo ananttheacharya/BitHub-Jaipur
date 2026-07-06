@@ -154,7 +154,7 @@ const REFERENCE_BOOKS_REGISTRY = {
 // SUBJECTS REGISTRY & DATA INTEGRATION ENDPOINTS
 // ============================================================
 // Future developers can connect this registry object to backend API fetches
-// (e.g. fetch(`/api/subjects/${code}`).then(res => res.json()))
+// (e.g. fetch(`${import.meta.env.VITE_API_BASE_URL || ''}/api/subjects/${code}`).then(res => res.json()))
 
 const SUBJECTS_REGISTRY = {
   "MA24101": {
@@ -537,7 +537,7 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
     setPracticeMeta(null);
     
     // Fetch dynamic files from backend
-    fetch(`/api/subjects/${subjectCode}/materials`)
+    fetch(`${import.meta.env.VITE_API_BASE_URL || ''}/api/subjects/${subjectCode}/materials`)
       .then(res => res.json())
       .then(data => {
         if (!data.error) setSubjectFiles(data);
@@ -545,7 +545,7 @@ function JaipurDashboard({ subjectCode, theme, onToggleTheme, onBack }) {
       .catch(err => console.error("Failed to fetch materials:", err));
 
     // Fetch Practice Meta
-    fetch(`/api/practice/meta?subject=${subjectCode}`)
+    fetch(`${import.meta.env.VITE_API_BASE_URL || ''}/api/practice/meta?subject=${subjectCode}`)
       .then(res => res.json())
       .then(data => {
         if (!data.error) {

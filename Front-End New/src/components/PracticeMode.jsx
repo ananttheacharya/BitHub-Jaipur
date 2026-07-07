@@ -1,25 +1,42 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-// Custom KaTeX components relying on window.katex loaded via CDN
-const InlineMath = ({ math }) => {
+// ============================================================
+// HaTeX - The "I Hate Vite" Math Renderer
+// ============================================================
+/**
+ * HaTeX (Hateful-TeX)
+ * 
+ * Why does this exist? Because modern build tools like Vite think they are smarter than us.
+ * They decided that KaTeX's macros were "unused code" and aggressively tree-shook them into oblivion,
+ * leaving our math looking like \textSolvebyvariationofParameter. 
+ * 
+ * Then, when we used the CDN, KaTeX decided to be "accessible" and render BOTH the beautiful HTML 
+ * and a hidden MathML block. But because web development is suffering, the hidden MathML block 
+ * decided to be visible, making every question look like it was having an identity crisis.
+ * 
+ * HaTeX forcibly strips the MathML (output: 'html') and wraps the CDN call in an iron-clad try/catch.
+ * Deal with it.
+ */
+const HaTeXInline = ({ math }) => {
   try {
     return window.katex 
-      ? <span dangerouslySetInnerHTML={{ __html: window.katex.renderToString(math, { throwOnError: false, displayMode: false }) }} />
+      ? <span dangerouslySetInnerHTML={{ __html: window.katex.renderToString(math, { throwOnError: false, displayMode: false, output: 'html' }) }} />
       : <span>{math}</span>;
   } catch (e) {
     return <span style={{ color: '#c65575' }}>{math}</span>;
   }
 };
 
-const BlockMath = ({ math }) => {
+const HaTeXBlock = ({ math }) => {
   try {
     return window.katex 
-      ? <div dangerouslySetInnerHTML={{ __html: window.katex.renderToString(math, { throwOnError: false, displayMode: true }) }} />
+      ? <div dangerouslySetInnerHTML={{ __html: window.katex.renderToString(math, { throwOnError: false, displayMode: true, output: 'html' }) }} />
       : <div>{math}</div>;
   } catch (e) {
     return <div style={{ color: '#c65575' }}>{math}</div>;
   }
 };
+
 
 // Sub-parser to split text by $ and $$ delimiters
 const parseInlineDollars = (str) => {
@@ -80,8 +97,8 @@ const renderLatex = (textVal) => {
           if (!part.isMath) return <span key={i}>{part.content}</span>;
           try {
             return part.isBlock
-              ? <div key={i} style={{ overflowX: 'auto', maxWidth: '100%', margin: '0.5rem 0' }}><BlockMath math={part.content.trim()} /></div>
-              : <InlineMath key={i} math={part.content.trim()} />;
+              ? <div key={i} style={{ overflowX: 'auto', maxWidth: '100%', margin: '0.5rem 0' }}><HaTeXBlock math={part.content.trim()} /></div>
+              : <HaTeXInline key={i} math={part.content.trim()} />;
           } catch { return <span key={i} style={{ color: '#c65575' }}>{part.content}</span>; }
         })}
       </div>
@@ -93,8 +110,8 @@ const renderLatex = (textVal) => {
     try {
       const hasBlock = /\\begin\{/.test(text);
       return hasBlock
-        ? <div style={{ overflowX: 'auto', maxWidth: '100%' }}><BlockMath math={text} /></div>
-        : <div style={{ lineHeight: '1.8' }}><InlineMath math={text} /></div>;
+        ? <div style={{ overflowX: 'auto', maxWidth: '100%' }}><HaTeXBlock math={text} /></div>
+        : <div style={{ lineHeight: '1.8' }}><HaTeXInline math={text} /></div>;
     } catch {
       return <span style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>{text}</span>;
     }

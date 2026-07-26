@@ -375,12 +375,12 @@ const LabDashboard = ({ subjectCode, theme, onToggleTheme, onBack }) => {
                   <p className="card-title-sub">PDF materials for Engineering Drawing</p>
                 </div>
               </div>
-              <div className="subjects-button-list" style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem'}}>
+              <div className="subjects-button-list" style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: '1.5rem'}}>
                 {["1. Engg. Drawing Notes .pdf", "2. Drawing Notes.pdf", "3. Proj of Solid.pdf"].map((pdf, idx) => (
                   <button 
                     key={idx}
                     className="subject-selection-btn"
-                    onClick={() => window.open(`/study-material/ME24102/${pdf}`, '_blank')}
+                    onClick={() => window.open(`${import.meta.env.VITE_API_BASE_URL || ''}/study-material/ME24102/${pdf}`, '_blank')}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem' }}>
                       {renderFileIcon(false)}
@@ -403,7 +403,7 @@ const LabDashboard = ({ subjectCode, theme, onToggleTheme, onBack }) => {
                   <p className="card-title-sub">Visual examples by topic</p>
                 </div>
               </div>
-              <div className="subjects-button-list" style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem'}}>
+              <div className="subjects-button-list" style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: '1.5rem'}}>
                 {meTopics.map((topic, idx) => (
                   <button 
                     key={idx}
@@ -436,7 +436,7 @@ const LabDashboard = ({ subjectCode, theme, onToggleTheme, onBack }) => {
                   <p className="card-title-sub">Select a shop to view its manuals and files</p>
                 </div>
               </div>
-              <div className="subjects-button-list" style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '1.5rem'}}>
+              <div className="subjects-button-list" style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 350px), 1fr))', gap: '1.5rem'}}>
                 {Object.keys(shopFiles).map(shop => (
                   <button 
                     key={shop}
@@ -474,10 +474,10 @@ const LabDashboard = ({ subjectCode, theme, onToggleTheme, onBack }) => {
                   <p className="card-title-sub">Official guide for the laboratory</p>
                 </div>
               </div>
-              <div className="subjects-button-list" style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '1.5rem'}}>
+              <div className="subjects-button-list" style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 350px), 1fr))', gap: '1.5rem'}}>
                 <button 
                   className="subject-selection-btn"
-                  onClick={() => window.open(`/study-material/PH24102/physics_lab.pdf`, '_blank')}
+                  onClick={() => window.open(`${import.meta.env.VITE_API_BASE_URL || ''}/study-material/PH24102/physics_lab.pdf`, '_blank')}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
                     <div className="math-logo-box" style={{width: 54, height: 54}}>
@@ -511,7 +511,7 @@ const LabDashboard = ({ subjectCode, theme, onToggleTheme, onBack }) => {
                   <p className="card-title-sub">Select an experiment to view the manual pages</p>
                 </div>
               </div>
-              <div className="subjects-button-list" style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '1.5rem'}}>
+              <div className="subjects-button-list" style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 350px), 1fr))', gap: '1.5rem'}}>
                 {eeExperiments.map((exp, idx) => (
                   <button 
                     key={idx}
@@ -550,10 +550,10 @@ const LabDashboard = ({ subjectCode, theme, onToggleTheme, onBack }) => {
                   <p className="card-title-sub">Official guide for the laboratory</p>
                 </div>
               </div>
-              <div className="subjects-button-list" style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '1.5rem'}}>
+              <div className="subjects-button-list" style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 350px), 1fr))', gap: '1.5rem'}}>
                 <button 
                   className="subject-selection-btn"
-                  onClick={() => window.open(`/study-material/${selectedLab}/${isEC ? 'ece_lab.pdf' : 'chemistry_lab.pdf'}`, '_blank')}
+                  onClick={() => window.open(`${import.meta.env.VITE_API_BASE_URL || ''}/study-material/${selectedLab}/${isEC ? 'ece_lab.pdf' : 'chemistry_lab.pdf'}`, '_blank')}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
                     <div className="math-logo-box" style={{width: 54, height: 54}}>
@@ -645,7 +645,7 @@ const LabDashboard = ({ subjectCode, theme, onToggleTheme, onBack }) => {
                     <button 
                       key={idx}
                       className="subject-selection-btn"
-                      onClick={() => window.open(`/study-material/PE24102/${activePEShop}/${file}`, '_blank')}
+                      onClick={() => window.open(`${import.meta.env.VITE_API_BASE_URL || ''}/study-material/PE24102/${activePEShop}/${file}`, '_blank')}
                     >
                       <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem' }}>
                         {renderFileIcon(isZip)}
@@ -771,7 +771,7 @@ const ME24102Modal = ({ activeMEModal, setActiveMEModal, renderImageIcon }) => {
                 <button 
                   key={idx}
                   className="subject-selection-btn"
-                  onClick={() => window.open(`/study-material/ME24102/${encodeURIComponent(activeMEModal)}/${encodeURIComponent(file)}`, '_blank')}
+                  onClick={() => window.open(`${import.meta.env.VITE_API_BASE_URL || ''}/study-material/ME24102/${encodeURIComponent(activeMEModal)}/${encodeURIComponent(file)}`, '_blank')}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem' }}>
                     {renderImageIcon()}

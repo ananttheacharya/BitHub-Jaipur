@@ -11,8 +11,10 @@ app.use(express.json());
 const STUDY_MATERIAL_DIR = path.resolve(__dirname, '../Study Material');
 app.use('/study-material', express.static(STUDY_MATERIAL_DIR));
 
-// Serve root directory for local dev (to access old index.html)
-app.use('/dev-root', express.static(path.resolve(__dirname, '../')));
+const IS_PROD = process.env.NODE_ENV === 'production';
+
+// Serve root directory for local dev (to access old index.html); never in production (exposes the repo, incl. dump.sql)
+if (!IS_PROD) app.use('/dev-root', express.static(path.resolve(__dirname, '../')));
 
 // Dynamic file lister for study material
 app.get('/api/study-material/files', async (req, res) => {
@@ -50,9 +52,11 @@ app.get('/api/study-material/files', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
-// Admin routes
-const adminRoutes = require('./admin_routes');
-app.use('/api/admin', adminRoutes);
+// Admin routes (local Admin-Dashboard only; unauthenticated, so disabled in production)
+if (!IS_PROD) {
+    const adminRoutes = require('./admin_routes');
+    app.use('/api/admin', adminRoutes);
+}
 
 // ============================================================
 // UTILITY: Normalize double-escaped LaTeX from SSH/JSON pipeline

@@ -8,6 +8,8 @@ const railwayConfig = {
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASS || '',
     database: process.env.DB_NAME || 'railway',
+    // DB_SSL=true when the primary is a TLS-only host (e.g. Aiven)
+    ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : undefined,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0

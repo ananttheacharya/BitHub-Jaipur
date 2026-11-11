@@ -22,8 +22,9 @@ import mesraImg from '../images/mesra.png';
 // import mananImg from '../ProfilePics/mananonhisweddingnight.jpg'; // BACKUP 69 EASTER EGG
 
 function App() {
-  const [view, setView] = useState('landing'); // 'landing', 'subject-selector', 'subject-dashboard'
-  const [theme, setTheme] = useState('light'); // 'light', 'dark'
+  // ?view=jaipur opens the Jaipur page directly (used by the DSD lab simulator's back link)
+  const [view, setView] = useState(() => (new URLSearchParams(window.location.search).get('view') === 'jaipur' ? 'subject-selector' : 'landing')); // 'landing', 'subject-selector', 'subject-dashboard'
+  const [theme, setTheme] = useState(() => (new URLSearchParams(window.location.search).get('theme') === 'dark' ? 'dark' : 'light')); // 'light', 'dark'
   const [selectedSubjectCode, setSelectedSubjectCode] = useState(null);
   
   const [isMobileMode, setIsMobileMode] = useState(false);

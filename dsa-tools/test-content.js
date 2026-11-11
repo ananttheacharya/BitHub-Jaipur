@@ -6,7 +6,7 @@ const fs = require('fs'), path = require('path');
 const root = path.join(__dirname, '..');
 const dataDir = path.join(root, 'Front-End New', 'public', 'dsa', 'js', 'data');
 global.window = global; global.DSA = {};
-for (const f of ['modules', 'slides', 'slides2', 'slides3', 'notes', 'studynotes1', 'studynotes2', 'studynotes3', 'studynotes4', 'questions', 'questions2', 'lib1', 'lib2', 'lib3', 'lib4', 'lib5', 'lib6', 'problems'])
+for (const f of ['modules', 'slides', 'slides2', 'slides3', 'slides4', 'notes', 'studynotes1', 'studynotes2', 'studynotes3', 'studynotes4', 'questions', 'questions2', 'lib1', 'lib2', 'lib3', 'lib4', 'lib5', 'lib6', 'lib7', 'problems'])
   eval(fs.readFileSync(path.join(dataDir, f + '.js'), 'utf8'));
 let fails = 0, checks = 0;
 const ok = (c, msg) => { checks++; if (!c) { fails++; console.log('FAIL:', msg); } };

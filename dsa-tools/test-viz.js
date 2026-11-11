@@ -112,7 +112,7 @@ const gd = DSA.viz.get('graph'); const kt = frames(gd, 'kruskal', 'go', { start:
 }
 // every viz slide and every Visualize-tab entry: the variant exists, the script runs, and every frame is valid
 global.DSA = window.DSA;
-for (const f of ['data/slides', 'data/slides2', 'data/slides3', 'data/modules']) require(path.join(root, 'js', f + '.js'));
+for (const f of ['data/slides', 'data/slides2', 'data/slides3', 'data/slides4', 'data/modules']) require(path.join(root, 'js', f + '.js'));
 {
   const check = (where, id, variant, script) => {
     const def = DSA.viz.get(id); ok(!!def, where + ': unknown visualizer ' + id); if (!def) return;

@@ -111,10 +111,6 @@
     const nProblems = (DSA.problems || []).length, nPyq = (DSA.pyqs || []).length;
     const done = (DSA.problems || []).filter((p) => store.get('solved.' + p.id, false)).length;
     shell('', [
-      h('section', { class: 'hero' },
-        h('div', { class: 'eyebrow' }, h('span', { class: 'pill' }, 'CS24201'), 'Data Structures and Algorithms'),
-        h('h1', { class: 'display title-bar' }, 'Learn DSA, ', h('em', {}, 'see'), ' how it works'),
-        h('p', {}, 'Animated slides and step-by-step visualizers for every module of the syllabus, past papers with answers, coding problems with an online compiler, and all the class notes in one place.')),
       h('div', { class: 'module-grid' }, MODS.map((m) => h('a', { class: 'card bar module-card', href: `#/m/${m.n}`, id: 'module-' + m.n },
         h('div', { class: 'module-head' }, h('span', { class: 'module-no' }, 'M' + m.n)),
         h('h2', {}, m.title), h('p', {}, m.blurb),

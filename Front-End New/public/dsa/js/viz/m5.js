@@ -25,8 +25,8 @@
     const walk = (t) => {
       if (!t) return;
       const [x, y] = pos.get(t);
-      nodes.push({ id: 'k' + t.v, shape: 'circle', x, y, w: 44, text: t.v, sub: opts.avl ? `bf ${bf(t)}` : undefined, cls: (m.hl && m.hl[t.v]) || '', enter: [0, -30] });
-      [t.l, t.r].forEach((c) => { if (c) { edges.push({ id: `e${t.v}>${c.v}`, from: 'k' + t.v, to: 'k' + c.v, arrow: false, cls: m.edge && m.edge[c.v] ? m.edge[c.v] : '' }); walk(c); } });
+      nodes.push({ id: 'k' + t.id, shape: 'circle', x, y, w: 44, text: t.v, sub: opts.avl ? `bf ${bf(t)}` : undefined, cls: (m.hl && m.hl[t.v]) || '', enter: [0, -30] });
+      [t.l, t.r].forEach((c) => { if (c) { edges.push({ id: `e${t.id}>${c.id}`, from: 'k' + t.id, to: 'k' + c.id, arrow: false, cls: m.edge && m.edge[c.v] ? m.edge[c.v] : '' }); walk(c); } });
     };
     walk(root);
     return { nodes, edges, pos };
@@ -58,7 +58,7 @@
     run(st, op, a, snap) {
       const avl = st.variant === 'avl', def = DSA.viz.get('tree');
       def.code = TREE_CODE[st.variant];
-      const mk = (v) => ({ v, l: null, r: null, h: 1 });
+      const mk = (v) => ({ v, l: null, r: null, h: 1, id: (st.uid = (st.uid || 0) + 1) });   // the id (not the value) names the node on screen: deleting copies a value into another node
       const hl = {};
 
       /* AVL rebalancing, with a before/after frame for each rotation */
@@ -251,14 +251,14 @@
   DSA.viz.define('graph', {
     title: 'Graph algorithms',
     blurb: 'Traversals visit every vertex reachable from a start vertex (neighbours in alphabetical order). Kruskal and Prim build a minimum spanning tree: V − 1 edges, no cycle, least total weight.',
-    variants: [{ id: 'bfs', label: 'BFS' }, { id: 'dfs', label: 'DFS' }, { id: 'kruskal', label: 'Kruskal MST' }, { id: 'prim', label: 'Prim MST' }],
+    variants: [{ id: 'bfs', label: 'BFS' }, { id: 'dfs', label: 'DFS' }, { id: 'kruskal', label: 'Kruskal MST' }, { id: 'prim', label: 'Prim MST' }, { id: 'dijkstra', label: 'Dijkstra' }],
     args: { start: { label: 'Start vertex', type: 'text', def: 'A' } },
     ops: [{ id: 'go', label: 'Run', uses: ['start'], primary: true }],
-    create: (variant) => ({ variant, vis: {}, tree: {}, ds: [], order: [], note: '' }),
+    create: (variant) => ({ variant, vis: {}, tree: {}, ds: [], order: [], note: '', dist: null }),
     draw(st, m) {
       const nodes = [], edges = [], X = 120;
       GN.forEach((v) => nodes.push({ id: 'g' + v, shape: 'circle', x: GP[v][0], y: GP[v][1], w: 44, text: v, cls: (m.hl && m.hl[v]) || (st.vis[v] ? 'n-ok' : '') }));
-      GE.forEach(([u, v, w]) => { const k = eid(u, v); edges.push({ id: 'ge' + k, from: 'g' + u, to: 'g' + v, arrow: false, label: st.variant === 'kruskal' || st.variant === 'prim' ? w : undefined, cls: (m.eh && m.eh[k]) || (st.tree[k] ? 'e-ok' : st.running ? 'e-dim' : '') }); });
+      GE.forEach(([u, v, w]) => { const k = eid(u, v); edges.push({ id: 'ge' + k, from: 'g' + u, to: 'g' + v, arrow: false, label: st.variant === 'bfs' || st.variant === 'dfs' ? undefined : w, cls: (m.eh && m.eh[k]) || (st.tree[k] ? 'e-ok' : st.running ? 'e-dim' : '') }); });
       const y0 = 230;
       if (st.variant === 'bfs' || st.variant === 'dfs') {
         nodes.push(D.text('dsl', st.variant === 'bfs' ? 'queue (front →)' : 'stack (top →)', -50, y0, 't-accent', 'start'));
@@ -267,18 +267,20 @@
         nodes.push(D.text('dsl', 'edges, lightest first', -50, y0, 't-accent', 'start'));
         st.ds.forEach((e, i) => nodes.push({ id: 'q' + e.k, shape: 'rect', x: i * 52, y: y0 + 34, w: 48, h: 40, text: e.w, sub: e.k, cls: 'n-token ' + (e.cls || '') }));
       } else nodes.push(D.text('dsl', st.note, -50, y0, 't-muted', 'start'));
-      if (st.order.length) { nodes.push(D.text('ol', st.variant === 'kruskal' || st.variant === 'prim' ? 'total weight' : 'visit order', 490, y0 - 4 + 90, 't-accent', 'end')); st.order.forEach((v, i) => nodes.push({ id: 'o' + i, shape: 'rect', x: 120 + i * 36, y: y0 + 100, w: 32, h: 32, text: v, cls: 'n-token n-ok', enter: [0, -12] })); }
+      if (st.variant === 'dijkstra' && st.dist) GN.forEach((g) => nodes.push(D.text('dd' + g, st.dist[g] === Infinity ? '∞' : st.dist[g], GP[g][0], GP[g][1] + 36, st.vis[g] ? 't-ok' : 't-accent')));
+      if (st.order.length) { nodes.push(D.text('ol', st.variant === 'kruskal' || st.variant === 'prim' ? 'total weight' : st.variant === 'dijkstra' ? 'settled order' : 'visit order', 490, y0 - 4 + 90, 't-accent', 'end')); st.order.forEach((v, i) => nodes.push({ id: 'o' + i, shape: 'rect', x: 120 + i * 36, y: y0 + 100, w: 32, h: 32, text: v, cls: 'n-token n-ok', enter: [0, -12] })); }
       void X;
       return { nodes, edges };
     },
     run(st, op, a, snap) {
       const v = st.variant, start = a.start.trim().toUpperCase();
       if (!GN.includes(start)) throw new VizError('Start vertex must be one of A, B, C, D, E, F, G.');
-      st.vis = {}; st.tree = {}; st.ds = []; st.order = []; st.note = ''; st.running = true;
+      st.vis = {}; st.tree = {}; st.ds = []; st.order = []; st.note = ''; st.running = true; st.dist = null;
       DSA.viz.get('graph').code = { go: {
         bfs: ['queue = [start]; mark start visited', 'while queue is not empty:', '  u = dequeue(); visit(u)', '  for each unvisited neighbour w of u: mark w, enqueue(w)'],
         dfs: ['push start', 'while stack is not empty:', '  u = pop()', '  if u is unvisited: mark and visit(u); push its unvisited neighbours (in reverse order)'],
         kruskal: ['sort all edges by weight', 'for each edge (u, v) in that order:', '  if find(u) != find(v): add the edge to the tree; union(u, v)', '  else: skip (it would form a cycle)', 'stop after V - 1 edges'],
+        dijkstra: ['dist[start] = 0, all others = ∞', 'repeat: u = unsettled vertex with the smallest dist; settle u', '  for each edge (u, w) with weight c:', '    if dist[u] + c < dist[w]: dist[w] = dist[u] + c', 'until every reachable vertex is settled'],
         prim: ['tree = {start}', 'repeat V - 1 times:', '  among edges leaving the tree, pick the lightest', '  add that edge and its new vertex to the tree'],
       }[v] };
       if (v === 'bfs') {
@@ -320,6 +322,29 @@
         }
         return snap(`Minimum spanning tree: ${used} edges (V − 1 = ${GN.length - 1}), total weight **${total}**. O(E log E), dominated by sorting.`, { line: 4, tone: 'good' });
       }
+      if (v === 'dijkstra') {
+        const dist = {}, prev = {}; GN.forEach((g) => { dist[g] = Infinity; }); dist[start] = 0; st.dist = dist;
+        snap(`Dijkstra: dist[${start}] = 0 and every other distance starts at ∞. Repeatedly settle the unsettled vertex with the smallest distance, then relax its edges. (Edge weights must not be negative.)`, { line: 0, hl: { [start]: 'n-hl' } });
+        for (let r = 0; r < GN.length; r++) {
+          const u = GN.filter((g) => !st.vis[g] && dist[g] < Infinity).sort((p, q) => dist[p] - dist[q] || (p < q ? -1 : 1))[0];
+          if (!u) break;
+          st.vis[u] = true; st.order.push(u);
+          snap(`Smallest unsettled distance: **${u}** (${dist[u]}). Its distance is now final.`, { line: 1, hl: { [u]: 'n-ok' } }, { hold: 0.9 });
+          for (const [x, y, w] of GE) {
+            const o = x === u ? y : y === u ? x : null;
+            if (!o || st.vis[o]) continue;
+            const nd = dist[u] + w, k = eid(u, o);
+            if (nd < dist[o]) {
+              if (prev[o]) delete st.tree[eid(prev[o], o)];
+              snap(`Relax ${u}–${o} (${w}): ${dist[u]} + ${w} = ${nd} is better than ${dist[o] === Infinity ? '∞' : dist[o]}. Update dist[${o}] = ${nd}.`, { line: 3, hl: { [o]: 'n-cmp' }, eh: { [k]: 'e-cmp' } }, { hold: 0.9 });
+              dist[o] = nd; prev[o] = u; st.tree[k] = true;
+              snap(`dist[${o}] = ${nd}.`, { line: 3, hl: { [o]: 'n-hl' }, eh: { [k]: 'e-hl' } }, { hold: 0.5 });
+            } else snap(`Relax ${u}–${o} (${w}): ${dist[u]} + ${w} = ${nd} is not better than ${dist[o]}. Keep it.`, { line: 3, hl: { [o]: 'n-cmp' }, eh: { [k]: 'e-dim' } }, { hold: 0.7 });
+          }
+        }
+        st.dijkstra = dist;
+        return snap(`Shortest distances from ${start}: ${GN.map((g) => g + '=' + (dist[g] === Infinity ? '∞' : dist[g])).join(', ')}. The highlighted edges form the shortest-path tree. O(E log V) with a heap.`, { tone: 'good' });
+      }
       const inT = { [start]: true }; let total = 0; st.vis[start] = true;
       snap(`Prim: grow one tree from ${start}. Each step adds the lightest edge that leaves the tree.`, { line: 0, hl: { [start]: 'n-hl' } });
       for (let i = 1; i < GN.length; i++) {
@@ -337,5 +362,64 @@
     code: {},
     demo: [['go', { start: 'A' }]],
     view: { minW: 560, minH: 330 },
+  });
+  /* ---------------- topological sort (directed acyclic graph) ---------------- */
+  const TN = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+  const TP = { A: [0, 20], B: [0, 130], C: [130, 0], D: [130, 90], E: [260, 40], F: [260, 140], G: [390, 90] };
+  const TE = [['A', 'C'], ['A', 'D'], ['B', 'D'], ['C', 'E'], ['D', 'E'], ['D', 'F'], ['E', 'G'], ['F', 'G']];
+  DSA.viz.define('toposort', {
+    title: 'Topological sort',
+    blurb: 'A linear order of a directed acyclic graph in which every edge u → v has u before v (think of course prerequisites). Kahn\'s algorithm repeatedly removes a vertex with no incoming edges; the DFS version outputs vertices in reverse finishing order.',
+    variants: [{ id: 'kahn', label: "Kahn (in-degree)" }, { id: 'dfs', label: 'DFS (finish order)' }],
+    args: {},
+    ops: [{ id: 'go', label: 'Sort', primary: true }],
+    create: (variant) => ({ variant, indeg: null, done: {}, queue: [], order: [], stack: [], removed: {} }),
+    draw(st, m) {
+      const nodes = [], edges = [], kahn = st.variant === 'kahn';
+      TN.forEach((v) => {
+        nodes.push({ id: 't' + v, shape: 'circle', x: TP[v][0], y: TP[v][1], w: 44, text: v, cls: (m.hl && m.hl[v]) || (st.done[v] ? 'n-ok' : '') });
+        if (kahn && st.indeg) nodes.push(D.text('ti' + v, 'in ' + st.indeg[v], TP[v][0], TP[v][1] + 36, st.indeg[v] === 0 && !st.done[v] ? 't-accent' : 't-muted'));
+      });
+      TE.forEach(([u, v]) => edges.push({ id: 'te' + u + v, from: 't' + u, to: 't' + v, cls: st.removed[u] ? 'e-dim' : (m.eh && m.eh[u + v]) || '' }));
+      nodes.push(D.text('ql', kahn ? 'queue (in-degree 0)' : 'stack of finished vertices', -20, 230, 't-accent', 'start'));
+      (kahn ? st.queue : st.stack).forEach((v, i) => nodes.push({ id: 'tq' + v, shape: 'rect', x: 130 + i * 40, y: 254, w: 34, h: 32, text: v, cls: 'n-token' }));
+      nodes.push(D.text('ol', 'order', 480, 322, 't-accent', 'end'));
+      st.order.forEach((v, i) => nodes.push({ id: 'to' + v, shape: 'rect', x: 120 + i * 40, y: 322, w: 34, h: 32, text: v, cls: 'n-token n-ok', enter: [0, -20] }));
+      return { nodes, edges };
+    },
+    run(st, op, a, snap) {
+      const out = (v) => TE.filter((e) => e[0] === v).map((e) => e[1]);
+      Object.assign(st, { done: {}, queue: [], order: [], stack: [], removed: {} });
+      if (st.variant === 'kahn') {
+        st.indeg = {}; TN.forEach((v) => { st.indeg[v] = TE.filter((e) => e[1] === v).length; });
+        DSA.viz.get('toposort').code = { go: ['compute in-degree of every vertex', 'queue = all vertices with in-degree 0', 'while queue is not empty:', '  u = dequeue(); output u', '  for each edge u -> w: in-degree[w]--; if it becomes 0, enqueue w', 'if fewer than V vertices were output: the graph has a cycle'] };
+        st.queue = TN.filter((v) => st.indeg[v] === 0);
+        snap(`In-degree = number of incoming edges. Vertices with in-degree 0 have no prerequisite, so they can go first: **${st.queue.join(', ')}**.`, { line: 1 });
+        while (st.queue.length) {
+          const u = st.queue.shift(); st.order.push(u); st.done[u] = true;
+          snap(`Dequeue ${u} and output it.`, { line: 3, hl: { [u]: 'n-hl' } }, { hold: 0.8 });
+          st.removed[u] = true;
+          const eh = {}, born = [];
+          out(u).forEach((w) => { st.indeg[w]--; eh[u + w] = 'e-hl'; if (st.indeg[w] === 0) { st.queue.push(w); born.push(w); } });
+          snap(out(u).length ? `Remove ${u}'s outgoing edges: in-degrees drop${born.length ? '; **' + born.join(', ') + '** reach 0 and join the queue' : ', but none reaches 0 yet'}.` : `${u} has no outgoing edges.`, { line: 4, hl: { [u]: 'n-ok' }, eh }, { hold: 1 });
+        }
+        return snap(`Topological order: **${st.order.join(' → ')}**. Each vertex and edge is handled once: O(V + E). If the queue ran dry before all V vertices were output, the graph would contain a cycle.`, { line: 5, tone: 'good' });
+      }
+      st.indeg = null;
+      DSA.viz.get('toposort').code = { go: ['visit(u): mark u visited', '  for each edge u -> w: if w is unvisited, visit(w)', '  push u onto the stack (u is finished)', 'run visit on every unvisited vertex', 'the stack, read from top to bottom, is the topological order'] };
+      const seen = {};
+      const visit = (u) => {
+        seen[u] = true; snap(`Visit ${u}: explore everything that depends on it first.`, { line: 0, hl: { [u]: 'n-cmp' } }, { hold: 0.7 });
+        out(u).forEach((w) => { if (!seen[w]) visit(w); });
+        st.stack.unshift(u); st.done[u] = true;
+        snap(`${u} is finished: push it. (A vertex is pushed only after everything reachable from it.)`, { line: 2, hl: { [u]: 'n-ok' } }, { hold: 0.8 });
+      };
+      TN.forEach((v) => { if (!seen[v]) visit(v); });
+      st.order = st.stack.slice(); st.stack = [];
+      snap(`Reading the stack from the top gives the topological order: **${st.order.join(' → ')}**. O(V + E).`, { line: 4, tone: 'good' });
+    },
+    code: {},
+    demo: [['go', {}]],
+    view: { minW: 560, minH: 380 },
   });
 })();

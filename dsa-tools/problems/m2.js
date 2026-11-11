@@ -562,3 +562,4 @@ print_list(dummy.next)
     },
   },
 ];
+module.exports.pre = { C_NODE, CPP_NODE, JAVA_NODE, PY_NODE };

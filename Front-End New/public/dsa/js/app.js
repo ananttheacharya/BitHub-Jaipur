@@ -33,6 +33,7 @@
       chunk.split(/\n{2,}/).forEach((para) => {
         para = para.trim(); if (!para) return;
         const lines = para.split('\n');
+        if (/^###\s/.test(lines[0])) { out.appendChild(h('h4', { html: DSA.fmt(lines[0].replace(/^###\s+/, '')) })); if (lines.length > 1) out.appendChild(DSA.rich(lines.slice(1).join('\n'))); return; }
         const tbl = lines.findIndex((l) => /^\|/.test(l));
         if (tbl > 0) { out.appendChild(DSA.rich(lines.slice(0, tbl).join('\n'))); out.appendChild(DSA.rich(lines.slice(tbl).join('\n'))); return; }
         if (tbl === 0 && lines.every((l) => /^\|/.test(l))) {
@@ -115,7 +116,7 @@
         h('h1', { class: 'display title-bar' }, 'Learn DSA, ', h('em', {}, 'see'), ' how it works'),
         h('p', {}, 'Animated slides and step-by-step visualizers for every module of the syllabus, past papers with answers, coding problems with an online compiler, and all the class notes in one place.')),
       h('div', { class: 'module-grid' }, MODS.map((m) => h('a', { class: 'card bar module-card', href: `#/m/${m.n}`, id: 'module-' + m.n },
-        h('div', { class: 'module-head' }, h('span', { class: 'module-no' }, 'M' + m.n), h('span', { class: 'pill plain' }, m.hours + ' lectures')),
+        h('div', { class: 'module-head' }, h('span', { class: 'module-no' }, 'M' + m.n)),
         h('h2', {}, m.title), h('p', {}, m.blurb),
         h('div', { class: 'topic-chips' }, m.topics.slice(0, 6).map((t) => h('span', { class: 'topic-chip' }, t))),
         h('div', { class: 'module-foot' }, h('span', {}, `${(DSA.slides[m.n] || []).length} slides · ${m.viz.length} visualizers`), h('span', { class: 'go' }, 'Open', icon('right')))))),
@@ -149,19 +150,19 @@
     shell('M' + n, [
       h('a', { class: 'back-link', href: '#/' }, icon('left'), 'All modules'),
       h('div', { class: 'mod-hero' + (tab === 'visualize' || tab === 'practice' ? ' compact' : '') },
-        h('div', {}, h('div', { class: 'eyebrow' }, h('span', { class: 'pill' }, 'Module ' + n), h('span', { class: 'pill plain' }, m.hours + ' lecture hours')),
+        h('div', {}, h('div', { class: 'eyebrow' }, h('span', { class: 'pill' }, 'Module ' + n)),
           h('h1', { class: 'display title-bar' }, m.title), h('p', { class: 'syll' }, m.syllabus)),
         h('div', { class: 'mod-switch', 'aria-label': 'Switch module' }, MODS.map((x) => h('a', { href: `#/m/${x.n}/${tab}`, class: x.n === m.n ? 'on' : '', title: x.title }, x.n)))),
-      h('div', { class: 'tabs', role: 'tablist' }, TABS.map(([k, label, ic]) => h('a', { class: 'tab' + (k === tab ? ' active' : ''), href: `#/m/${n}/${k}`, role: 'tab' }, icon(ic), label, counts[k] ? h('span', { class: 'tab-count' }, counts[k]) : null))),
+      h('div', { class: 'tabs', role: 'tablist' }, TABS.map(([k, label, ic]) => h('a', { class: 'tab' + (k === tab ? ' active' : '') + (k === 'notes' ? ' tab-notes' : ''), href: `#/m/${n}/${k}`, role: 'tab' }, icon(ic), label, counts[k] ? h('span', { class: 'tab-count' }, counts[k]) : null))),
       body,
     ], true);
     ({ slides: tabSlides, visualize: tabVisualize, algorithms: tabAlgorithms, practice: tabPractice, notes: tabNotes })[tab](body, m, sub);
   }
 
   /* ---------- slides ---------- */
-  function tabSlides(host, m) {
+  function tabSlides(host, m, sub) {
     const slides = DSA.slides[m.n] || [];
-    let i = 0, mounted = null, dir = 1;
+    let i = Math.min(Math.max(parseInt(sub, 10) || 0, 0), Math.max(0, slides.length - 1)), mounted = null, dir = 1;
     const frame = h('div', { class: 'deck-frame' });
     const dots = h('div', { class: 'deck-dots' }, slides.map((s, k) => h('button', { class: 'deck-dot', 'aria-label': 'Slide ' + (k + 1), onclick: () => to(k) })));
     const count = h('span', { class: 'deck-count' });
@@ -176,7 +177,7 @@
     function build(s) {
       if (s.kind === 'cover') {
         return h('div', { class: 'slide cover' + (dir < 0 ? ' back' : '') },
-          h('div', { class: 'slide-kicker' }, 'Module ' + m.n + ' · ' + m.hours + ' lectures'), h('h2', {}, m.title), h('p', { class: 'slide-lead' }, m.long + '.'),
+          h('div', { class: 'slide-kicker' }, 'Module ' + m.n), h('h2', {}, m.title), h('p', { class: 'slide-lead' }, m.long + '.'),
           h('div', { class: 'slide-cover-chips' }, m.topics.map((t, k) => h('span', { class: 'topic-chip', style: { animationDelay: 150 + k * 70 + 'ms' } }, t))));
       }
       const text = h('div', { class: 'slide-text' }, h('div', { class: 'slide-kicker' }, s.kicker || ''), h('h2', {}, s.title), s.lead ? h('p', { class: 'slide-lead', html: DSA.fmt(s.lead) }) : null, s.bullets ? bullets(s.bullets) : null,
@@ -208,25 +209,31 @@
     const key = (e) => { if (/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return; if (e.key === 'ArrowRight') to(i + 1); else if (e.key === 'ArrowLeft') to(i - 1); };
     document.addEventListener('keydown', key);
     onLeave(() => { document.removeEventListener('keydown', key); if (mounted) mounted.destroy(); if (document.fullscreenElement) document.exitFullscreen(); });
-    i = Math.min(store.get('slide.' + m.n, 0), slides.length - 1) || 0;
+    if (!/^\d+$/.test(sub || '')) i = Math.min(store.get('slide.' + m.n, 0), slides.length - 1) || 0;   // a number in the address wins over the remembered slide
     render();
   }
 
   /* ---------- visualize ---------- */
   function tabVisualize(host, m, sub) {
-    const items = m.viz; let cur = items.find((v) => v.id === sub) || items[0], mounted = null;
+    const items = m.viz, keyOf = (v) => v.key || v.id;
+    let cur = items.find((v) => keyOf(v) === sub) || items.find((v) => v.id === sub) || items[0], mounted = null;
     const panel = h('div', { class: 'viz-panel' });
     const list = h('div', { class: 'side-list' });
+    const btns = new Map();
     function pick(v) {
       cur = v; if (mounted) mounted.destroy(); mounted = null;
-      [...list.children].forEach((b, k) => b.classList.toggle('on', items[k].id === v.id));
+      btns.forEach((b, k) => b.classList.toggle('on', k === v));
       const def = DSA.viz.get(v.id);
       const holder = h('div');
       fill(panel, h('div', { class: 'viz-head' }, h('h2', {}, v.label), h('p', {}, v.blurb || (def && def.blurb) || '')), holder);
-      mounted = v.widget ? DSA.widgets[v.id](holder) : DSA.mountViz(holder, v.id, { mode: 'full' });
-      history.replaceState(null, '', `#/m/${m.n}/visualize/${v.id}`);
+      mounted = v.widget ? DSA.widgets[v.id](holder) : DSA.mountViz(holder, v.id, { mode: 'full', variant: v.variant, lock: !!v.variant, script: v.script, autodemo: !!v.script });
+      history.replaceState(null, '', `#/m/${m.n}/visualize/${keyOf(v)}`);
     }
-    items.forEach((v) => list.appendChild(h('button', { class: 'side-item', onclick: () => pick(v) }, v.label)));
+    let group = null;
+    items.forEach((v) => {
+      if (v.group && v.group !== group) { group = v.group; list.appendChild(h('div', { class: 'side-group' }, group)); }
+      const b = h('button', { class: 'side-item', onclick: () => pick(v) }, v.label); btns.set(v, b); list.appendChild(b);
+    });
     host.appendChild(h('div', { class: 'viz-layout' }, list, panel));
     onLeave(() => mounted && mounted.destroy());
     pick(cur);
@@ -297,11 +304,39 @@
       btn.disabled = false;
     };
   }
-  function tabNotes(host, m) {
-    const files = DSA.notes[m.n] || [], status = h('span', { class: 'zip-status' }), btn = h('button', { class: 'btn primary' }, icon('zip'), `Download all (${files.length} files)`);
+  function tabNotes(host, m, sub) {
+    const files = DSA.notes[m.n] || [], status = h('span', { class: 'zip-status' }), btn = h('button', { class: 'btn primary big' }, icon('zip'), `Download all notes (${files.length} files)`);
     btn.onclick = zipAll(files, `CS24201-Module-${m.n}-notes.zip`, status, btn);
-    host.append(h('div', { class: 'notes-top' }, h('div', {}, h('div', { class: 'card-title' }, 'Raw notes for module ' + m.n), h('p', { class: 'muted' }, 'Handwritten class notes, textbook pages, slides and C programs.')), h('div', { style: { display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' } }, status, btn)),
+    const study = (DSA.studyNotes || {})[m.n] || [];
+    host.append(
+      h('div', { class: 'notes-hero' },
+        h('div', {}, h('div', { class: 'card-title' }, 'Notes for module ' + m.n), h('p', { class: 'muted' }, (study.length ? `${study.length} study notes to read here, and ` : '') + `${files.length} original class files (handwritten notes, textbook pages, slides, C programs) to download.`)),
+        h('div', { class: 'notes-actions' }, status, btn)),
+      study.length ? studyNotes(m, study, sub) : null,
+      h('h2', { class: 'section-title' }, 'Class files'),
       groupedNotes(files));
+  }
+  /** Written study notes of a module: a topic list on the left, the selected note on the right. */
+  function studyNotes(m, study, sub) {
+    let cur = Math.max(0, study.findIndex((s) => s.id === sub));
+    const list = h('div', { class: 'side-list' }), panel = h('article', { class: 'note-panel card' });
+    const btns = study.map((s, i) => h('button', { class: 'side-item', onclick: () => show(i, true) }, s.title));
+    btns.forEach((b) => list.appendChild(b));
+    function show(i, scroll) {
+      cur = i; const s = study[i];
+      btns.forEach((b, k) => b.classList.toggle('on', k === i));
+      const rel = [];
+      if (s.viz) rel.push(h('a', { class: 'btn small', href: `#/m/${m.n}/visualize/${s.viz}` }, icon('eye'), 'Watch it animated'));
+      if (s.slide != null) rel.push(h('a', { class: 'btn small ghost', href: `#/m/${m.n}/slides/${s.slide}` }, icon('slides'), 'Slides'));
+      if (s.algos) rel.push(h('a', { class: 'btn small ghost', href: `#/m/${m.n}/algorithms` }, icon('code'), 'Code in C, C++, Java, Python'));
+      fill(panel, h('div', { class: 'eyebrow' }, h('span', { class: 'pill' }, `${i + 1} / ${study.length}`)), h('h2', { class: 'note-title' }, s.title), DSA.rich(s.body),
+        rel.length ? h('div', { class: 'actions' }, rel) : null,
+        h('div', { class: 'note-nav' }, i > 0 ? h('button', { class: 'btn small ghost', onclick: () => show(i - 1, true) }, icon('left'), study[i - 1].title) : h('span'), i < study.length - 1 ? h('button', { class: 'btn small', onclick: () => show(i + 1, true) }, study[i + 1].title, icon('right')) : h('span')));
+      history.replaceState(null, '', `#/m/${m.n}/notes/${s.id}`);
+      if (scroll) panel.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    }
+    show(cur, false);
+    return h('div', { class: 'viz-layout notes-layout' }, list, panel);
   }
   function groupedNotes(files) {
     const wrap = h('div');
@@ -313,7 +348,7 @@
   }
   function pageNotes() {
     const all = MODS.flatMap((m) => DSA.notes[m.n].map((f) => Object.assign({ mod: m.n }, f))).concat(DSA.notesExtra.map((f) => Object.assign({ mod: 0 }, f)));
-    const status = h('span', { class: 'zip-status' }), btn = h('button', { class: 'btn primary' }, icon('zip'), `Download everything (${all.length} files)`);
+    const status = h('span', { class: 'zip-status' }), btn = h('button', { class: 'btn primary big' }, icon('zip'), `Download everything (${all.length} files)`);
     btn.onclick = zipAll(all, 'CS24201-all-notes.zip', status, btn);
     shell('Notes', [
       h('div', { class: 'eyebrow' }, h('span', { class: 'pill' }, 'CS24201'), 'Notes'), h('h1', { class: 'display title-bar', style: { margin: '0.6rem 0 1rem' } }, 'All notes'),

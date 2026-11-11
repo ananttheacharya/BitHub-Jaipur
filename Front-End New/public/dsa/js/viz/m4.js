@@ -240,17 +240,18 @@
 
   /* ---------------- hashing ---------------- */
   const HS = 7;
+  const PROBE = { linear: 'i + 1, i + 2, i + 3, …', quadratic: 'i + 1², i + 2², i + 3², …', double: 'i + 1·h₂, i + 2·h₂, … with h₂(k) = 5 − k mod 5' };
   DSA.viz.define('hash', {
     title: 'Hashing',
     blurb: 'A hash function turns a key into a table index, so search is O(1) on average. Collisions (two keys, one slot) are resolved by chaining or by probing.',
-    variants: [{ id: 'chain', label: 'Chaining' }, { id: 'linear', label: 'Linear probing' }],
+    variants: [{ id: 'chain', label: 'Chaining' }, { id: 'linear', label: 'Linear probing' }, { id: 'quadratic', label: 'Quadratic probing' }, { id: 'double', label: 'Double hashing' }],
     args: { key: { label: 'Key', type: 'int', def: () => rand(10, 99), fresh: true, min: 0, max: 999 } },
     ops: [{ id: 'insert', label: 'Insert', uses: ['key'], primary: true }, { id: 'search', label: 'Search', uses: ['key'] }, { id: 'delete', label: 'Delete', uses: ['key'] }],
-    create: (variant) => { const st = { variant, t: Array.from({ length: HS }, () => []), uid: 0 }; if (variant === 'linear') st.t = new Array(HS).fill(null); return st; },
+    create: (variant) => { const st = { variant, t: Array.from({ length: HS }, () => []), uid: 0 }; if (variant !== 'chain') st.t = new Array(HS).fill(null); return st; },
     draw(st, m) {
       const nodes = [], edges = [];
       for (let i = 0; i < HS; i++) {
-        nodes.push({ id: 's' + i, shape: 'rect', x: 0, y: i * 52, w: 64, h: 44, text: st.variant === 'linear' ? (st.t[i] ? (st.t[i].dead ? 'deleted' : st.t[i].v) : '') : '', sub: undefined, cls: (st.variant === 'linear' && st.t[i] && !st.t[i].dead ? '' : 'n-empty ') + ((m.hl && m.hl[i]) || '') });
+        nodes.push({ id: 's' + i, shape: 'rect', x: 0, y: i * 52, w: 64, h: 44, text: st.variant !== 'chain' ? (st.t[i] ? (st.t[i].dead ? 'deleted' : st.t[i].v) : '') : '', sub: undefined, cls: (st.variant !== 'chain' && st.t[i] && !st.t[i].dead ? '' : 'n-empty ') + ((m.hl && m.hl[i]) || '') });
         nodes.push(D.text('ix' + i, i, -50, i * 52, 't-idx'));
         if (st.variant === 'chain') {
           let prev = 's' + i;
@@ -262,7 +263,7 @@
     },
     run(st, op, a, snap) {
       const chain = st.variant === 'chain', def = DSA.viz.get('hash');
-      def.code = { insert: chain ? ['i = h(key) = key mod M', 'append key to the list at table[i]'] : ['i = h(key) = key mod M', 'while table[i] is occupied: i = (i + 1) mod M', 'table[i] = key'], search: chain ? ['i = h(key)', 'walk the list at table[i] looking for key'] : ['i = h(key)', 'probe i, i+1, i+2, … until key found or an empty slot is reached'], delete: chain ? ['i = h(key)', 'find key in the list at table[i] and unlink it'] : ['find the slot as in search', 'mark it DELETED (a tombstone), not empty, so later probes continue past it'] };
+      def.code = { insert: chain ? ['i = h(key) = key mod M', 'append key to the list at table[i]'] : ['i = h(key) = key mod M', 'while table[i] is occupied: i = next probe position (' + PROBE[st.variant] + ')', 'table[i] = key'], search: chain ? ['i = h(key)', 'walk the list at table[i] looking for key'] : ['i = h(key)', 'probe ' + PROBE[st.variant] + ' until key found or an empty slot is reached'], delete: chain ? ['i = h(key)', 'find key in the list at table[i] and unlink it'] : ['find the slot as in search', 'mark it DELETED (a tombstone), not empty, so later probes continue past it'] };
       const i0 = a.key % HS;
       snap(`h(${a.key}) = ${a.key} mod ${HS} = **${i0}**.`, { line: 0, hl: { [i0]: 'n-hl' } });
       if (chain) {
@@ -277,15 +278,21 @@
         return snap(`${a.key} is not in the table (the chain was exhausted).`, { tone: 'bad' });
       }
       let i = i0, probes = 0;
+      const step = a.key % 5, h2 = 5 - step;                              // second hash for double hashing (5 is coprime to 7, so every slot is reachable)
+      const seq = (k) => (st.variant === 'quadratic' ? (i0 + k * k) % HS : st.variant === 'double' ? (i0 + k * h2) % HS : (i0 + k) % HS);
+      const how = (k) => (st.variant === 'quadratic' ? `(${i0} + ${k}²) mod ${HS}` : st.variant === 'double' ? `(${i0} + ${k}·${h2}) mod ${HS}` : `(${i0} + ${k}) mod ${HS}`);
+      if (st.variant === 'double') snap(`Double hashing: when there is a collision, step by h₂(${a.key}) = 5 − (${a.key} mod 5) = **${h2}** instead of 1.`, { line: 0, hl: { [i0]: 'n-hl' } });
       if (op === 'insert') {
         if (st.t.some((x) => x && !x.dead && x.v === a.key)) return snap(`${a.key} is already in the table.`, { tone: 'bad' });
-        for (; probes < HS; probes++, i = (i + 1) % HS) {
+        for (; probes < HS; probes++) {
+          i = seq(probes);
           if (!st.t[i] || st.t[i].dead) { st.t[i] = { v: a.key }; return snap(`Slot ${i} is free: store ${a.key} there${probes ? ` (after ${probes} collision${probes > 1 ? 's' : ''})` : ''}.`, { line: 2, hl: { [i]: 'n-ok' }, tone: 'good' }); }
-          snap(`Slot ${i} holds ${st.t[i].v}: **collision**. Probe the next slot, (${i} + 1) mod ${HS} = ${(i + 1) % HS}.`, { line: 1, hl: { [i]: 'n-cmp' } }, { hold: 0.8 });
+          snap(`Slot ${i} holds ${st.t[i].v}: **collision**. Next probe: ${how(probes + 1)} = ${seq(probes + 1)}.`, { line: 1, hl: { [i]: 'n-cmp' } }, { hold: 0.8 });
         }
-        return snap('**Table full.** Every slot is occupied; a real table would be resized (rehashed).', { tone: 'bad' });
+        return snap(st.variant === 'quadratic' ? '**No free slot found.** Quadratic probing only reaches some of the slots, so it can fail while the table still has room (rehash with a bigger prime M).' : '**Table full.** Every slot is occupied; a real table would be resized (rehashed).', { tone: 'bad' });
       }
-      for (; probes < HS; probes++, i = (i + 1) % HS) {
+      for (; probes < HS; probes++) {
+        i = seq(probes);
         if (!st.t[i]) return snap(`Slot ${i} is empty: the key cannot be further along. ${a.key} is **not in the table**.`, { line: 1, hl: { [i]: 'n-bad' }, tone: 'bad' });
         const hit = !st.t[i].dead && st.t[i].v === a.key;
         snap(hit ? `Slot ${i} holds ${a.key}: **found**.` : `Slot ${i} ${st.t[i].dead ? 'is a tombstone' : 'holds ' + st.t[i].v}: keep probing.`, { line: 1, hl: { [i]: hit ? 'n-ok' : 'n-cmp' }, tone: hit ? 'good' : '' }, { hold: 0.7 });

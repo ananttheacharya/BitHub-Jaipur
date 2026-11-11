@@ -4,7 +4,7 @@
 const fs = require('fs'), path = require('path'), os = require('os'), { spawnSync } = require('child_process');
 const dataDir = path.join(__dirname, '..', 'Front-End New', 'public', 'dsa', 'js', 'data');
 global.window = global; global.DSA = {};
-eval(fs.readFileSync(path.join(dataDir, 'questions.js'), 'utf8'));
+for (const f of ['questions.js', 'questions2.js']) eval(fs.readFileSync(path.join(dataDir, f), 'utf8'));
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'dsapyq-'));
 let fails = 0, progs = 0; const ids = new Set();
 for (const q of DSA.pyqs) {

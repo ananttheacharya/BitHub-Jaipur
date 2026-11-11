@@ -143,7 +143,7 @@
     const inputs = {};
     function buildControls() {
       fill(controls);
-      if (def.variants) {
+      if (def.variants && !opts.lock) {
         controls.appendChild(h('div', { class: 'seg' }, def.variants.map((v) => h('button', { class: 'seg-btn' + (v.id === variant ? ' active' : ''), onclick: () => { variant = v.id; reset(); buildControls(); } }, v.label))));
       }
       const ops = (def.ops || []).filter((o) => !o.only || o.only.includes(variant));
@@ -214,7 +214,7 @@
       player.load(frames, { autoplay: opts.autoplay !== false, instant: true });
     }
 
-    if (full) { reset(); buildControls(); if (opts.intro !== false && def.demo && opts.autodemo) playScript(); }
+    if (full) { reset(); buildControls(); if (opts.autodemo && (opts.script || def.demo)) playScript(); }
     else playScript();
 
     return { destroy() { player.destroy(); root.remove(); }, replay: playScript, player };

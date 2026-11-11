@@ -68,7 +68,7 @@ async function runJava(code, input) {
 }
 
 (async () => {
-  const sources = fs.readdirSync(srcDir).filter((f) => /^m\d\.js$/.test(f)).sort().flatMap((f) => require(path.join(srcDir, f)));
+  const sources = fs.readdirSync(srcDir).filter((f) => /^m\d\w*\.js$/.test(f)).sort().flatMap((f) => require(path.join(srcDir, f)));
   const ids = new Set(), out = [];
   for (const p of sources) {
     if (only.length && !only.includes(p.id)) continue;

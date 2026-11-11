@@ -84,7 +84,8 @@ for (const v of ['max', 'min']) for (let t = 0; t < 30; t++) {
 }
 // hash
 const hh = DSA.viz.get('hash');
-for (const v of ['chain', 'linear']) { const st = hh.create(v); for (const k of [15, 22, 8, 36, 29]) frames(hh, v, 'insert', { key: k }, st); const r = frames(hh, v, 'search', { key: 36 }, st); ok(/found/i.test(r.out[r.out.length - 1].note) && !/not/.test(r.out[r.out.length - 1].note), `hash ${v} search`); frames(hh, v, 'delete', { key: 22 }, st); const r2 = frames(hh, v, 'search', { key: 22 }, st); ok(/not/i.test(r2.out[r2.out.length - 1].note), `hash ${v} delete`); const r3 = frames(hh, v, 'search', { key: 29 }, st); ok(!/not/i.test(r3.out[r3.out.length - 1].note), `hash ${v} probe past tombstone`); }
+for (const v of ['chain', 'linear', 'quadratic', 'double']) { const st = hh.create(v); for (const k of [15, 22, 8, 36, 29]) frames(hh, v, 'insert', { key: k }, st); const last = v === 'quadratic' ? 36 : 29; const r = frames(hh, v, 'search', { key: 36 }, st); ok(/found/i.test(r.out[r.out.length - 1].note) && !/not/.test(r.out[r.out.length - 1].note), `hash ${v} search`); frames(hh, v, 'delete', { key: 22 }, st); const r2 = frames(hh, v, 'search', { key: 22 }, st); ok(/not/i.test(r2.out[r2.out.length - 1].note), `hash ${v} delete`); const r3 = frames(hh, v, 'search', { key: last }, st); ok(!/not/i.test(r3.out[r3.out.length - 1].note), `hash ${v} probe past tombstone`); }
+{ const st = hh.create('quadratic'); for (const k of [15, 22, 8, 36, 29]) frames(hh, 'quadratic', 'insert', { key: k }, st); const r = frames(hh, 'quadratic', 'search', { key: 29 }, st); ok(/not in the table/.test(r.out[r.out.length - 1].note), 'quadratic: unreachable key is reported missing'); }
 // linked list ops keep the list consistent
 const ld = DSA.viz.get('list');
 for (const v of ['singly', 'doubly', 'circular']) { const st = ld.create(v); frames(ld, v, 'insF', { value: 5 }, st); frames(ld, v, 'insE', { value: 99 }, st); frames(ld, v, 'insAt', { value: 77, pos: 3 }, st); ok(JSON.stringify(st.a.map((x) => x.v)) === '[5,10,15,77,23,40,99]', `list ${v} inserts ${st.a.map((x) => x.v)}`); frames(ld, v, 'delV', { value: 15 }, st); frames(ld, v, 'delF', {}, st); frames(ld, v, 'delE', {}, st); ok(JSON.stringify(st.a.map((x) => x.v)) === '[10,77,23,40]', `list ${v} deletes ${st.a.map((x) => x.v)}`); }
@@ -95,4 +96,32 @@ const pd = DSA.viz.get('poly'); { const { st } = frames(pd, null, 'add', { p: '5
 const dd = DSA.viz.get('dsu'); for (const v of ['plain', 'compress']) { const st = dd.create(v); for (const [x, y] of [[1, 2], [3, 4], [2, 4], [5, 6], [6, 1]]) frames(dd, v, 'union', { x, y }, st); const f = (x) => { while (st.p[x] !== x) x = st.p[x]; return x; }; ok(f(1) === f(4) && f(5) === f(3) && f(7) !== f(1), 'dsu ' + v); }
 // graph totals
 const gd = DSA.viz.get('graph'); const kt = frames(gd, 'kruskal', 'go', { start: 'A' }).out.pop().note, pt = frames(gd, 'prim', 'go', { start: 'A' }).out.pop().note; ok(/\*\*(\d+)\*\*/.exec(kt)[1] === /\*\*(\d+)\*\*/.exec(pt)[1], 'kruskal vs prim: ' + kt + ' / ' + pt);
+// dijkstra: every start vertex agrees with an independent Bellman-Ford
+{
+  const E = [['A', 'B', 4], ['A', 'C', 2], ['B', 'D', 7], ['C', 'E', 3], ['B', 'C', 1], ['D', 'F', 5], ['E', 'F', 6], ['D', 'E', 8], ['F', 'G', 9]], N = 'ABCDEFG'.split('');
+  for (const s of N) {
+    const { st } = frames(gd, 'dijkstra', 'go', { start: s }); const d = {}; N.forEach((x) => { d[x] = Infinity; }); d[s] = 0;
+    for (let i = 0; i < N.length; i++) for (const [a, b, w] of E) { if (d[a] + w < d[b]) d[b] = d[a] + w; if (d[b] + w < d[a]) d[a] = d[b] + w; }
+    ok(N.every((x) => st.dijkstra[x] === d[x]), 'dijkstra from ' + s + ': ' + JSON.stringify(st.dijkstra) + ' vs ' + JSON.stringify(d));
+  }
+}
+// topological sort: every edge goes forward in the output, for both variants
+{
+  const td = DSA.viz.get('toposort'), TE = [['A', 'C'], ['A', 'D'], ['B', 'D'], ['C', 'E'], ['D', 'E'], ['D', 'F'], ['E', 'G'], ['F', 'G']];
+  for (const v of ['kahn', 'dfs']) { const { st } = frames(td, v, 'go', {}); const pos = {}; st.order.forEach((x, i) => { pos[x] = i; }); ok(st.order.length === 7 && TE.every(([a, b]) => pos[a] < pos[b]), 'toposort ' + v + ': ' + st.order.join('')); }
+}
+// every viz slide and every Visualize-tab entry: the variant exists, the script runs, and every frame is valid
+global.DSA = window.DSA;
+for (const f of ['data/slides', 'data/slides2', 'data/slides3', 'data/modules']) require(path.join(root, 'js', f + '.js'));
+{
+  const check = (where, id, variant, script) => {
+    const def = DSA.viz.get(id); ok(!!def, where + ': unknown visualizer ' + id); if (!def) return;
+    if (variant) ok(def.variants && def.variants.some((v) => v.id === variant), where + ': unknown variant ' + variant);
+    const st = def.create(variant || (def.variants ? def.variants[0].id : null));
+    try { for (const [op, args] of script || def.demo || []) { ok(def.ops.some((o) => o.id === op), where + ': unknown op ' + op); const r = frames(def, null, op, args || {}, st); ok(r.out.length > 0, where + ': no frames'); r.out.forEach((fr, i) => validFrame(fr, where + '#' + i)); } }
+    catch (e) { fails++; console.log('THROW', where, e.stack.split('\n').slice(0, 3).join(' | ')); }
+  };
+  for (const n of Object.keys(DSA.slides)) DSA.slides[n].forEach((s, i) => { if (s.kind === 'viz') check(`slide ${n}.${i} ${s.title}`, s.viz.id, s.viz.variant, s.viz.script); });
+  for (const m of DSA.modules) { const keys = new Set(); for (const v of m.viz) { ok(!keys.has(v.key || v.id), 'module ' + m.n + ': duplicate viz key ' + (v.key || v.id)); keys.add(v.key || v.id); if (!v.widget) check(`module ${m.n} viz ${v.key || v.id}`, v.id, v.variant, v.script); } }
+}
 console.log(`${checks} checks, ${fails} failures`); process.exit(fails ? 1 : 0);

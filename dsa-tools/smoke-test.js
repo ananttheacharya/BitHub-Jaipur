@@ -34,6 +34,11 @@ const base = process.argv[2] || 'http://127.0.0.1:4173/dsa/';
       if (!ok || errs.length) { fails++; console.log('FAIL module', n, 'slide', k + 1, errs.slice(0, 3).join(' | ')); }
     }
     await visit(`m/${n}/visualize`, `(${has('.viz-stage svg, .growth svg', 1)})`, `module ${n} visualize`);
+    // every Visualize-tab entry and every study note opens, and the visualizer plays its first steps without errors
+    const keys = await p.evaluate((n) => DSA.modules[n - 1].viz.map((v) => v.key || v.id), n);
+    for (const key of keys) await visit(`m/${n}/visualize/${key}`, `(${has('.viz-stage svg, .growth svg', 1)})`, `module ${n} visualize ${key}`);
+    const noteIds = await p.evaluate((n) => (DSA.studyNotes[n] || []).map((s) => s.id), n);
+    for (const id of noteIds) await visit(`m/${n}/notes/${id}`, `(${has('.note-panel .prose', 1)})`, `module ${n} note ${id}`);
     await visit(`m/${n}/algorithms`, `(${has('.acc-item', 1)})`, `module ${n} algorithms`);
     await visit(`m/${n}/practice/pyq`, `(${has('.q', 1)})`, `module ${n} pyq`);
     await visit(`m/${n}/practice/problems`, `(${has('.prob', 1)})`, `module ${n} problems`);

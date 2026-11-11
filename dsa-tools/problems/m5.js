@@ -605,3 +605,4 @@ print(count)
     },
   },
 ];
+module.exports.pre = { TREE_FORMAT, C_TREE, CPP_TREE, JAVA_TREE, PY_TREE };

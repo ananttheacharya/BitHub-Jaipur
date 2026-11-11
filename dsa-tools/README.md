@@ -15,8 +15,12 @@ public/dsa/
   js/viz/m1..m5.js      the visualizers, one file per module
   js/data/modules.js    module metadata and syllabus text
   js/data/slides.js     the animated deck of every module
-  js/data/lib1..5.js    algorithms: pseudocode + C, C++, Java, Python 3
+  js/data/slides2.js    extra slides inserted into the decks: intuition, one slide per algorithm
+  js/data/slides3.js    theory slides from the class notes: classification, proofs, representations
+  js/data/studynotes1..4.js  written study notes per module (read on the Notes tab)
+  js/data/lib1..6.js    algorithms: pseudocode + C, C++, Java, Python 3
   js/data/questions.js  past papers (MO23, MO25) with answers + extra practice
+  js/data/questions2.js more practice questions in the style of the course textbooks
   js/data/quiz.js       quick-check multiple choice
   js/data/problems.js   GENERATED coding problems (see below)
   js/data/notes.js      every note file, grouped by module
@@ -25,6 +29,8 @@ public/dsa/
 ```
 
 ## Adding or changing things
+
+**Visualize-tab entries** (`modules.js`) are `{ key, id, variant, group, label, blurb, script }`: one entry per algorithm, with the variant locked and the script played on arrival.
 
 **A visualizer** is a definition passed to `DSA.viz.define` (see `viz/core.js`): `create`, `draw`, `run`, and
 `snap(note, marks)` calls inside `run` record one animation frame each. The code that runs is the real
@@ -42,6 +48,7 @@ becomes the default return line of the starter. Then run `node dsa-tools/build-p
 | `node dsa-tools/test-pyq.js` | every C program in the past-paper answers compiles and prints its `expect` |
 | `JAVA=99 node dsa-tools/build-problems.js` | builds `problems.js`; every test's expected output comes from the Python reference, and C, C++ (with sanitizers) and Java (on Judge0 CE) must agree, and the hand-written example outputs must match |
 | `node dsa-tools/smoke-test.js` | opens every page in headless Chromium and fails on console errors or empty pages |
+| `node dsa-tools/test-content.js` | links between slides, notes, questions, algorithms and visualizers; every file in notes.js exists; markup is converted |
 | `node dsa-tools/test-viz.js` | 60k+ checks that each visualizer's algorithm is correct: sorts sort, BST/AVL keep their invariants, heaps extract in order, and so on |
 
 ## Hosting notes

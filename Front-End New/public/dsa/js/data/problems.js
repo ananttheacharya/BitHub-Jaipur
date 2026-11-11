@@ -160,6 +160,250 @@ DSA.problems = [
   "space": "O(1)"
  },
  {
+  "id": "best-time-to-buy-sell-stock",
+  "title": "Best Time to Buy and Sell Stock",
+  "module": 1,
+  "difficulty": "Easy",
+  "tags": [
+   "Array",
+   "One pass"
+  ],
+  "source": "LeetCode 121",
+  "link": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/",
+  "blurb": "One buy and one later sell: the largest profit in a single pass.",
+  "statement": "You are given the price of a stock on each of n days. Choose **one day to buy** and a **later day to sell**. Print the maximum profit, or `0` if no profit is possible.",
+  "format": "**Input:** n, then n prices.\n\n**Output:** the maximum profit.",
+  "constraints": "- 1 ≤ n ≤ 1000\n- 0 ≤ price ≤ 10000",
+  "examples": [
+   {
+    "in": "6\n7 1 5 3 6 4\n",
+    "out": "5\n",
+    "why": "Buy at 1, sell at 6."
+   },
+   {
+    "in": "5\n7 6 4 3 1\n",
+    "out": "0\n",
+    "why": "Prices only fall."
+   }
+  ],
+  "tests": [
+   {
+    "in": "6\n7 1 5 3 6 4\n",
+    "out": "5\n"
+   },
+   {
+    "in": "5\n7 6 4 3 1\n",
+    "out": "0\n"
+   },
+   {
+    "in": "1\n5\n",
+    "out": "0\n"
+   },
+   {
+    "in": "2\n1 2\n",
+    "out": "1\n"
+   },
+   {
+    "in": "4\n2 4 1 7\n",
+    "out": "6\n"
+   },
+   {
+    "in": "7\n3 3 5 0 0 3 1\n",
+    "out": "3\n"
+   },
+   {
+    "in": "5\n1 2 3 4 5\n",
+    "out": "4\n"
+   }
+  ],
+  "starter": {
+   "c": "#include <stdio.h>\n\nint main(void) {\n    int n, a[1000];\n    scanf(\"%d\", &n);\n    for (int i = 0; i < n; i++) scanf(\"%d\", &a[i]);\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "cpp": "#include <algorithm>\n#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    vector<int> a(n);\n    for (int &x : a) cin >> x;\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt();\n        int[] a = new int[n];\n        for (int i = 0; i < n; i++) a[i] = in.nextInt();\n        // TODO: write your solution here\n    }\n}\n",
+   "py": "import sys\n\ndata = sys.stdin.read().split()\nn = int(data[0])\na = [int(x) for x in data[1:1 + n]]\n# TODO: write your solution here\n"
+  },
+  "solution": {
+   "c": "#include <stdio.h>\n\nint main(void) {\n    int n, a[1000];\n    scanf(\"%d\", &n);\n    for (int i = 0; i < n; i++) scanf(\"%d\", &a[i]);\n    int lowest = a[0], best = 0;\n    for (int i = 1; i < n; i++) {\n        if (a[i] < lowest) lowest = a[i];\n        if (a[i] - lowest > best) best = a[i] - lowest;\n    }\n    printf(\"%d\\n\", best);\n    return 0;\n}\n",
+   "cpp": "#include <algorithm>\n#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    vector<int> a(n);\n    for (int &x : a) cin >> x;\n    int lowest = a[0], best = 0;\n    for (int i = 1; i < n; i++) {\n        lowest = min(lowest, a[i]);\n        best = max(best, a[i] - lowest);\n    }\n    cout << best << \"\\n\";\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt();\n        int[] a = new int[n];\n        for (int i = 0; i < n; i++) a[i] = in.nextInt();\n        int lowest = a[0], best = 0;\n        for (int i = 1; i < n; i++) {\n            lowest = Math.min(lowest, a[i]);\n            best = Math.max(best, a[i] - lowest);\n        }\n        System.out.println(best);\n    }\n}\n",
+   "py": "import sys\n\ndata = sys.stdin.read().split()\nn = int(data[0])\na = [int(x) for x in data[1:1 + n]]\nlowest, best = a[0], 0\nfor p in a[1:]:\n    lowest = min(lowest, p)\n    best = max(best, p - lowest)\nprint(best)\n"
+  },
+  "explain": "Checking every (buy, sell) pair is O(n²). Instead scan once, remembering the **lowest price seen so far**. Selling today would earn `price − lowest`, so keep the best such value. Each day is looked at once.",
+  "pseudo": [
+   "lowest = infinity; best = 0",
+   "for each price p:",
+   "  lowest = min(lowest, p)",
+   "  best = max(best, p - lowest)",
+   "print best"
+  ],
+  "time": "O(n)",
+  "space": "O(1)"
+ },
+ {
+  "id": "move-zeroes",
+  "title": "Move Zeroes",
+  "module": 1,
+  "difficulty": "Easy",
+  "tags": [
+   "Array",
+   "Two pointers"
+  ],
+  "source": "LeetCode 283",
+  "link": "https://leetcode.com/problems/move-zeroes/",
+  "blurb": "Push all zeros to the end in place, keeping the order of the other elements.",
+  "statement": "Move all `0`s of an array to its end while keeping the **relative order of the non-zero elements**. Do it **in place** with one pass, and print the resulting array.",
+  "format": "**Input:** n, then n integers.\n\n**Output:** the rearranged array, separated by spaces.",
+  "constraints": "- 1 ≤ n ≤ 1000",
+  "examples": [
+   {
+    "in": "5\n0 1 0 3 12\n",
+    "out": "1 3 12 0 0\n",
+    "why": "The non-zero values keep their order: 1, 3, 12."
+   },
+   {
+    "in": "1\n0\n",
+    "out": "0\n",
+    "why": "Nothing to move."
+   }
+  ],
+  "tests": [
+   {
+    "in": "5\n0 1 0 3 12\n",
+    "out": "1 3 12 0 0\n"
+   },
+   {
+    "in": "1\n0\n",
+    "out": "0\n"
+   },
+   {
+    "in": "4\n1 2 3 4\n",
+    "out": "1 2 3 4\n"
+   },
+   {
+    "in": "4\n0 0 0 5\n",
+    "out": "5 0 0 0\n"
+   },
+   {
+    "in": "6\n4 0 5 0 0 6\n",
+    "out": "4 5 6 0 0 0\n"
+   },
+   {
+    "in": "3\n0 0 0\n",
+    "out": "0 0 0\n"
+   },
+   {
+    "in": "7\n-1 0 -2 0 3 0 4\n",
+    "out": "-1 -2 3 4 0 0 0\n"
+   }
+  ],
+  "starter": {
+   "c": "#include <stdio.h>\n\nint main(void) {\n    int n, a[1000];\n    scanf(\"%d\", &n);\n    for (int i = 0; i < n; i++) scanf(\"%d\", &a[i]);\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    vector<int> a(n);\n    for (int &x : a) cin >> x;\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt();\n        int[] a = new int[n];\n        for (int i = 0; i < n; i++) a[i] = in.nextInt();\n        // TODO: write your solution here\n    }\n}\n",
+   "py": "import sys\n\ndata = sys.stdin.read().split()\nn = int(data[0])\na = [int(x) for x in data[1:1 + n]]\n# TODO: write your solution here\n"
+  },
+  "solution": {
+   "c": "#include <stdio.h>\n\nint main(void) {\n    int n, a[1000];\n    scanf(\"%d\", &n);\n    for (int i = 0; i < n; i++) scanf(\"%d\", &a[i]);\n    int w = 0;\n    for (int i = 0; i < n; i++)\n        if (a[i] != 0) { int t = a[i]; a[i] = a[w]; a[w] = t; w++; }\n    for (int i = 0; i < n; i++) printf(i ? \" %d\" : \"%d\", a[i]);\n    printf(\"\\n\");\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    vector<int> a(n);\n    for (int &x : a) cin >> x;\n    int w = 0;\n    for (int i = 0; i < n; i++)\n        if (a[i] != 0) swap(a[i], a[w++]);\n    for (int i = 0; i < n; i++) cout << (i ? \" \" : \"\") << a[i];\n    cout << \"\\n\";\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt();\n        int[] a = new int[n];\n        for (int i = 0; i < n; i++) a[i] = in.nextInt();\n        int w = 0;\n        for (int i = 0; i < n; i++)\n            if (a[i] != 0) { int t = a[i]; a[i] = a[w]; a[w] = t; w++; }\n        StringBuilder sb = new StringBuilder();\n        for (int i = 0; i < n; i++) sb.append(i > 0 ? \" \" : \"\").append(a[i]);\n        System.out.println(sb);\n    }\n}\n",
+   "py": "import sys\n\ndata = sys.stdin.read().split()\nn = int(data[0])\na = [int(x) for x in data[1:1 + n]]\nw = 0\nfor i in range(n):\n    if a[i] != 0:\n        a[i], a[w] = a[w], a[i]\n        w += 1\nprint(*a)\n"
+  },
+  "explain": "Keep a **write index** `w` for the next position of a non-zero value. Scan once; whenever `a[i]` is non-zero, swap it into `a[w]` and advance `w`. All the zeros are left behind, after the write index, and the non-zero values never change their relative order. This is the partition step of quick sort with the test \"is non-zero\".",
+  "pseudo": [
+   "w = 0",
+   "for i = 0 to n - 1:",
+   "  if a[i] != 0:",
+   "    swap a[i], a[w]",
+   "    w = w + 1",
+   "print a"
+  ],
+  "time": "O(n)",
+  "space": "O(1)"
+ },
+ {
+  "id": "climbing-stairs",
+  "title": "Climbing Stairs",
+  "module": 1,
+  "difficulty": "Easy",
+  "tags": [
+   "Recursion",
+   "Dynamic programming"
+  ],
+  "source": "LeetCode 70",
+  "link": "https://leetcode.com/problems/climbing-stairs/",
+  "blurb": "Count the ways to climb n steps taking 1 or 2 at a time: a recurrence in disguise.",
+  "statement": "You climb a staircase of `n` steps, taking **1 or 2 steps** at a time. Print the number of distinct ways to reach the top.",
+  "format": "**Input:** n.\n\n**Output:** the number of ways.",
+  "constraints": "- 1 ≤ n ≤ 40",
+  "examples": [
+   {
+    "in": "2\n",
+    "out": "2\n",
+    "why": "1+1 or 2."
+   },
+   {
+    "in": "4\n",
+    "out": "5\n",
+    "why": "1+1+1+1, 1+1+2, 1+2+1, 2+1+1, 2+2."
+   }
+  ],
+  "tests": [
+   {
+    "in": "2\n",
+    "out": "2\n"
+   },
+   {
+    "in": "4\n",
+    "out": "5\n"
+   },
+   {
+    "in": "1\n",
+    "out": "1\n"
+   },
+   {
+    "in": "3\n",
+    "out": "3\n"
+   },
+   {
+    "in": "5\n",
+    "out": "8\n"
+   },
+   {
+    "in": "10\n",
+    "out": "89\n"
+   },
+   {
+    "in": "20\n",
+    "out": "10946\n"
+   },
+   {
+    "in": "40\n",
+    "out": "165580141\n"
+   }
+  ],
+  "starter": {
+   "c": "#include <stdio.h>\n\nint main(void) {\n    int n;\n    scanf(\"%d\", &n);\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt();\n        // TODO: write your solution here\n    }\n}\n",
+   "py": "n = int(input())\n# TODO: write your solution here\n"
+  },
+  "solution": {
+   "c": "#include <stdio.h>\n\nint main(void) {\n    int n;\n    scanf(\"%d\", &n);\n    long long a = 1, b = 1;\n    for (int i = 2; i <= n; i++) { long long c = a + b; a = b; b = c; }\n    printf(\"%lld\\n\", b);\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    long long a = 1, b = 1;\n    for (int i = 2; i <= n; i++) { long long c = a + b; a = b; b = c; }\n    cout << b << \"\\n\";\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt();\n        long a = 1, b = 1;\n        for (int i = 2; i <= n; i++) { long c = a + b; a = b; b = c; }\n        System.out.println(b);\n    }\n}\n",
+   "py": "n = int(input())\na, b = 1, 1\nfor _ in range(2, n + 1):\n    a, b = b, a + b\nprint(b)\n"
+  },
+  "explain": "The last move was either a 1-step from stair n − 1 or a 2-step from stair n − 2, so **ways(n) = ways(n − 1) + ways(n − 2)**: the Fibonacci recurrence. The plain recursion recomputes the same values and takes O(2ⁿ); remembering only the last two values gives O(n) time and O(1) space.",
+  "pseudo": [
+   "a = 1 (ways to reach step 0), b = 1 (step 1)",
+   "for i = 2 to n:",
+   "  c = a + b; a = b; b = c",
+   "print b"
+  ],
+  "time": "O(n)",
+  "space": "O(1)"
+ },
+ {
   "id": "rotate-array",
   "title": "Rotate Array",
   "module": 1,
@@ -398,6 +642,86 @@ DSA.problems = [
   ],
   "time": "O(log b)",
   "space": "O(log b) recursion"
+ },
+ {
+  "id": "product-except-self",
+  "title": "Product of Array Except Self",
+  "module": 1,
+  "difficulty": "Medium",
+  "tags": [
+   "Array",
+   "Prefix product"
+  ],
+  "source": "LeetCode 238",
+  "link": "https://leetcode.com/problems/product-of-array-except-self/",
+  "blurb": "For every position, the product of all the other elements, without dividing.",
+  "statement": "Given an array `a` of n integers, print an array `out` where `out[i]` is the **product of all elements except a[i]**. Do it **without using division**, in O(n) time. All products fit in a 32-bit integer.",
+  "format": "**Input:** n, then n integers.\n\n**Output:** the n products, separated by spaces.",
+  "constraints": "- 2 ≤ n ≤ 15\n- −3 ≤ a[i] ≤ 3",
+  "examples": [
+   {
+    "in": "4\n1 2 3 4\n",
+    "out": "24 12 8 6\n",
+    "why": "For index 0: 2 × 3 × 4 = 24."
+   },
+   {
+    "in": "5\n-1 1 0 -3 3\n",
+    "out": "0 0 9 0 0\n",
+    "why": "With a zero present, every product except the zero's own is 0."
+   }
+  ],
+  "tests": [
+   {
+    "in": "4\n1 2 3 4\n",
+    "out": "24 12 8 6\n"
+   },
+   {
+    "in": "5\n-1 1 0 -3 3\n",
+    "out": "0 0 9 0 0\n"
+   },
+   {
+    "in": "2\n5 7\n",
+    "out": "7 5\n"
+   },
+   {
+    "in": "3\n0 0 2\n",
+    "out": "0 0 0\n"
+   },
+   {
+    "in": "4\n-2 -2 -2 -2\n",
+    "out": "-8 -8 -8 -8\n"
+   },
+   {
+    "in": "6\n1 1 1 1 1 1\n",
+    "out": "1 1 1 1 1 1\n"
+   },
+   {
+    "in": "5\n3 -3 2 1 -2\n",
+    "out": "12 -12 18 36 -18\n"
+   }
+  ],
+  "starter": {
+   "c": "#include <stdio.h>\n\nint main(void) {\n    int n, a[100];\n    scanf(\"%d\", &n);\n    for (int i = 0; i < n; i++) scanf(\"%d\", &a[i]);\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    vector<int> a(n);\n    for (int &x : a) cin >> x;\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt();\n        int[] a = new int[n];\n        for (int i = 0; i < n; i++) a[i] = in.nextInt();\n        // TODO: write your solution here\n    }\n}\n",
+   "py": "import sys\n\ndata = sys.stdin.read().split()\nn = int(data[0])\na = [int(x) for x in data[1:1 + n]]\n# TODO: write your solution here\n"
+  },
+  "solution": {
+   "c": "#include <stdio.h>\n\nint main(void) {\n    int n, a[100];\n    scanf(\"%d\", &n);\n    for (int i = 0; i < n; i++) scanf(\"%d\", &a[i]);\n    long long out[100], right = 1;\n    out[0] = 1;\n    for (int i = 1; i < n; i++) out[i] = out[i - 1] * a[i - 1];\n    for (int i = n - 1; i >= 0; i--) { out[i] *= right; right *= a[i]; }\n    for (int i = 0; i < n; i++) printf(i ? \" %lld\" : \"%lld\", out[i]);\n    printf(\"\\n\");\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    vector<int> a(n);\n    for (int &x : a) cin >> x;\n    vector<long long> out(n, 1);\n    for (int i = 1; i < n; i++) out[i] = out[i - 1] * a[i - 1];\n    long long right = 1;\n    for (int i = n - 1; i >= 0; i--) { out[i] *= right; right *= a[i]; }\n    for (int i = 0; i < n; i++) cout << (i ? \" \" : \"\") << out[i];\n    cout << \"\\n\";\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt();\n        int[] a = new int[n];\n        for (int i = 0; i < n; i++) a[i] = in.nextInt();\n        long[] out = new long[n];\n        out[0] = 1;\n        for (int i = 1; i < n; i++) out[i] = out[i - 1] * a[i - 1];\n        long right = 1;\n        for (int i = n - 1; i >= 0; i--) { out[i] *= right; right *= a[i]; }\n        StringBuilder sb = new StringBuilder();\n        for (int i = 0; i < n; i++) sb.append(i > 0 ? \" \" : \"\").append(out[i]);\n        System.out.println(sb);\n    }\n}\n",
+   "py": "import sys\n\ndata = sys.stdin.read().split()\nn = int(data[0])\na = [int(x) for x in data[1:1 + n]]\nout = [1] * n\nfor i in range(1, n):\n    out[i] = out[i - 1] * a[i - 1]\nright = 1\nfor i in range(n - 1, -1, -1):\n    out[i] *= right\n    right *= a[i]\nprint(*out)\n"
+  },
+  "explain": "The product of everything except a[i] is (product of the elements **left** of i) × (product of the elements **right** of i). A first pass fills `out[i]` with the left products; a second pass from the right multiplies in the running right product. Division is avoided, so zeros cause no trouble.",
+  "pseudo": [
+   "out[0] = 1; for i = 1..n-1: out[i] = out[i-1] * a[i-1]      (left products)",
+   "right = 1",
+   "for i = n-1 down to 0:",
+   "  out[i] = out[i] * right",
+   "  right = right * a[i]"
+  ],
+  "time": "O(n)",
+  "space": "O(1) extra"
  },
  {
   "id": "reverse-linked-list",
@@ -716,6 +1040,167 @@ DSA.problems = [
   "space": "O(1)"
  },
  {
+  "id": "palindrome-linked-list",
+  "title": "Palindrome Linked List",
+  "module": 2,
+  "difficulty": "Easy",
+  "tags": [
+   "Linked list",
+   "Two pointers"
+  ],
+  "source": "LeetCode 234",
+  "link": "https://leetcode.com/problems/palindrome-linked-list/",
+  "blurb": "Does the list read the same backwards? Check in O(n) time and O(1) space.",
+  "statement": "Print `true` if a singly linked list is a **palindrome** (reads the same forwards and backwards), otherwise `false`.",
+  "format": "**Input:** n, then n integers (the list).\n\n**Output:** `true` or `false`.",
+  "constraints": "- 1 ≤ n ≤ 1000",
+  "examples": [
+   {
+    "in": "4\n1 2 2 1\n",
+    "out": "true\n",
+    "why": "1 2 2 1 is symmetric."
+   },
+   {
+    "in": "2\n1 2\n",
+    "out": "false\n",
+    "why": "1 2 reversed is 2 1."
+   }
+  ],
+  "tests": [
+   {
+    "in": "4\n1 2 2 1\n",
+    "out": "true\n"
+   },
+   {
+    "in": "2\n1 2\n",
+    "out": "false\n"
+   },
+   {
+    "in": "1\n7\n",
+    "out": "true\n"
+   },
+   {
+    "in": "5\n1 2 3 2 1\n",
+    "out": "true\n"
+   },
+   {
+    "in": "5\n1 2 3 4 1\n",
+    "out": "false\n"
+   },
+   {
+    "in": "6\n4 5 6 6 5 4\n",
+    "out": "true\n"
+   },
+   {
+    "in": "3\n1 1 2\n",
+    "out": "false\n"
+   }
+  ],
+  "starter": {
+   "c": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node { int val; struct Node *next; } Node;\n\nNode *readList(int n) {                  /* reads n integers into a list and returns its head */\n    Node dummy = {0, NULL}, *tail = &dummy;\n    for (int i = 0; i < n; i++) {\n        tail->next = malloc(sizeof(Node));\n        tail = tail->next;\n        scanf(\"%d\", &tail->val);\n        tail->next = NULL;\n    }\n    return dummy.next;\n}\n\nvoid printList(Node *head) {\n    for (Node *p = head; p; p = p->next) printf(p == head ? \"%d\" : \" %d\", p->val);\n    printf(\"\\n\");\n}\n\nint main(void) {\n    int n;\n    scanf(\"%d\", &n);\n    Node *head = readList(n);\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\nusing namespace std;\n\nstruct Node { int val; Node *next; Node(int v) : val(v), next(nullptr) {} };\n\nNode *readList(int n) {                  // reads n integers into a list and returns its head\n    Node dummy(0), *tail = &dummy;\n    for (int i = 0; i < n; i++) {\n        int x; cin >> x;\n        tail->next = new Node(x);\n        tail = tail->next;\n    }\n    return dummy.next;\n}\n\nvoid printList(Node *head) {\n    for (Node *p = head; p; p = p->next) cout << (p == head ? \"\" : \" \") << p->val;\n    cout << \"\\n\";\n}\n\nint main() {\n    int n;\n    cin >> n;\n    Node *head = readList(n);\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    static class Node {\n        int val; Node next;\n        Node(int v) { val = v; }\n    }\n\n    static Scanner in = new Scanner(System.in);\n\n    static Node readList(int n) {                // reads n integers into a list and returns its head\n        Node dummy = new Node(0), tail = dummy;\n        for (int i = 0; i < n; i++) { tail.next = new Node(in.nextInt()); tail = tail.next; }\n        return dummy.next;\n    }\n\n    static void printList(Node head) {\n        StringBuilder sb = new StringBuilder();\n        for (Node p = head; p != null; p = p.next) sb.append(p == head ? \"\" : \" \").append(p.val);\n        System.out.println(sb);\n    }\n\n    public static void main(String[] args) {\n        int n = in.nextInt();\n        Node head = readList(n);\n        // TODO: write your solution here\n    }\n}\n",
+   "py": "import sys\n\n\nclass Node:\n    def __init__(self, val):\n        self.val = val\n        self.next = None\n\n\ntokens = iter(sys.stdin.read().split())\n\n\ndef read_list(n):\n    \"\"\"Reads n integers into a linked list and returns its head.\"\"\"\n    dummy = tail = Node(0)\n    for _ in range(n):\n        tail.next = Node(int(next(tokens)))\n        tail = tail.next\n    return dummy.next\n\n\ndef print_list(head):\n    out = []\n    while head:\n        out.append(head.val)\n        head = head.next\n    print(*out)\n\n\nn = int(next(tokens))\nhead = read_list(n)\n# TODO: write your solution here\n"
+  },
+  "solution": {
+   "c": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node { int val; struct Node *next; } Node;\n\nNode *readList(int n) {                  /* reads n integers into a list and returns its head */\n    Node dummy = {0, NULL}, *tail = &dummy;\n    for (int i = 0; i < n; i++) {\n        tail->next = malloc(sizeof(Node));\n        tail = tail->next;\n        scanf(\"%d\", &tail->val);\n        tail->next = NULL;\n    }\n    return dummy.next;\n}\n\nvoid printList(Node *head) {\n    for (Node *p = head; p; p = p->next) printf(p == head ? \"%d\" : \" %d\", p->val);\n    printf(\"\\n\");\n}\n\nint main(void) {\n    int n;\n    scanf(\"%d\", &n);\n    Node *head = readList(n);\n    Node *slow = head, *fast = head;\n    while (fast && fast->next) { slow = slow->next; fast = fast->next->next; }\n    Node *prev = NULL, *cur = slow;\n    while (cur) { Node *nx = cur->next; cur->next = prev; prev = cur; cur = nx; }\n    int ok = 1;\n    for (Node *p = head, *q = prev; q; p = p->next, q = q->next)\n        if (p->val != q->val) { ok = 0; break; }\n    printf(ok ? \"true\\n\" : \"false\\n\");\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\nusing namespace std;\n\nstruct Node { int val; Node *next; Node(int v) : val(v), next(nullptr) {} };\n\nNode *readList(int n) {                  // reads n integers into a list and returns its head\n    Node dummy(0), *tail = &dummy;\n    for (int i = 0; i < n; i++) {\n        int x; cin >> x;\n        tail->next = new Node(x);\n        tail = tail->next;\n    }\n    return dummy.next;\n}\n\nvoid printList(Node *head) {\n    for (Node *p = head; p; p = p->next) cout << (p == head ? \"\" : \" \") << p->val;\n    cout << \"\\n\";\n}\n\nint main() {\n    int n;\n    cin >> n;\n    Node *head = readList(n);\n    Node *slow = head, *fast = head;\n    while (fast && fast->next) { slow = slow->next; fast = fast->next->next; }\n    Node *prev = nullptr, *cur = slow;\n    while (cur) { Node *nx = cur->next; cur->next = prev; prev = cur; cur = nx; }\n    bool ok = true;\n    for (Node *p = head, *q = prev; q; p = p->next, q = q->next)\n        if (p->val != q->val) { ok = false; break; }\n    cout << (ok ? \"true\" : \"false\") << \"\\n\";\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    static class Node {\n        int val; Node next;\n        Node(int v) { val = v; }\n    }\n\n    static Scanner in = new Scanner(System.in);\n\n    static Node readList(int n) {                // reads n integers into a list and returns its head\n        Node dummy = new Node(0), tail = dummy;\n        for (int i = 0; i < n; i++) { tail.next = new Node(in.nextInt()); tail = tail.next; }\n        return dummy.next;\n    }\n\n    static void printList(Node head) {\n        StringBuilder sb = new StringBuilder();\n        for (Node p = head; p != null; p = p.next) sb.append(p == head ? \"\" : \" \").append(p.val);\n        System.out.println(sb);\n    }\n\n    public static void main(String[] args) {\n        int n = in.nextInt();\n        Node head = readList(n);\n        Node slow = head, fast = head;\n        while (fast != null && fast.next != null) { slow = slow.next; fast = fast.next.next; }\n        Node prev = null, cur = slow;\n        while (cur != null) { Node nx = cur.next; cur.next = prev; prev = cur; cur = nx; }\n        boolean ok = true;\n        for (Node p = head, q = prev; q != null; p = p.next, q = q.next)\n            if (p.val != q.val) { ok = false; break; }\n        System.out.println(ok ? \"true\" : \"false\");\n    }\n}\n",
+   "py": "import sys\n\n\nclass Node:\n    def __init__(self, val):\n        self.val = val\n        self.next = None\n\n\ntokens = iter(sys.stdin.read().split())\n\n\ndef read_list(n):\n    \"\"\"Reads n integers into a linked list and returns its head.\"\"\"\n    dummy = tail = Node(0)\n    for _ in range(n):\n        tail.next = Node(int(next(tokens)))\n        tail = tail.next\n    return dummy.next\n\n\ndef print_list(head):\n    out = []\n    while head:\n        out.append(head.val)\n        head = head.next\n    print(*out)\n\n\nn = int(next(tokens))\nhead = read_list(n)\nslow = fast = head\nwhile fast and fast.next:\n    slow, fast = slow.next, fast.next.next\nprev, cur = None, slow\nwhile cur:\n    cur.next, prev, cur = prev, cur, cur.next\np, q, ok = head, prev, True\nwhile q:\n    if p.val != q.val:\n        ok = False\n        break\n    p, q = p.next, q.next\nprint(\"true\" if ok else \"false\")\n"
+  },
+  "explain": "Copying the values into an array and comparing it with its reverse needs O(n) extra space. To use O(1): find the **middle** with slow and fast pointers, **reverse the second half** in place, then walk the first half and the reversed second half together comparing values. (Reverse the second half back if the list must stay unchanged.)",
+  "pseudo": [
+   "find the middle with slow and fast pointers",
+   "reverse the list from the middle onwards",
+   "p = head, q = head of the reversed half",
+   "while q != NULL: if p.val != q.val: print false; stop",
+   "  p = p.next; q = q.next",
+   "print true"
+  ],
+  "time": "O(n)",
+  "space": "O(1)"
+ },
+ {
+  "id": "remove-linked-list-elements",
+  "title": "Remove Linked List Elements",
+  "module": 2,
+  "difficulty": "Easy",
+  "tags": [
+   "Linked list",
+   "Dummy head"
+  ],
+  "source": "LeetCode 203",
+  "link": "https://leetcode.com/problems/remove-linked-list-elements/",
+  "blurb": "Delete every node with a given value, including at the head, using a dummy node.",
+  "statement": "Delete **every node whose value equals `val`** from a singly linked list and print the remaining list. The result is never empty in the tests.",
+  "format": "**Input:** n, then n integers, then `val`.\n\n**Output:** the remaining list, separated by spaces.",
+  "constraints": "- 1 ≤ n ≤ 1000",
+  "examples": [
+   {
+    "in": "7\n1 2 6 3 4 5 6\n6\n",
+    "out": "1 2 3 4 5\n",
+    "why": "Both 6s are removed."
+   },
+   {
+    "in": "4\n7 7 7 8\n7\n",
+    "out": "8\n",
+    "why": "Several nodes in a row at the head are removed."
+   }
+  ],
+  "tests": [
+   {
+    "in": "7\n1 2 6 3 4 5 6\n6\n",
+    "out": "1 2 3 4 5\n"
+   },
+   {
+    "in": "4\n7 7 7 8\n7\n",
+    "out": "8\n"
+   },
+   {
+    "in": "3\n1 2 3\n9\n",
+    "out": "1 2 3\n"
+   },
+   {
+    "in": "5\n4 1 4 2 4\n4\n",
+    "out": "1 2\n"
+   },
+   {
+    "in": "2\n5 6\n5\n",
+    "out": "6\n"
+   },
+   {
+    "in": "6\n1 1 2 2 3 3\n2\n",
+    "out": "1 1 3 3\n"
+   },
+   {
+    "in": "1\n8\n7\n",
+    "out": "8\n"
+   }
+  ],
+  "starter": {
+   "c": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node { int val; struct Node *next; } Node;\n\nNode *readList(int n) {                  /* reads n integers into a list and returns its head */\n    Node dummy = {0, NULL}, *tail = &dummy;\n    for (int i = 0; i < n; i++) {\n        tail->next = malloc(sizeof(Node));\n        tail = tail->next;\n        scanf(\"%d\", &tail->val);\n        tail->next = NULL;\n    }\n    return dummy.next;\n}\n\nvoid printList(Node *head) {\n    for (Node *p = head; p; p = p->next) printf(p == head ? \"%d\" : \" %d\", p->val);\n    printf(\"\\n\");\n}\n\nint main(void) {\n    int n, val;\n    scanf(\"%d\", &n);\n    Node *head = readList(n);\n    scanf(\"%d\", &val);\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\nusing namespace std;\n\nstruct Node { int val; Node *next; Node(int v) : val(v), next(nullptr) {} };\n\nNode *readList(int n) {                  // reads n integers into a list and returns its head\n    Node dummy(0), *tail = &dummy;\n    for (int i = 0; i < n; i++) {\n        int x; cin >> x;\n        tail->next = new Node(x);\n        tail = tail->next;\n    }\n    return dummy.next;\n}\n\nvoid printList(Node *head) {\n    for (Node *p = head; p; p = p->next) cout << (p == head ? \"\" : \" \") << p->val;\n    cout << \"\\n\";\n}\n\nint main() {\n    int n, val;\n    cin >> n;\n    Node *head = readList(n);\n    cin >> val;\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    static class Node {\n        int val; Node next;\n        Node(int v) { val = v; }\n    }\n\n    static Scanner in = new Scanner(System.in);\n\n    static Node readList(int n) {                // reads n integers into a list and returns its head\n        Node dummy = new Node(0), tail = dummy;\n        for (int i = 0; i < n; i++) { tail.next = new Node(in.nextInt()); tail = tail.next; }\n        return dummy.next;\n    }\n\n    static void printList(Node head) {\n        StringBuilder sb = new StringBuilder();\n        for (Node p = head; p != null; p = p.next) sb.append(p == head ? \"\" : \" \").append(p.val);\n        System.out.println(sb);\n    }\n\n    public static void main(String[] args) {\n        int n = in.nextInt();\n        Node head = readList(n);\n        int val = in.nextInt();\n        // TODO: write your solution here\n    }\n}\n",
+   "py": "import sys\n\n\nclass Node:\n    def __init__(self, val):\n        self.val = val\n        self.next = None\n\n\ntokens = iter(sys.stdin.read().split())\n\n\ndef read_list(n):\n    \"\"\"Reads n integers into a linked list and returns its head.\"\"\"\n    dummy = tail = Node(0)\n    for _ in range(n):\n        tail.next = Node(int(next(tokens)))\n        tail = tail.next\n    return dummy.next\n\n\ndef print_list(head):\n    out = []\n    while head:\n        out.append(head.val)\n        head = head.next\n    print(*out)\n\n\nn = int(next(tokens))\nhead = read_list(n)\nval = int(next(tokens))\n# TODO: write your solution here\n"
+  },
+  "solution": {
+   "c": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node { int val; struct Node *next; } Node;\n\nNode *readList(int n) {                  /* reads n integers into a list and returns its head */\n    Node dummy = {0, NULL}, *tail = &dummy;\n    for (int i = 0; i < n; i++) {\n        tail->next = malloc(sizeof(Node));\n        tail = tail->next;\n        scanf(\"%d\", &tail->val);\n        tail->next = NULL;\n    }\n    return dummy.next;\n}\n\nvoid printList(Node *head) {\n    for (Node *p = head; p; p = p->next) printf(p == head ? \"%d\" : \" %d\", p->val);\n    printf(\"\\n\");\n}\n\nint main(void) {\n    int n, val;\n    scanf(\"%d\", &n);\n    Node *head = readList(n);\n    scanf(\"%d\", &val);\n    Node dummy = {0, head}, *prev = &dummy;\n    while (prev->next) {\n        if (prev->next->val == val) { Node *dead = prev->next; prev->next = dead->next; free(dead); }\n        else prev = prev->next;\n    }\n    printList(dummy.next);\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\nusing namespace std;\n\nstruct Node { int val; Node *next; Node(int v) : val(v), next(nullptr) {} };\n\nNode *readList(int n) {                  // reads n integers into a list and returns its head\n    Node dummy(0), *tail = &dummy;\n    for (int i = 0; i < n; i++) {\n        int x; cin >> x;\n        tail->next = new Node(x);\n        tail = tail->next;\n    }\n    return dummy.next;\n}\n\nvoid printList(Node *head) {\n    for (Node *p = head; p; p = p->next) cout << (p == head ? \"\" : \" \") << p->val;\n    cout << \"\\n\";\n}\n\nint main() {\n    int n, val;\n    cin >> n;\n    Node *head = readList(n);\n    cin >> val;\n    Node dummy(0), *prev = &dummy;\n    dummy.next = head;\n    while (prev->next) {\n        if (prev->next->val == val) prev->next = prev->next->next;\n        else prev = prev->next;\n    }\n    printList(dummy.next);\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    static class Node {\n        int val; Node next;\n        Node(int v) { val = v; }\n    }\n\n    static Scanner in = new Scanner(System.in);\n\n    static Node readList(int n) {                // reads n integers into a list and returns its head\n        Node dummy = new Node(0), tail = dummy;\n        for (int i = 0; i < n; i++) { tail.next = new Node(in.nextInt()); tail = tail.next; }\n        return dummy.next;\n    }\n\n    static void printList(Node head) {\n        StringBuilder sb = new StringBuilder();\n        for (Node p = head; p != null; p = p.next) sb.append(p == head ? \"\" : \" \").append(p.val);\n        System.out.println(sb);\n    }\n\n    public static void main(String[] args) {\n        int n = in.nextInt();\n        Node head = readList(n);\n        int val = in.nextInt();\n        Node dummy = new Node(0), prev = dummy;\n        dummy.next = head;\n        while (prev.next != null) {\n            if (prev.next.val == val) prev.next = prev.next.next;\n            else prev = prev.next;\n        }\n        printList(dummy.next);\n    }\n}\n",
+   "py": "import sys\n\n\nclass Node:\n    def __init__(self, val):\n        self.val = val\n        self.next = None\n\n\ntokens = iter(sys.stdin.read().split())\n\n\ndef read_list(n):\n    \"\"\"Reads n integers into a linked list and returns its head.\"\"\"\n    dummy = tail = Node(0)\n    for _ in range(n):\n        tail.next = Node(int(next(tokens)))\n        tail = tail.next\n    return dummy.next\n\n\ndef print_list(head):\n    out = []\n    while head:\n        out.append(head.val)\n        head = head.next\n    print(*out)\n\n\nn = int(next(tokens))\nhead = read_list(n)\nval = int(next(tokens))\ndummy = Node(0)\ndummy.next = head\nprev = dummy\nwhile prev.next:\n    if prev.next.val == val:\n        prev.next = prev.next.next\n    else:\n        prev = prev.next\nprint_list(dummy.next)\n"
+  },
+  "explain": "Deleting the head is a special case with a plain pointer, because there is no node before it. A **dummy node** placed in front of the list removes that case: keep a pointer `prev` to the last node that stays; for each node, if its value is `val` unlink it (`prev.next = cur.next`), otherwise move `prev` forward. The answer is `dummy.next`.",
+  "pseudo": [
+   "dummy.next = head; prev = dummy",
+   "while prev.next != NULL:",
+   "  if prev.next.val == val: prev.next = prev.next.next",
+   "  else: prev = prev.next",
+   "print dummy.next"
+  ],
+  "time": "O(n)",
+  "space": "O(1)"
+ },
+ {
   "id": "remove-nth-from-end",
   "title": "Remove N-th Node From End",
   "module": 2,
@@ -792,6 +1277,168 @@ DSA.problems = [
    "while fast.next != NULL: slow = slow.next; fast = fast.next",
    "slow.next = slow.next.next",
    "return dummy.next"
+  ],
+  "time": "O(n)",
+  "space": "O(1)"
+ },
+ {
+  "id": "add-two-numbers",
+  "title": "Add Two Numbers",
+  "module": 2,
+  "difficulty": "Medium",
+  "tags": [
+   "Linked list",
+   "Math"
+  ],
+  "source": "LeetCode 2",
+  "link": "https://leetcode.com/problems/add-two-numbers/",
+  "blurb": "Add two numbers stored digit by digit in reverse order in linked lists, carrying as you go.",
+  "statement": "Two non-negative integers are stored in two linked lists, **one digit per node, least significant digit first** (so 342 is the list 2 → 4 → 3). Print their sum in the same representation.",
+  "format": "**Input:** n₁, then n₁ digits (the first list), then n₂, then n₂ digits (the second list).\n\n**Output:** the digits of the sum, least significant first, separated by spaces.",
+  "constraints": "- 1 ≤ n₁, n₂ ≤ 100\n- every digit is 0 to 9; no leading zeros except the number 0 itself",
+  "examples": [
+   {
+    "in": "3\n2 4 3\n3\n5 6 4\n",
+    "out": "7 0 8\n",
+    "why": "342 + 465 = 807."
+   },
+   {
+    "in": "1\n0\n1\n0\n",
+    "out": "0\n",
+    "why": "0 + 0 = 0."
+   }
+  ],
+  "tests": [
+   {
+    "in": "3\n2 4 3\n3\n5 6 4\n",
+    "out": "7 0 8\n"
+   },
+   {
+    "in": "1\n0\n1\n0\n",
+    "out": "0\n"
+   },
+   {
+    "in": "7\n9 9 9 9 9 9 9\n4\n9 9 9 9\n",
+    "out": "8 9 9 9 0 0 0 1\n"
+   },
+   {
+    "in": "2\n5 5\n1\n5\n",
+    "out": "0 6\n"
+   },
+   {
+    "in": "1\n1\n3\n9 9 9\n",
+    "out": "0 0 0 1\n"
+   },
+   {
+    "in": "4\n1 2 3 4\n4\n9 8 7 6\n",
+    "out": "0 1 1 1 1\n"
+   },
+   {
+    "in": "3\n0 0 1\n3\n0 0 9\n",
+    "out": "0 0 0 1\n"
+   }
+  ],
+  "starter": {
+   "c": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node { int val; struct Node *next; } Node;\n\nNode *readList(int n) {                  /* reads n integers into a list and returns its head */\n    Node dummy = {0, NULL}, *tail = &dummy;\n    for (int i = 0; i < n; i++) {\n        tail->next = malloc(sizeof(Node));\n        tail = tail->next;\n        scanf(\"%d\", &tail->val);\n        tail->next = NULL;\n    }\n    return dummy.next;\n}\n\nvoid printList(Node *head) {\n    for (Node *p = head; p; p = p->next) printf(p == head ? \"%d\" : \" %d\", p->val);\n    printf(\"\\n\");\n}\n\nint main(void) {\n    int n1, n2;\n    scanf(\"%d\", &n1);\n    Node *a = readList(n1);\n    scanf(\"%d\", &n2);\n    Node *b = readList(n2);\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\nusing namespace std;\n\nstruct Node { int val; Node *next; Node(int v) : val(v), next(nullptr) {} };\n\nNode *readList(int n) {                  // reads n integers into a list and returns its head\n    Node dummy(0), *tail = &dummy;\n    for (int i = 0; i < n; i++) {\n        int x; cin >> x;\n        tail->next = new Node(x);\n        tail = tail->next;\n    }\n    return dummy.next;\n}\n\nvoid printList(Node *head) {\n    for (Node *p = head; p; p = p->next) cout << (p == head ? \"\" : \" \") << p->val;\n    cout << \"\\n\";\n}\n\nint main() {\n    int n1, n2;\n    cin >> n1;\n    Node *a = readList(n1);\n    cin >> n2;\n    Node *b = readList(n2);\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    static class Node {\n        int val; Node next;\n        Node(int v) { val = v; }\n    }\n\n    static Scanner in = new Scanner(System.in);\n\n    static Node readList(int n) {                // reads n integers into a list and returns its head\n        Node dummy = new Node(0), tail = dummy;\n        for (int i = 0; i < n; i++) { tail.next = new Node(in.nextInt()); tail = tail.next; }\n        return dummy.next;\n    }\n\n    static void printList(Node head) {\n        StringBuilder sb = new StringBuilder();\n        for (Node p = head; p != null; p = p.next) sb.append(p == head ? \"\" : \" \").append(p.val);\n        System.out.println(sb);\n    }\n\n    public static void main(String[] args) {\n        int n1 = in.nextInt();\n        Node a = readList(n1);\n        int n2 = in.nextInt();\n        Node b = readList(n2);\n        // TODO: write your solution here\n    }\n}\n",
+   "py": "import sys\n\n\nclass Node:\n    def __init__(self, val):\n        self.val = val\n        self.next = None\n\n\ntokens = iter(sys.stdin.read().split())\n\n\ndef read_list(n):\n    \"\"\"Reads n integers into a linked list and returns its head.\"\"\"\n    dummy = tail = Node(0)\n    for _ in range(n):\n        tail.next = Node(int(next(tokens)))\n        tail = tail.next\n    return dummy.next\n\n\ndef print_list(head):\n    out = []\n    while head:\n        out.append(head.val)\n        head = head.next\n    print(*out)\n\n\nn1 = int(next(tokens))\na = read_list(n1)\nn2 = int(next(tokens))\nb = read_list(n2)\n# TODO: write your solution here\n"
+  },
+  "solution": {
+   "c": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node { int val; struct Node *next; } Node;\n\nNode *readList(int n) {                  /* reads n integers into a list and returns its head */\n    Node dummy = {0, NULL}, *tail = &dummy;\n    for (int i = 0; i < n; i++) {\n        tail->next = malloc(sizeof(Node));\n        tail = tail->next;\n        scanf(\"%d\", &tail->val);\n        tail->next = NULL;\n    }\n    return dummy.next;\n}\n\nvoid printList(Node *head) {\n    for (Node *p = head; p; p = p->next) printf(p == head ? \"%d\" : \" %d\", p->val);\n    printf(\"\\n\");\n}\n\nint main(void) {\n    int n1, n2;\n    scanf(\"%d\", &n1);\n    Node *a = readList(n1);\n    scanf(\"%d\", &n2);\n    Node *b = readList(n2);\n    Node dummy = {0, NULL}, *tail = &dummy;\n    int carry = 0;\n    while (a || b || carry) {\n        int sum = carry + (a ? a->val : 0) + (b ? b->val : 0);\n        tail->next = malloc(sizeof(Node));\n        tail = tail->next;\n        tail->val = sum % 10;\n        tail->next = NULL;\n        carry = sum / 10;\n        if (a) a = a->next;\n        if (b) b = b->next;\n    }\n    printList(dummy.next);\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\nusing namespace std;\n\nstruct Node { int val; Node *next; Node(int v) : val(v), next(nullptr) {} };\n\nNode *readList(int n) {                  // reads n integers into a list and returns its head\n    Node dummy(0), *tail = &dummy;\n    for (int i = 0; i < n; i++) {\n        int x; cin >> x;\n        tail->next = new Node(x);\n        tail = tail->next;\n    }\n    return dummy.next;\n}\n\nvoid printList(Node *head) {\n    for (Node *p = head; p; p = p->next) cout << (p == head ? \"\" : \" \") << p->val;\n    cout << \"\\n\";\n}\n\nint main() {\n    int n1, n2;\n    cin >> n1;\n    Node *a = readList(n1);\n    cin >> n2;\n    Node *b = readList(n2);\n    Node dummy(0), *tail = &dummy;\n    int carry = 0;\n    while (a || b || carry) {\n        int sum = carry + (a ? a->val : 0) + (b ? b->val : 0);\n        tail->next = new Node(sum % 10);\n        tail = tail->next;\n        carry = sum / 10;\n        if (a) a = a->next;\n        if (b) b = b->next;\n    }\n    printList(dummy.next);\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    static class Node {\n        int val; Node next;\n        Node(int v) { val = v; }\n    }\n\n    static Scanner in = new Scanner(System.in);\n\n    static Node readList(int n) {                // reads n integers into a list and returns its head\n        Node dummy = new Node(0), tail = dummy;\n        for (int i = 0; i < n; i++) { tail.next = new Node(in.nextInt()); tail = tail.next; }\n        return dummy.next;\n    }\n\n    static void printList(Node head) {\n        StringBuilder sb = new StringBuilder();\n        for (Node p = head; p != null; p = p.next) sb.append(p == head ? \"\" : \" \").append(p.val);\n        System.out.println(sb);\n    }\n\n    public static void main(String[] args) {\n        int n1 = in.nextInt();\n        Node a = readList(n1);\n        int n2 = in.nextInt();\n        Node b = readList(n2);\n        Node dummy = new Node(0), tail = dummy;\n        int carry = 0;\n        while (a != null || b != null || carry != 0) {\n            int sum = carry + (a != null ? a.val : 0) + (b != null ? b.val : 0);\n            tail.next = new Node(sum % 10);\n            tail = tail.next;\n            carry = sum / 10;\n            if (a != null) a = a.next;\n            if (b != null) b = b.next;\n        }\n        printList(dummy.next);\n    }\n}\n",
+   "py": "import sys\n\n\nclass Node:\n    def __init__(self, val):\n        self.val = val\n        self.next = None\n\n\ntokens = iter(sys.stdin.read().split())\n\n\ndef read_list(n):\n    \"\"\"Reads n integers into a linked list and returns its head.\"\"\"\n    dummy = tail = Node(0)\n    for _ in range(n):\n        tail.next = Node(int(next(tokens)))\n        tail = tail.next\n    return dummy.next\n\n\ndef print_list(head):\n    out = []\n    while head:\n        out.append(head.val)\n        head = head.next\n    print(*out)\n\n\nn1 = int(next(tokens))\na = read_list(n1)\nn2 = int(next(tokens))\nb = read_list(n2)\ndummy = tail = Node(0)\ncarry = 0\nwhile a or b or carry:\n    total = carry + (a.val if a else 0) + (b.val if b else 0)\n    tail.next = Node(total % 10)\n    tail = tail.next\n    carry = total // 10\n    a = a.next if a else None\n    b = b.next if b else None\nprint_list(dummy.next)\n"
+  },
+  "explain": "Because the least significant digit comes first, the lists are already in the order in which schoolbook addition works. Walk both lists together: `sum = a + b + carry`, output `sum % 10`, and carry `sum / 10`. Continue while either list or the carry remains, so a final carry produces one extra digit. A **dummy head** node avoids a special case for the first output node.",
+  "pseudo": [
+   "dummy = new node; tail = dummy; carry = 0",
+   "while p != NULL or q != NULL or carry != 0:",
+   "  sum = carry + (p ? p.val : 0) + (q ? q.val : 0)",
+   "  append node(sum mod 10); carry = sum div 10",
+   "  advance p and q if they exist",
+   "print dummy.next"
+  ],
+  "time": "O(max(n₁, n₂))",
+  "space": "O(max(n₁, n₂))"
+ },
+ {
+  "id": "odd-even-linked-list",
+  "title": "Odd Even Linked List",
+  "module": 2,
+  "difficulty": "Medium",
+  "tags": [
+   "Linked list",
+   "Pointers"
+  ],
+  "source": "LeetCode 328",
+  "link": "https://leetcode.com/problems/odd-even-linked-list/",
+  "blurb": "Group the nodes at odd positions first, then the nodes at even positions, in place.",
+  "statement": "Reorder a linked list so that all nodes at **odd positions** (1st, 3rd, 5th, …) come first, followed by all nodes at **even positions** (2nd, 4th, …). The relative order inside each group must be kept. Do it in place with O(1) extra space. Print the new list.",
+  "format": "**Input:** n, then n integers.\n\n**Output:** the reordered list, separated by spaces.",
+  "constraints": "- 1 ≤ n ≤ 1000",
+  "examples": [
+   {
+    "in": "5\n1 2 3 4 5\n",
+    "out": "1 3 5 2 4\n",
+    "why": "Positions 1, 3, 5 first, then 2, 4."
+   },
+   {
+    "in": "7\n2 1 3 5 6 4 7\n",
+    "out": "2 3 6 7 1 5 4\n",
+    "why": "Positions 1, 3, 5, 7 hold 2, 3, 6, 7; positions 2, 4, 6 hold 1, 5, 4."
+   }
+  ],
+  "tests": [
+   {
+    "in": "5\n1 2 3 4 5\n",
+    "out": "1 3 5 2 4\n"
+   },
+   {
+    "in": "7\n2 1 3 5 6 4 7\n",
+    "out": "2 3 6 7 1 5 4\n"
+   },
+   {
+    "in": "1\n9\n",
+    "out": "9\n"
+   },
+   {
+    "in": "2\n1 2\n",
+    "out": "1 2\n"
+   },
+   {
+    "in": "4\n10 20 30 40\n",
+    "out": "10 30 20 40\n"
+   },
+   {
+    "in": "6\n6 5 4 3 2 1\n",
+    "out": "6 4 2 5 3 1\n"
+   },
+   {
+    "in": "3\n3 1 2\n",
+    "out": "3 2 1\n"
+   }
+  ],
+  "starter": {
+   "c": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node { int val; struct Node *next; } Node;\n\nNode *readList(int n) {                  /* reads n integers into a list and returns its head */\n    Node dummy = {0, NULL}, *tail = &dummy;\n    for (int i = 0; i < n; i++) {\n        tail->next = malloc(sizeof(Node));\n        tail = tail->next;\n        scanf(\"%d\", &tail->val);\n        tail->next = NULL;\n    }\n    return dummy.next;\n}\n\nvoid printList(Node *head) {\n    for (Node *p = head; p; p = p->next) printf(p == head ? \"%d\" : \" %d\", p->val);\n    printf(\"\\n\");\n}\n\nint main(void) {\n    int n;\n    scanf(\"%d\", &n);\n    Node *head = readList(n);\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\nusing namespace std;\n\nstruct Node { int val; Node *next; Node(int v) : val(v), next(nullptr) {} };\n\nNode *readList(int n) {                  // reads n integers into a list and returns its head\n    Node dummy(0), *tail = &dummy;\n    for (int i = 0; i < n; i++) {\n        int x; cin >> x;\n        tail->next = new Node(x);\n        tail = tail->next;\n    }\n    return dummy.next;\n}\n\nvoid printList(Node *head) {\n    for (Node *p = head; p; p = p->next) cout << (p == head ? \"\" : \" \") << p->val;\n    cout << \"\\n\";\n}\n\nint main() {\n    int n;\n    cin >> n;\n    Node *head = readList(n);\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    static class Node {\n        int val; Node next;\n        Node(int v) { val = v; }\n    }\n\n    static Scanner in = new Scanner(System.in);\n\n    static Node readList(int n) {                // reads n integers into a list and returns its head\n        Node dummy = new Node(0), tail = dummy;\n        for (int i = 0; i < n; i++) { tail.next = new Node(in.nextInt()); tail = tail.next; }\n        return dummy.next;\n    }\n\n    static void printList(Node head) {\n        StringBuilder sb = new StringBuilder();\n        for (Node p = head; p != null; p = p.next) sb.append(p == head ? \"\" : \" \").append(p.val);\n        System.out.println(sb);\n    }\n\n    public static void main(String[] args) {\n        int n = in.nextInt();\n        Node head = readList(n);\n        // TODO: write your solution here\n    }\n}\n",
+   "py": "import sys\n\n\nclass Node:\n    def __init__(self, val):\n        self.val = val\n        self.next = None\n\n\ntokens = iter(sys.stdin.read().split())\n\n\ndef read_list(n):\n    \"\"\"Reads n integers into a linked list and returns its head.\"\"\"\n    dummy = tail = Node(0)\n    for _ in range(n):\n        tail.next = Node(int(next(tokens)))\n        tail = tail.next\n    return dummy.next\n\n\ndef print_list(head):\n    out = []\n    while head:\n        out.append(head.val)\n        head = head.next\n    print(*out)\n\n\nn = int(next(tokens))\nhead = read_list(n)\n# TODO: write your solution here\n"
+  },
+  "solution": {
+   "c": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node { int val; struct Node *next; } Node;\n\nNode *readList(int n) {                  /* reads n integers into a list and returns its head */\n    Node dummy = {0, NULL}, *tail = &dummy;\n    for (int i = 0; i < n; i++) {\n        tail->next = malloc(sizeof(Node));\n        tail = tail->next;\n        scanf(\"%d\", &tail->val);\n        tail->next = NULL;\n    }\n    return dummy.next;\n}\n\nvoid printList(Node *head) {\n    for (Node *p = head; p; p = p->next) printf(p == head ? \"%d\" : \" %d\", p->val);\n    printf(\"\\n\");\n}\n\nint main(void) {\n    int n;\n    scanf(\"%d\", &n);\n    Node *head = readList(n);\n    if (head && head->next) {\n        Node *odd = head, *even = head->next, *evenHead = even;\n        while (even && even->next) {\n            odd->next = even->next;  odd = odd->next;\n            even->next = odd->next;  even = even->next;\n        }\n        odd->next = evenHead;\n    }\n    printList(head);\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\nusing namespace std;\n\nstruct Node { int val; Node *next; Node(int v) : val(v), next(nullptr) {} };\n\nNode *readList(int n) {                  // reads n integers into a list and returns its head\n    Node dummy(0), *tail = &dummy;\n    for (int i = 0; i < n; i++) {\n        int x; cin >> x;\n        tail->next = new Node(x);\n        tail = tail->next;\n    }\n    return dummy.next;\n}\n\nvoid printList(Node *head) {\n    for (Node *p = head; p; p = p->next) cout << (p == head ? \"\" : \" \") << p->val;\n    cout << \"\\n\";\n}\n\nint main() {\n    int n;\n    cin >> n;\n    Node *head = readList(n);\n    if (head && head->next) {\n        Node *odd = head, *even = head->next, *evenHead = even;\n        while (even && even->next) {\n            odd->next = even->next;  odd = odd->next;\n            even->next = odd->next;  even = even->next;\n        }\n        odd->next = evenHead;\n    }\n    printList(head);\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    static class Node {\n        int val; Node next;\n        Node(int v) { val = v; }\n    }\n\n    static Scanner in = new Scanner(System.in);\n\n    static Node readList(int n) {                // reads n integers into a list and returns its head\n        Node dummy = new Node(0), tail = dummy;\n        for (int i = 0; i < n; i++) { tail.next = new Node(in.nextInt()); tail = tail.next; }\n        return dummy.next;\n    }\n\n    static void printList(Node head) {\n        StringBuilder sb = new StringBuilder();\n        for (Node p = head; p != null; p = p.next) sb.append(p == head ? \"\" : \" \").append(p.val);\n        System.out.println(sb);\n    }\n\n    public static void main(String[] args) {\n        int n = in.nextInt();\n        Node head = readList(n);\n        if (head != null && head.next != null) {\n            Node odd = head, even = head.next, evenHead = even;\n            while (even != null && even.next != null) {\n                odd.next = even.next;  odd = odd.next;\n                even.next = odd.next;  even = even.next;\n            }\n            odd.next = evenHead;\n        }\n        printList(head);\n    }\n}\n",
+   "py": "import sys\n\n\nclass Node:\n    def __init__(self, val):\n        self.val = val\n        self.next = None\n\n\ntokens = iter(sys.stdin.read().split())\n\n\ndef read_list(n):\n    \"\"\"Reads n integers into a linked list and returns its head.\"\"\"\n    dummy = tail = Node(0)\n    for _ in range(n):\n        tail.next = Node(int(next(tokens)))\n        tail = tail.next\n    return dummy.next\n\n\ndef print_list(head):\n    out = []\n    while head:\n        out.append(head.val)\n        head = head.next\n    print(*out)\n\n\nn = int(next(tokens))\nhead = read_list(n)\nif head and head.next:\n    odd, even = head, head.next\n    even_head = even\n    while even and even.next:\n        odd.next = even.next\n        odd = odd.next\n        even.next = odd.next\n        even = even.next\n    odd.next = even_head\nprint_list(head)\n"
+  },
+  "explain": "Keep two chains: `odd` starting at the first node and `even` starting at the second. Walk along relinking `odd.next = even.next` and `even.next = odd.next` alternately, so that the odd chain collects the odd positions and the even chain the even ones. Finally attach the head of the even chain to the tail of the odd chain. Every node is relinked once.",
+  "pseudo": [
+   "if list has fewer than 3 nodes: nothing to do",
+   "odd = head; even = head.next; evenHead = even",
+   "while even != NULL and even.next != NULL:",
+   "  odd.next = even.next; odd = odd.next",
+   "  even.next = odd.next; even = even.next",
+   "odd.next = evenHead"
   ],
   "time": "O(n)",
   "space": "O(1)"
@@ -879,6 +1526,83 @@ DSA.problems = [
    "print true if the stack is empty, else false"
   ],
   "time": "O(n)",
+  "space": "O(n)"
+ },
+ {
+  "id": "queue-using-stacks",
+  "title": "Implement Queue using Stacks",
+  "module": 3,
+  "difficulty": "Easy",
+  "tags": [
+   "Queue",
+   "Stack",
+   "Design"
+  ],
+  "source": "LeetCode 232",
+  "link": "https://leetcode.com/problems/implement-queue-using-stacks/",
+  "blurb": "Build a FIFO queue out of two LIFO stacks with amortised O(1) operations.",
+  "statement": "Implement a **queue** using only **two stacks**. Process a list of commands:\n\n- `push x`: add x at the back of the queue (prints nothing)\n- `pop`: remove and print the element at the front\n- `peek`: print the front element without removing it\n- `empty`: print `true` if the queue is empty, else `false`\n\nEvery `pop` and `peek` is on a non-empty queue.",
+  "format": "**Input:** m, then m commands, one per line.\n\n**Output:** one line for each `pop`, `peek` and `empty` command.",
+  "constraints": "- 1 ≤ m ≤ 100",
+  "examples": [
+   {
+    "in": "6\npush 1\npush 2\npeek\npop\nempty\npop\n",
+    "out": "1\n1\nfalse\n2\n",
+    "why": "The queue holds 1, 2; peek and pop give 1; one element is left; pop gives 2."
+   },
+   {
+    "in": "2\nempty\npush 5\n",
+    "out": "true\n",
+    "why": "The queue is empty at first."
+   }
+  ],
+  "tests": [
+   {
+    "in": "6\npush 1\npush 2\npeek\npop\nempty\npop\n",
+    "out": "1\n1\nfalse\n2\n"
+   },
+   {
+    "in": "2\nempty\npush 5\n",
+    "out": "true\n"
+   },
+   {
+    "in": "5\npush 3\npush 4\npop\npush 5\npop\n",
+    "out": "3\n4\n"
+   },
+   {
+    "in": "7\npush 1\npush 2\npush 3\npop\npop\npush 4\npop\n",
+    "out": "1\n2\n3\n"
+   },
+   {
+    "in": "4\npush 9\nempty\npop\nempty\n",
+    "out": "false\n9\ntrue\n"
+   },
+   {
+    "in": "6\npush 7\npeek\npush 8\npeek\npop\npeek\n",
+    "out": "7\n7\n7\n8\n"
+   }
+  ],
+  "starter": {
+   "c": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    int m;\n    scanf(\"%d\", &m);\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\n#include <stack>\n#include <string>\nusing namespace std;\n\nint main() {\n    int m;\n    cin >> m;\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int m = sc.nextInt();\n        // TODO: write your solution here\n    }\n}\n",
+   "py": "import sys\n\ntokens = iter(sys.stdin.read().split())\nm = int(next(tokens))\n# TODO: write your solution here\n"
+  },
+  "solution": {
+   "c": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    int m;\n    scanf(\"%d\", &m);\n    int in[200], out[200], ti = 0, to = 0;\n    char cmd[16];\n    while (m--) {\n        scanf(\"%15s\", cmd);\n        if (strcmp(cmd, \"push\") == 0) { int x; scanf(\"%d\", &x); in[ti++] = x; }\n        else if (strcmp(cmd, \"empty\") == 0) printf(ti == 0 && to == 0 ? \"true\\n\" : \"false\\n\");\n        else {\n            if (to == 0) while (ti > 0) out[to++] = in[--ti];      /* pour: reverses the order */\n            printf(\"%d\\n\", strcmp(cmd, \"pop\") == 0 ? out[--to] : out[to - 1]);\n        }\n    }\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\n#include <stack>\n#include <string>\nusing namespace std;\n\nint main() {\n    int m;\n    cin >> m;\n    stack<int> in, out;\n    string cmd;\n    while (m--) {\n        cin >> cmd;\n        if (cmd == \"push\") { int x; cin >> x; in.push(x); }\n        else if (cmd == \"empty\") cout << (in.empty() && out.empty() ? \"true\" : \"false\") << \"\\n\";\n        else {\n            if (out.empty()) while (!in.empty()) { out.push(in.top()); in.pop(); }\n            cout << out.top() << \"\\n\";\n            if (cmd == \"pop\") out.pop();\n        }\n    }\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int m = sc.nextInt();\n        Deque<Integer> in = new ArrayDeque<>(), out = new ArrayDeque<>();\n        while (m-- > 0) {\n            String cmd = sc.next();\n            if (cmd.equals(\"push\")) in.push(sc.nextInt());\n            else if (cmd.equals(\"empty\")) System.out.println(in.isEmpty() && out.isEmpty() ? \"true\" : \"false\");\n            else {\n                if (out.isEmpty()) while (!in.isEmpty()) out.push(in.pop());\n                System.out.println(out.peek());\n                if (cmd.equals(\"pop\")) out.pop();\n            }\n        }\n    }\n}\n",
+   "py": "import sys\n\ntokens = iter(sys.stdin.read().split())\nm = int(next(tokens))\ninp, out = [], []\nfor _ in range(m):\n    cmd = next(tokens)\n    if cmd == \"push\":\n        inp.append(int(next(tokens)))\n    elif cmd == \"empty\":\n        print(\"true\" if not inp and not out else \"false\")\n    else:\n        if not out:\n            while inp:\n                out.append(inp.pop())\n        print(out[-1])\n        if cmd == \"pop\":\n            out.pop()\n"
+  },
+  "explain": "Use an **input stack** `in` and an **output stack** `out`. `push` simply pushes onto `in`. When the front is needed (`pop` or `peek`) and `out` is empty, pour all of `in` into `out`: this **reverses** the order, so the oldest element ends up on top. Each element is moved at most once from `in` to `out`, so the cost per operation is **amortised O(1)**.",
+  "pseudo": [
+   "push x: in.push(x)",
+   "move(): if out is empty: while in is not empty: out.push(in.pop())",
+   "pop: move(); print out.pop()",
+   "peek: move(); print out.top()",
+   "empty: print (in is empty and out is empty)"
+  ],
+  "time": "amortised O(1) per operation",
   "space": "O(n)"
  },
  {
@@ -1118,6 +1842,174 @@ DSA.problems = [
   "space": "O(n)"
  },
  {
+  "id": "next-greater-element",
+  "title": "Next Greater Element",
+  "module": 3,
+  "difficulty": "Medium",
+  "tags": [
+   "Stack",
+   "Monotonic stack"
+  ],
+  "source": "Classic (LeetCode 496 / 739)",
+  "link": "https://leetcode.com/problems/next-greater-element-i/",
+  "blurb": "For every element, the first larger element to its right, in one pass with a stack.",
+  "statement": "For each element of an array, find the **first element to its right that is strictly greater**. Print that value, or `-1` if there is none.",
+  "format": "**Input:** n, then n integers.\n\n**Output:** n values separated by spaces.",
+  "constraints": "- 1 ≤ n ≤ 1000",
+  "examples": [
+   {
+    "in": "4\n4 5 2 25\n",
+    "out": "5 25 25 -1\n",
+    "why": "After 4 comes 5; after 5 the first larger is 25; after 2 it is 25; nothing follows 25."
+   },
+   {
+    "in": "3\n13 7 6\n",
+    "out": "-1 -1 -1\n",
+    "why": "The array is decreasing, so no element has a greater one to its right."
+   }
+  ],
+  "tests": [
+   {
+    "in": "4\n4 5 2 25\n",
+    "out": "5 25 25 -1\n"
+   },
+   {
+    "in": "3\n13 7 6\n",
+    "out": "-1 -1 -1\n"
+   },
+   {
+    "in": "1\n5\n",
+    "out": "-1\n"
+   },
+   {
+    "in": "5\n1 2 3 4 5\n",
+    "out": "2 3 4 5 -1\n"
+   },
+   {
+    "in": "6\n2 7 3 5 4 6\n",
+    "out": "7 -1 5 6 6 -1\n"
+   },
+   {
+    "in": "5\n5 5 5 5 5\n",
+    "out": "-1 -1 -1 -1 -1\n"
+   },
+   {
+    "in": "7\n9 1 8 2 7 3 6\n",
+    "out": "-1 8 -1 7 -1 6 -1\n"
+   }
+  ],
+  "starter": {
+   "c": "#include <stdio.h>\n\nint main(void) {\n    int n, a[1000];\n    scanf(\"%d\", &n);\n    for (int i = 0; i < n; i++) scanf(\"%d\", &a[i]);\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\n#include <stack>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    vector<int> a(n);\n    for (int &x : a) cin >> x;\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt();\n        int[] a = new int[n];\n        for (int i = 0; i < n; i++) a[i] = in.nextInt();\n        // TODO: write your solution here\n    }\n}\n",
+   "py": "import sys\n\ndata = sys.stdin.read().split()\nn = int(data[0])\na = [int(x) for x in data[1:1 + n]]\n# TODO: write your solution here\n"
+  },
+  "solution": {
+   "c": "#include <stdio.h>\n\nint main(void) {\n    int n, a[1000];\n    scanf(\"%d\", &n);\n    for (int i = 0; i < n; i++) scanf(\"%d\", &a[i]);\n    int ans[1000], st[1000], top = -1;\n    for (int i = 0; i < n; i++) ans[i] = -1;\n    for (int i = 0; i < n; i++) {\n        while (top >= 0 && a[st[top]] < a[i]) ans[st[top--]] = a[i];\n        st[++top] = i;\n    }\n    for (int i = 0; i < n; i++) printf(i ? \" %d\" : \"%d\", ans[i]);\n    printf(\"\\n\");\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\n#include <stack>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    vector<int> a(n);\n    for (int &x : a) cin >> x;\n    vector<int> ans(n, -1);\n    stack<int> st;\n    for (int i = 0; i < n; i++) {\n        while (!st.empty() && a[st.top()] < a[i]) { ans[st.top()] = a[i]; st.pop(); }\n        st.push(i);\n    }\n    for (int i = 0; i < n; i++) cout << (i ? \" \" : \"\") << ans[i];\n    cout << \"\\n\";\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt();\n        int[] a = new int[n];\n        for (int i = 0; i < n; i++) a[i] = in.nextInt();\n        int[] ans = new int[n];\n        Arrays.fill(ans, -1);\n        Deque<Integer> st = new ArrayDeque<>();\n        for (int i = 0; i < n; i++) {\n            while (!st.isEmpty() && a[st.peek()] < a[i]) ans[st.pop()] = a[i];\n            st.push(i);\n        }\n        StringBuilder sb = new StringBuilder();\n        for (int i = 0; i < n; i++) sb.append(i > 0 ? \" \" : \"\").append(ans[i]);\n        System.out.println(sb);\n    }\n}\n",
+   "py": "import sys\n\ndata = sys.stdin.read().split()\nn = int(data[0])\na = [int(x) for x in data[1:1 + n]]\nans = [-1] * n\nst = []\nfor i, x in enumerate(a):\n    while st and a[st[-1]] < x:\n        ans[st.pop()] = x\n    st.append(i)\nprint(*ans)\n"
+  },
+  "explain": "Comparing every element with everything to its right is O(n²). Use a **stack of indices whose answer is still unknown**, kept in decreasing order of value. Scan left to right: while the new element is greater than the value at the top of the stack, it is that element's answer, so pop and record it. Then push the new index. Each index is pushed and popped once, so the scan is O(n). Elements left on the stack have no greater element: their answer stays −1.",
+  "pseudo": [
+   "ans[0..n-1] = -1; stack = empty (indices)",
+   "for i = 0 to n - 1:",
+   "  while stack not empty and a[top] < a[i]:",
+   "    ans[top] = a[i]; pop",
+   "  push i",
+   "print ans"
+  ],
+  "time": "O(n)",
+  "space": "O(n)"
+ },
+ {
+  "id": "decode-string",
+  "title": "Decode String",
+  "module": 3,
+  "difficulty": "Medium",
+  "tags": [
+   "Stack",
+   "String",
+   "Recursion"
+  ],
+  "source": "LeetCode 394",
+  "link": "https://leetcode.com/problems/decode-string/",
+  "blurb": "Expand patterns such as 3[a2[c]] using the stack of unfinished brackets.",
+  "statement": "The encoding rule is `k[text]`: the `text` inside the brackets is repeated exactly `k` times. Brackets may be nested. Print the decoded string. The input is always valid, with letters, digits and brackets only.",
+  "format": "**Input:** the encoded string (no spaces).\n\n**Output:** the decoded string.",
+  "constraints": "- length ≤ 100\n- the decoded string has at most 1000 characters",
+  "examples": [
+   {
+    "in": "3[a]2[bc]\n",
+    "out": "aaabcbc\n",
+    "why": "a three times, then bc twice."
+   },
+   {
+    "in": "3[a2[c]]\n",
+    "out": "accaccacc\n",
+    "why": "Inside: a + cc = acc; repeated three times."
+   }
+  ],
+  "tests": [
+   {
+    "in": "3[a]2[bc]\n",
+    "out": "aaabcbc\n"
+   },
+   {
+    "in": "3[a2[c]]\n",
+    "out": "accaccacc\n"
+   },
+   {
+    "in": "abc\n",
+    "out": "abc\n"
+   },
+   {
+    "in": "2[ab]cd\n",
+    "out": "ababcd\n"
+   },
+   {
+    "in": "10[a]\n",
+    "out": "aaaaaaaaaa\n"
+   },
+   {
+    "in": "2[a2[b2[c]]]\n",
+    "out": "abccbccabccbcc\n"
+   },
+   {
+    "in": "x3[y]z\n",
+    "out": "xyyyz\n"
+   },
+   {
+    "in": "1[a1[b]]\n",
+    "out": "ab\n"
+   }
+  ],
+  "starter": {
+   "c": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    static char s[205];\n    scanf(\"%204s\", s);\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\n#include <stack>\n#include <string>\nusing namespace std;\n\nint main() {\n    string s;\n    cin >> s;\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        String s = in.next();\n        // TODO: write your solution here\n    }\n}\n",
+   "py": "s = input().strip()\n# TODO: write your solution here\n"
+  },
+  "solution": {
+   "c": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    static char s[205];\n    scanf(\"%204s\", s);\n    static char cur[1200], saved[100][1200];            /* the text being built, and the texts waiting on the stack */\n    int savedNum[100], top = -1, num = 0, len = 0;\n    for (int i = 0; s[i]; i++) {\n        char c = s[i];\n        if (c >= '0' && c <= '9') num = num * 10 + (c - '0');\n        else if (c == '[') {\n            cur[len] = 0;\n            strcpy(saved[++top], cur); savedNum[top] = num;\n            len = 0; num = 0;\n        } else if (c == ']') {\n            cur[len] = 0;\n            static char tmp[1200];\n            strcpy(tmp, saved[top]);\n            int p = (int)strlen(tmp);\n            for (int r = 0; r < savedNum[top]; r++) for (int j = 0; j < len; j++) tmp[p++] = cur[j];\n            tmp[p] = 0; top--;\n            strcpy(cur, tmp); len = p;\n        } else cur[len++] = c;\n    }\n    cur[len] = 0;\n    printf(\"%s\\n\", cur);\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\n#include <stack>\n#include <string>\nusing namespace std;\n\nint main() {\n    string s;\n    cin >> s;\n    stack<pair<string, int>> st;\n    string cur;\n    int num = 0;\n    for (char c : s) {\n        if (isdigit(c)) num = num * 10 + (c - '0');\n        else if (c == '[') { st.push({cur, num}); cur = \"\"; num = 0; }\n        else if (c == ']') {\n            auto [prev, k] = st.top(); st.pop();\n            string rep;\n            for (int r = 0; r < k; r++) rep += cur;\n            cur = prev + rep;\n        } else cur += c;\n    }\n    cout << cur << \"\\n\";\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        String s = in.next();\n        Deque<String> texts = new ArrayDeque<>();\n        Deque<Integer> nums = new ArrayDeque<>();\n        StringBuilder cur = new StringBuilder();\n        int num = 0;\n        for (char c : s.toCharArray()) {\n            if (Character.isDigit(c)) num = num * 10 + (c - '0');\n            else if (c == '[') { texts.push(cur.toString()); nums.push(num); cur = new StringBuilder(); num = 0; }\n            else if (c == ']') {\n                StringBuilder prev = new StringBuilder(texts.pop());\n                int k = nums.pop();\n                for (int r = 0; r < k; r++) prev.append(cur);\n                cur = prev;\n            } else cur.append(c);\n        }\n        System.out.println(cur);\n    }\n}\n",
+   "py": "s = input().strip()\nstack, cur, num = [], \"\", 0\nfor c in s:\n    if c.isdigit():\n        num = num * 10 + int(c)\n    elif c == \"[\":\n        stack.append((cur, num))\n        cur, num = \"\", 0\n    elif c == \"]\":\n        prev, k = stack.pop()\n        cur = prev + cur * k\n    else:\n        cur += c\nprint(cur)\n"
+  },
+  "explain": "Every `[` starts a sub-problem that must be finished before the outer one continues, which is exactly what a **stack** does. Scan the string keeping the *current text* and the *current number*. On `[`, push the current text and the number and start fresh. On `]`, pop the saved text and number and set `current = saved + current × number`. Letters are appended to the current text and digits extend the number.",
+  "pseudo": [
+   "stack = empty; cur = \"\"; num = 0",
+   "for each character c:",
+   "  digit: num = num * 10 + c",
+   "  letter: cur = cur + c",
+   "  \"[\": push (cur, num); cur = \"\"; num = 0",
+   "  \"]\": (prev, k) = pop; cur = prev + cur repeated k times",
+   "print cur"
+  ],
+  "time": "O(length of the output)",
+  "space": "O(length of the output)"
+ },
+ {
   "id": "sliding-window-maximum",
   "title": "Sliding Window Maximum",
   "module": 3,
@@ -1197,6 +2089,93 @@ DSA.problems = [
   ],
   "time": "O(n)",
   "space": "O(k)"
+ },
+ {
+  "id": "largest-rectangle-histogram",
+  "title": "Largest Rectangle in Histogram",
+  "module": 3,
+  "difficulty": "Hard",
+  "tags": [
+   "Stack",
+   "Monotonic stack"
+  ],
+  "source": "LeetCode 84",
+  "link": "https://leetcode.com/problems/largest-rectangle-in-histogram/",
+  "blurb": "The biggest rectangle under a bar chart, found in one pass with a monotonic stack.",
+  "statement": "A histogram has n bars of width 1 and the given heights. Print the **area of the largest rectangle** that fits entirely inside the histogram.",
+  "format": "**Input:** n, then n heights.\n\n**Output:** the largest area.",
+  "constraints": "- 1 ≤ n ≤ 1000\n- 0 ≤ height ≤ 10000",
+  "examples": [
+   {
+    "in": "6\n2 1 5 6 2 3\n",
+    "out": "10\n",
+    "why": "The bars of height 5 and 6 give a rectangle of height 5 and width 2."
+   },
+   {
+    "in": "2\n2 4\n",
+    "out": "4\n",
+    "why": "Either the bar of height 4 alone, or both bars at height 2: 4."
+   }
+  ],
+  "tests": [
+   {
+    "in": "6\n2 1 5 6 2 3\n",
+    "out": "10\n"
+   },
+   {
+    "in": "2\n2 4\n",
+    "out": "4\n"
+   },
+   {
+    "in": "1\n7\n",
+    "out": "7\n"
+   },
+   {
+    "in": "5\n1 1 1 1 1\n",
+    "out": "5\n"
+   },
+   {
+    "in": "5\n5 4 3 2 1\n",
+    "out": "9\n"
+   },
+   {
+    "in": "7\n6 2 5 4 5 1 6\n",
+    "out": "12\n"
+   },
+   {
+    "in": "4\n0 0 0 0\n",
+    "out": "0\n"
+   },
+   {
+    "in": "6\n3 6 5 7 4 8\n",
+    "out": "20\n"
+   }
+  ],
+  "starter": {
+   "c": "#include <stdio.h>\n\nint main(void) {\n    int n, a[1001];\n    scanf(\"%d\", &n);\n    for (int i = 0; i < n; i++) scanf(\"%d\", &a[i]);\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "cpp": "#include <algorithm>\n#include <iostream>\n#include <stack>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    vector<int> a(n + 1, 0);\n    for (int i = 0; i < n; i++) cin >> a[i];\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt();\n        int[] a = new int[n + 1];\n        for (int i = 0; i < n; i++) a[i] = in.nextInt();\n        // TODO: write your solution here\n    }\n}\n",
+   "py": "import sys\n\ndata = sys.stdin.read().split()\nn = int(data[0])\na = [int(x) for x in data[1:1 + n]] + [0]\n# TODO: write your solution here\n"
+  },
+  "solution": {
+   "c": "#include <stdio.h>\n\nint main(void) {\n    int n, a[1001];\n    scanf(\"%d\", &n);\n    for (int i = 0; i < n; i++) scanf(\"%d\", &a[i]);\n    int st[1001], top = -1, best = 0;\n    a[n] = 0;                                   /* sentinel flushes the stack */\n    for (int i = 0; i <= n; i++) {\n        while (top >= 0 && a[st[top]] >= a[i]) {\n            int h = a[st[top--]];\n            int left = top >= 0 ? st[top] : -1;\n            if (h * (i - left - 1) > best) best = h * (i - left - 1);\n        }\n        st[++top] = i;\n    }\n    printf(\"%d\\n\", best);\n    return 0;\n}\n",
+   "cpp": "#include <algorithm>\n#include <iostream>\n#include <stack>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    vector<int> a(n + 1, 0);\n    for (int i = 0; i < n; i++) cin >> a[i];\n    stack<int> st;\n    int best = 0;\n    for (int i = 0; i <= n; i++) {                      // a[n] = 0 is the sentinel\n        while (!st.empty() && a[st.top()] >= a[i]) {\n            int h = a[st.top()]; st.pop();\n            int left = st.empty() ? -1 : st.top();\n            best = max(best, h * (i - left - 1));\n        }\n        st.push(i);\n    }\n    cout << best << \"\\n\";\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt();\n        int[] a = new int[n + 1];\n        for (int i = 0; i < n; i++) a[i] = in.nextInt();\n        Deque<Integer> st = new ArrayDeque<>();\n        int best = 0;\n        for (int i = 0; i <= n; i++) {                  // a[n] = 0 is the sentinel\n            while (!st.isEmpty() && a[st.peek()] >= a[i]) {\n                int h = a[st.pop()];\n                int left = st.isEmpty() ? -1 : st.peek();\n                best = Math.max(best, h * (i - left - 1));\n            }\n            st.push(i);\n        }\n        System.out.println(best);\n    }\n}\n",
+   "py": "import sys\n\ndata = sys.stdin.read().split()\nn = int(data[0])\na = [int(x) for x in data[1:1 + n]] + [0]\nst, best = [], 0\nfor i, x in enumerate(a):\n    while st and a[st[-1]] >= x:\n        h = a[st.pop()]\n        left = st[-1] if st else -1\n        best = max(best, h * (i - left - 1))\n    st.append(i)\nprint(best)\n"
+  },
+  "explain": "For each bar, the best rectangle that uses it as its **lowest bar** extends left and right until a lower bar is met. A stack of bar indices with **increasing heights** finds those limits: when a bar lower than the top arrives, the top bar's rectangle is complete (its right limit is the new bar, its left limit is the new top of the stack), so pop it and compute `height × width`. A sentinel bar of height 0 at the end flushes the stack. Every bar is pushed and popped once: O(n).",
+  "pseudo": [
+   "stack = empty (indices); best = 0",
+   "for i = 0 to n (treat a[n] as 0):",
+   "  while stack not empty and a[top] >= a[i]:",
+   "    h = a[top]; pop",
+   "    left = (stack empty ? -1 : top)",
+   "    width = i - left - 1; best = max(best, h * width)",
+   "  push i",
+   "print best"
+  ],
+  "time": "O(n)",
+  "space": "O(n)"
  },
  {
   "id": "binary-search",
@@ -1281,6 +2260,91 @@ DSA.problems = [
    "print -1"
   ],
   "time": "O(log n)",
+  "space": "O(1)"
+ },
+ {
+  "id": "valid-anagram",
+  "title": "Valid Anagram",
+  "module": 4,
+  "difficulty": "Easy",
+  "tags": [
+   "Hashing",
+   "String",
+   "Counting"
+  ],
+  "source": "LeetCode 242",
+  "link": "https://leetcode.com/problems/valid-anagram/",
+  "blurb": "Are two words made of exactly the same letters? Count them in a table.",
+  "statement": "Two strings are **anagrams** if one can be rearranged into the other, using every letter exactly once. Print `true` if they are, otherwise `false`.",
+  "format": "**Input:** two lowercase words, one per line.\n\n**Output:** `true` or `false`.",
+  "constraints": "- 1 ≤ length ≤ 1000, lowercase English letters",
+  "examples": [
+   {
+    "in": "anagram\nnagaram\n",
+    "out": "true\n",
+    "why": "Both contain a×3, n, g, r, m."
+   },
+   {
+    "in": "rat\ncar\n",
+    "out": "false\n",
+    "why": "The letters differ."
+   }
+  ],
+  "tests": [
+   {
+    "in": "anagram\nnagaram\n",
+    "out": "true\n"
+   },
+   {
+    "in": "rat\ncar\n",
+    "out": "false\n"
+   },
+   {
+    "in": "a\na\n",
+    "out": "true\n"
+   },
+   {
+    "in": "a\nb\n",
+    "out": "false\n"
+   },
+   {
+    "in": "listen\nsilent\n",
+    "out": "true\n"
+   },
+   {
+    "in": "abc\nabcc\n",
+    "out": "false\n"
+   },
+   {
+    "in": "aabbcc\nabcabc\n",
+    "out": "true\n"
+   },
+   {
+    "in": "hello\nbello\n",
+    "out": "false\n"
+   }
+  ],
+  "starter": {
+   "c": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    static char a[1005], b[1005];\n    scanf(\"%1004s %1004s\", a, b);\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string a, b;\n    cin >> a >> b;\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        String a = in.next(), b = in.next();\n        // TODO: write your solution here\n    }\n}\n",
+   "py": "import sys\nfrom collections import Counter\n\na, b = sys.stdin.read().split()\n# TODO: write your solution here\n"
+  },
+  "solution": {
+   "c": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    static char a[1005], b[1005];\n    scanf(\"%1004s %1004s\", a, b);\n    int count[26] = {0};\n    if (strlen(a) != strlen(b)) { printf(\"false\\n\"); return 0; }\n    for (int i = 0; a[i]; i++) { count[a[i] - 'a']++; count[b[i] - 'a']--; }\n    for (int i = 0; i < 26; i++) if (count[i]) { printf(\"false\\n\"); return 0; }\n    printf(\"true\\n\");\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string a, b;\n    cin >> a >> b;\n    if (a.size() != b.size()) { cout << \"false\\n\"; return 0; }\n    int count[26] = {};\n    for (size_t i = 0; i < a.size(); i++) { count[a[i] - 'a']++; count[b[i] - 'a']--; }\n    for (int c : count) if (c) { cout << \"false\\n\"; return 0; }\n    cout << \"true\\n\";\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        String a = in.next(), b = in.next();\n        if (a.length() != b.length()) { System.out.println(\"false\"); return; }\n        int[] count = new int[26];\n        for (int i = 0; i < a.length(); i++) { count[a.charAt(i) - 'a']++; count[b.charAt(i) - 'a']--; }\n        for (int c : count) if (c != 0) { System.out.println(\"false\"); return; }\n        System.out.println(\"true\");\n    }\n}\n",
+   "py": "import sys\nfrom collections import Counter\n\na, b = sys.stdin.read().split()\nprint(\"true\" if Counter(a) == Counter(b) else \"false\")\n"
+  },
+  "explain": "Sorting both words and comparing is O(n log n). A **hash table of counts** does it in O(n): add one for each letter of the first word, subtract one for each letter of the second. The words are anagrams exactly when every count ends at zero (and the lengths were equal). For lowercase letters the \"hash table\" is just an array of 26 counters indexed by `c - 'a'`: a perfect hash function.",
+  "pseudo": [
+   "if length(a) != length(b): print false; stop",
+   "count[26] = 0",
+   "for each char c in a: count[c - \"a\"]++",
+   "for each char c in b: count[c - \"a\"]--",
+   "print true if every count is 0, else false"
+  ],
+  "time": "O(n)",
   "space": "O(1)"
  },
  {
@@ -1610,6 +2674,258 @@ DSA.problems = [
   "space": "O(n)"
  },
  {
+  "id": "find-min-rotated",
+  "title": "Find Minimum in Rotated Sorted Array",
+  "module": 4,
+  "difficulty": "Medium",
+  "tags": [
+   "Binary search",
+   "Array"
+  ],
+  "source": "LeetCode 153",
+  "link": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/",
+  "blurb": "A sorted array was rotated: find its smallest element in O(log n).",
+  "statement": "A sorted array of **distinct** integers was rotated by some amount, for example `[0 1 2 4 5 6 7]` became `[4 5 6 7 0 1 2]`. Print the **minimum** element in O(log n) time.",
+  "format": "**Input:** n, then the n elements of the rotated array.\n\n**Output:** the minimum.",
+  "constraints": "- 1 ≤ n ≤ 1000, all values distinct",
+  "examples": [
+   {
+    "in": "5\n3 4 5 1 2\n",
+    "out": "1\n",
+    "why": "The rotation point is between 5 and 1."
+   },
+   {
+    "in": "4\n11 13 15 17\n",
+    "out": "11\n",
+    "why": "Rotated by zero positions: the first element is the minimum."
+   }
+  ],
+  "tests": [
+   {
+    "in": "5\n3 4 5 1 2\n",
+    "out": "1\n"
+   },
+   {
+    "in": "4\n11 13 15 17\n",
+    "out": "11\n"
+   },
+   {
+    "in": "1\n5\n",
+    "out": "5\n"
+   },
+   {
+    "in": "2\n2 1\n",
+    "out": "1\n"
+   },
+   {
+    "in": "7\n4 5 6 7 0 1 2\n",
+    "out": "0\n"
+   },
+   {
+    "in": "6\n6 1 2 3 4 5\n",
+    "out": "1\n"
+   },
+   {
+    "in": "6\n2 3 4 5 6 1\n",
+    "out": "1\n"
+   },
+   {
+    "in": "3\n-5 -3 -9\n",
+    "out": "-9\n"
+   }
+  ],
+  "starter": {
+   "c": "#include <stdio.h>\n\nint main(void) {\n    int n, a[1000];\n    scanf(\"%d\", &n);\n    for (int i = 0; i < n; i++) scanf(\"%d\", &a[i]);\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    vector<int> a(n);\n    for (int &x : a) cin >> x;\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt();\n        int[] a = new int[n];\n        for (int i = 0; i < n; i++) a[i] = in.nextInt();\n        // TODO: write your solution here\n    }\n}\n",
+   "py": "import sys\n\ndata = sys.stdin.read().split()\nn = int(data[0])\na = [int(x) for x in data[1:1 + n]]\n# TODO: write your solution here\n"
+  },
+  "solution": {
+   "c": "#include <stdio.h>\n\nint main(void) {\n    int n, a[1000];\n    scanf(\"%d\", &n);\n    for (int i = 0; i < n; i++) scanf(\"%d\", &a[i]);\n    int lo = 0, hi = n - 1;\n    while (lo < hi) {\n        int mid = lo + (hi - lo) / 2;\n        if (a[mid] > a[hi]) lo = mid + 1; else hi = mid;\n    }\n    printf(\"%d\\n\", a[lo]);\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    vector<int> a(n);\n    for (int &x : a) cin >> x;\n    int lo = 0, hi = n - 1;\n    while (lo < hi) {\n        int mid = lo + (hi - lo) / 2;\n        if (a[mid] > a[hi]) lo = mid + 1; else hi = mid;\n    }\n    cout << a[lo] << \"\\n\";\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt();\n        int[] a = new int[n];\n        for (int i = 0; i < n; i++) a[i] = in.nextInt();\n        int lo = 0, hi = n - 1;\n        while (lo < hi) {\n            int mid = lo + (hi - lo) / 2;\n            if (a[mid] > a[hi]) lo = mid + 1; else hi = mid;\n        }\n        System.out.println(a[lo]);\n    }\n}\n",
+   "py": "import sys\n\ndata = sys.stdin.read().split()\nn = int(data[0])\na = [int(x) for x in data[1:1 + n]]\nlo, hi = 0, n - 1\nwhile lo < hi:\n    mid = (lo + hi) // 2\n    if a[mid] > a[hi]:\n        lo = mid + 1\n    else:\n        hi = mid\nprint(a[lo])\n"
+  },
+  "explain": "Compare the middle element with the **last** element. If `a[mid] > a[hi]` the minimum lies strictly to the right of mid (the rotation point is there); otherwise the minimum is at mid or to its left. Shrink the range accordingly until one element remains. Half of the range is discarded every step, as in ordinary binary search.",
+  "pseudo": [
+   "lo = 0; hi = n - 1",
+   "while lo < hi:",
+   "  mid = (lo + hi) / 2",
+   "  if a[mid] > a[hi]: lo = mid + 1",
+   "  else: hi = mid",
+   "print a[lo]"
+  ],
+  "time": "O(log n)",
+  "space": "O(1)"
+ },
+ {
+  "id": "merge-intervals",
+  "title": "Merge Intervals",
+  "module": 4,
+  "difficulty": "Medium",
+  "tags": [
+   "Sorting",
+   "Intervals"
+  ],
+  "source": "LeetCode 56",
+  "link": "https://leetcode.com/problems/merge-intervals/",
+  "blurb": "Sort by start, then sweep and fuse the overlapping ranges.",
+  "statement": "Given n intervals `[start, end]`, merge all **overlapping** intervals (two intervals that share even one point overlap, so [1,4] and [4,5] merge) and print the merged intervals in increasing order of start.",
+  "format": "**Input:** n, then n lines with `start end`.\n\n**Output:** one merged interval per line as `start end`.",
+  "constraints": "- 1 ≤ n ≤ 500\n- 0 ≤ start ≤ end ≤ 10000",
+  "examples": [
+   {
+    "in": "4\n1 3\n2 6\n8 10\n15 18\n",
+    "out": "1 6\n8 10\n15 18\n",
+    "why": "[1,3] and [2,6] overlap and fuse into [1,6]."
+   },
+   {
+    "in": "2\n1 4\n4 5\n",
+    "out": "1 5\n",
+    "why": "They touch at 4, so they merge."
+   }
+  ],
+  "tests": [
+   {
+    "in": "4\n1 3\n2 6\n8 10\n15 18\n",
+    "out": "1 6\n8 10\n15 18\n"
+   },
+   {
+    "in": "2\n1 4\n4 5\n",
+    "out": "1 5\n"
+   },
+   {
+    "in": "1\n5 5\n",
+    "out": "5 5\n"
+   },
+   {
+    "in": "3\n1 4\n0 4\n3 5\n",
+    "out": "0 5\n"
+   },
+   {
+    "in": "3\n5 6\n1 2\n3 4\n",
+    "out": "1 2\n3 4\n5 6\n"
+   },
+   {
+    "in": "4\n1 10\n2 3\n4 5\n6 7\n",
+    "out": "1 10\n"
+   },
+   {
+    "in": "5\n9 12\n1 3\n2 4\n11 15\n20 21\n",
+    "out": "1 4\n9 15\n20 21\n"
+   }
+  ],
+  "starter": {
+   "c": "#include <stdio.h>\n#include <stdlib.h>\n\nstatic int cmp(const void *x, const void *y) {\n    const int *a = x, *b = y;\n    return a[0] != b[0] ? (a[0] > b[0]) - (a[0] < b[0]) : (a[1] > b[1]) - (a[1] < b[1]);\n}\n\nint main(void) {\n    int n, iv[500][2];\n    scanf(\"%d\", &n);\n    for (int i = 0; i < n; i++) scanf(\"%d %d\", &iv[i][0], &iv[i][1]);\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "cpp": "#include <algorithm>\n#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    vector<pair<int, int>> iv(n);\n    for (auto &p : iv) cin >> p.first >> p.second;\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt();\n        int[][] iv = new int[n][2];\n        for (int i = 0; i < n; i++) { iv[i][0] = in.nextInt(); iv[i][1] = in.nextInt(); }\n        // TODO: write your solution here\n    }\n}\n",
+   "py": "import sys\n\ndata = sys.stdin.read().split()\nn = int(data[0])\niv = sorted((int(data[1 + 2 * i]), int(data[2 + 2 * i])) for i in range(n))\n# TODO: write your solution here\n"
+  },
+  "solution": {
+   "c": "#include <stdio.h>\n#include <stdlib.h>\n\nstatic int cmp(const void *x, const void *y) {\n    const int *a = x, *b = y;\n    return a[0] != b[0] ? (a[0] > b[0]) - (a[0] < b[0]) : (a[1] > b[1]) - (a[1] < b[1]);\n}\n\nint main(void) {\n    int n, iv[500][2];\n    scanf(\"%d\", &n);\n    for (int i = 0; i < n; i++) scanf(\"%d %d\", &iv[i][0], &iv[i][1]);\n    qsort(iv, n, sizeof iv[0], cmp);\n    int s = iv[0][0], e = iv[0][1];\n    for (int i = 1; i < n; i++) {\n        if (iv[i][0] <= e) { if (iv[i][1] > e) e = iv[i][1]; }\n        else { printf(\"%d %d\\n\", s, e); s = iv[i][0]; e = iv[i][1]; }\n    }\n    printf(\"%d %d\\n\", s, e);\n    return 0;\n}\n",
+   "cpp": "#include <algorithm>\n#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    vector<pair<int, int>> iv(n);\n    for (auto &p : iv) cin >> p.first >> p.second;\n    sort(iv.begin(), iv.end());\n    int s = iv[0].first, e = iv[0].second;\n    for (int i = 1; i < n; i++) {\n        if (iv[i].first <= e) e = max(e, iv[i].second);\n        else { cout << s << \" \" << e << \"\\n\"; s = iv[i].first; e = iv[i].second; }\n    }\n    cout << s << \" \" << e << \"\\n\";\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt();\n        int[][] iv = new int[n][2];\n        for (int i = 0; i < n; i++) { iv[i][0] = in.nextInt(); iv[i][1] = in.nextInt(); }\n        Arrays.sort(iv, (a, b) -> a[0] != b[0] ? Integer.compare(a[0], b[0]) : Integer.compare(a[1], b[1]));\n        int s = iv[0][0], e = iv[0][1];\n        StringBuilder sb = new StringBuilder();\n        for (int i = 1; i < n; i++) {\n            if (iv[i][0] <= e) e = Math.max(e, iv[i][1]);\n            else { sb.append(s).append(\" \").append(e).append(\"\\n\"); s = iv[i][0]; e = iv[i][1]; }\n        }\n        sb.append(s).append(\" \").append(e);\n        System.out.println(sb);\n    }\n}\n",
+   "py": "import sys\n\ndata = sys.stdin.read().split()\nn = int(data[0])\niv = sorted((int(data[1 + 2 * i]), int(data[2 + 2 * i])) for i in range(n))\ns, e = iv[0]\nfor a, b in iv[1:]:\n    if a <= e:\n        e = max(e, b)\n    else:\n        print(s, e)\n        s, e = a, b\nprint(s, e)\n"
+  },
+  "explain": "If the intervals are **sorted by start**, overlapping ones become neighbours, so one sweep suffices. Keep the current merged interval; for each next interval, if its start is ≤ the current end, extend the end to the larger of the two ends; otherwise output the current interval and start a new one. The sort dominates: O(n log n).",
+  "pseudo": [
+   "sort intervals by start",
+   "cur = first interval",
+   "for each next interval (s, e):",
+   "  if s <= cur.end: cur.end = max(cur.end, e)",
+   "  else: output cur; cur = (s, e)",
+   "output cur"
+  ],
+  "time": "O(n log n)",
+  "space": "O(n)"
+ },
+ {
+  "id": "subarray-sum-k",
+  "title": "Subarray Sum Equals K",
+  "module": 4,
+  "difficulty": "Medium",
+  "tags": [
+   "Hashing",
+   "Prefix sum",
+   "Array"
+  ],
+  "source": "LeetCode 560",
+  "link": "https://leetcode.com/problems/subarray-sum-equals-k/",
+  "blurb": "Count the contiguous ranges that add up to k, using prefix sums and a hash table.",
+  "statement": "Given an array of integers (positive, zero or negative) and a target `k`, print the number of **contiguous subarrays** whose elements sum to `k`.",
+  "format": "**Input:** n, then n integers, then k.\n\n**Output:** the number of subarrays.",
+  "constraints": "- 1 ≤ n ≤ 1000\n- −1000 ≤ a[i] ≤ 1000",
+  "examples": [
+   {
+    "in": "3\n1 1 1\n2\n",
+    "out": "2\n",
+    "why": "[1,1] at positions 0–1 and at 1–2."
+   },
+   {
+    "in": "3\n1 2 3\n3\n",
+    "out": "2\n",
+    "why": "[1,2] and [3]."
+   }
+  ],
+  "tests": [
+   {
+    "in": "3\n1 1 1\n2\n",
+    "out": "2\n"
+   },
+   {
+    "in": "3\n1 2 3\n3\n",
+    "out": "2\n"
+   },
+   {
+    "in": "1\n5\n5\n",
+    "out": "1\n"
+   },
+   {
+    "in": "4\n1 -1 1 -1\n0\n",
+    "out": "4\n"
+   },
+   {
+    "in": "5\n3 4 7 2 -3\n7\n",
+    "out": "2\n"
+   },
+   {
+    "in": "6\n0 0 0 0 0 0\n0\n",
+    "out": "21\n"
+   },
+   {
+    "in": "5\n1 2 1 2 1\n3\n",
+    "out": "4\n"
+   },
+   {
+    "in": "4\n-1 -1 1 1\n0\n",
+    "out": "2\n"
+   }
+  ],
+  "starter": {
+   "c": "#include <stdio.h>\n\n#define H 8192\n\n/* index of the slot holding v, or of the empty slot where v belongs (linear probing) */\nstatic int slot(const int keys[], const int used[], int v) {\n    int h = ((v % H) + H) % H;\n    while (used[h] && keys[h] != v) h = (h + 1) % H;\n    return h;\n}\n\nint main(void) {\n    int n, a[1000], k;\n    scanf(\"%d\", &n);\n    for (int i = 0; i < n; i++) scanf(\"%d\", &a[i]);\n    scanf(\"%d\", &k);\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\n#include <unordered_map>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n, k;\n    cin >> n;\n    vector<int> a(n);\n    for (int &x : a) cin >> x;\n    cin >> k;\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt();\n        int[] a = new int[n];\n        for (int i = 0; i < n; i++) a[i] = in.nextInt();\n        int k = in.nextInt();\n        // TODO: write your solution here\n    }\n}\n",
+   "py": "import sys\nfrom collections import defaultdict\n\ndata = sys.stdin.read().split()\nn = int(data[0])\na = [int(x) for x in data[1:1 + n]]\nk = int(data[1 + n])\n# TODO: write your solution here\n"
+  },
+  "solution": {
+   "c": "#include <stdio.h>\n\n#define H 8192\n\n/* index of the slot holding v, or of the empty slot where v belongs (linear probing) */\nstatic int slot(const int keys[], const int used[], int v) {\n    int h = ((v % H) + H) % H;\n    while (used[h] && keys[h] != v) h = (h + 1) % H;\n    return h;\n}\n\nint main(void) {\n    int n, a[1000], k;\n    scanf(\"%d\", &n);\n    for (int i = 0; i < n; i++) scanf(\"%d\", &a[i]);\n    scanf(\"%d\", &k);\n    static int keys[H], cnt[H], used[H];                /* an open-addressing hash table: prefix sum -> count */\n    long long answer = 0;\n    int prefix = 0, h = slot(keys, used, 0);\n    used[h] = 1; keys[h] = 0; cnt[h] = 1;\n    for (int i = 0; i < n; i++) {\n        prefix += a[i];\n        h = slot(keys, used, prefix - k);\n        if (used[h]) answer += cnt[h];\n        h = slot(keys, used, prefix);\n        if (!used[h]) { used[h] = 1; keys[h] = prefix; cnt[h] = 0; }\n        cnt[h]++;\n    }\n    printf(\"%lld\\n\", answer);\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\n#include <unordered_map>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n, k;\n    cin >> n;\n    vector<int> a(n);\n    for (int &x : a) cin >> x;\n    cin >> k;\n    unordered_map<int, int> count;\n    count[0] = 1;\n    int prefix = 0;\n    long long answer = 0;\n    for (int x : a) {\n        prefix += x;\n        auto it = count.find(prefix - k);\n        if (it != count.end()) answer += it->second;\n        count[prefix]++;\n    }\n    cout << answer << \"\\n\";\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt();\n        int[] a = new int[n];\n        for (int i = 0; i < n; i++) a[i] = in.nextInt();\n        int k = in.nextInt();\n        Map<Integer, Integer> count = new HashMap<>();\n        count.put(0, 1);\n        int prefix = 0;\n        long answer = 0;\n        for (int x : a) {\n            prefix += x;\n            answer += count.getOrDefault(prefix - k, 0);\n            count.merge(prefix, 1, Integer::sum);\n        }\n        System.out.println(answer);\n    }\n}\n",
+   "py": "import sys\nfrom collections import defaultdict\n\ndata = sys.stdin.read().split()\nn = int(data[0])\na = [int(x) for x in data[1:1 + n]]\nk = int(data[1 + n])\ncount = defaultdict(int)\ncount[0] = 1\nprefix = answer = 0\nfor x in a:\n    prefix += x\n    answer += count[prefix - k]\n    count[prefix] += 1\nprint(answer)\n"
+  },
+  "explain": "Let `prefix[i]` be the sum of the first i elements. The subarray from j to i sums to k exactly when `prefix[i] - prefix[j] = k`, i.e. `prefix[j] = prefix[i] - k`. So while scanning, keep a **hash table counting how often each prefix sum has occurred**; at each position add the count of `prefix - k` to the answer, then record the current prefix. The table starts with `{0: 1}` for the empty prefix. One pass, O(n) on average.",
+  "pseudo": [
+   "count = {0: 1}; prefix = 0; answer = 0",
+   "for each x in a:",
+   "  prefix = prefix + x",
+   "  answer = answer + count[prefix - k]   (0 if absent)",
+   "  count[prefix] = count[prefix] + 1",
+   "print answer"
+  ],
+  "time": "O(n)",
+  "space": "O(n)"
+ },
+ {
   "id": "max-depth",
   "title": "Maximum Depth of a Binary Tree",
   "module": 5,
@@ -1764,6 +3080,88 @@ DSA.problems = [
    "  while cur != NULL: push cur; cur = cur.left",
    "  cur = pop(); visit cur",
    "  cur = cur.right"
+  ],
+  "time": "O(n)",
+  "space": "O(h)"
+ },
+ {
+  "id": "diameter-of-binary-tree",
+  "title": "Diameter of Binary Tree",
+  "module": 5,
+  "difficulty": "Easy",
+  "tags": [
+   "Tree",
+   "Recursion",
+   "DFS"
+  ],
+  "source": "LeetCode 543",
+  "link": "https://leetcode.com/problems/diameter-of-binary-tree/",
+  "blurb": "The longest path between any two nodes, computed while measuring heights.",
+  "statement": "The **diameter** of a binary tree is the number of **edges** on the longest path between any two nodes. The path may or may not pass through the root. Print the diameter.",
+  "format": "**Input:** n, then n tokens: the tree in **level order**, where `null` marks a missing child (the format used by LeetCode). For example `3 9 20 null null 15 7` is the tree with root 3, children 9 and 20, and 20 has children 15 and 7.\n\n**Output:** the diameter.",
+  "constraints": "- 1 ≤ n ≤ 1000, and the first token is not `null`",
+  "examples": [
+   {
+    "in": "5\n1 2 3 4 5\n",
+    "out": "3\n",
+    "why": "The path 4 → 2 → 1 → 3 (or 5 → 2 → 1 → 3) has 3 edges."
+   },
+   {
+    "in": "3\n1 2 null\n",
+    "out": "1\n",
+    "why": "Only one edge exists."
+   }
+  ],
+  "tests": [
+   {
+    "in": "5\n1 2 3 4 5\n",
+    "out": "3\n"
+   },
+   {
+    "in": "3\n1 2 null\n",
+    "out": "1\n"
+   },
+   {
+    "in": "1\n1\n",
+    "out": "0\n"
+   },
+   {
+    "in": "7\n1 2 3 4 5 6 7\n",
+    "out": "4\n"
+   },
+   {
+    "in": "5\n1 2 null 3 null\n",
+    "out": "2\n"
+   },
+   {
+    "in": "9\n1 2 3 4 null null 5 6 null\n",
+    "out": "5\n"
+   },
+   {
+    "in": "7\n5 4 8 11 null 13 4\n",
+    "out": "4\n"
+   }
+  ],
+  "starter": {
+   "c": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\ntypedef struct TreeNode { int val; struct TreeNode *left, *right; } TreeNode;\n\nTreeNode *newNode(int v) {\n    TreeNode *t = calloc(1, sizeof(TreeNode));\n    t->val = v;\n    return t;\n}\n\n/* builds the tree from n level-order tokens (\"null\" = no node) */\nTreeNode *buildTree(int n, char tok[][16]) {\n    if (n == 0 || strcmp(tok[0], \"null\") == 0) return NULL;\n    TreeNode *root = newNode(atoi(tok[0])), **queue = malloc(sizeof(TreeNode *) * (n + 1));\n    int head = 0, tail = 0, i = 1;\n    queue[tail++] = root;\n    while (head < tail && i < n) {\n        TreeNode *cur = queue[head++];\n        if (i < n && strcmp(tok[i], \"null\") != 0) { cur->left = newNode(atoi(tok[i])); queue[tail++] = cur->left; }\n        i++;\n        if (i < n && strcmp(tok[i], \"null\") != 0) { cur->right = newNode(atoi(tok[i])); queue[tail++] = cur->right; }\n        i++;\n    }\n    free(queue);\n    return root;\n}\n\nstatic int best = 0;\n\nint height(TreeNode *t) {\n    // TODO: write your solution here\n    return 0;\n}\n\nint main(void) {\n    int n;\n    scanf(\"%d\", &n);\n    char tok[1000][16];\n    for (int i = 0; i < n; i++) scanf(\"%15s\", tok[i]);\n    TreeNode *root = buildTree(n, tok);\n    height(root);\n    printf(\"%d\\n\", best);\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\n#include <queue>\n#include <string>\n#include <vector>\nusing namespace std;\n\nstruct TreeNode {\n    int val; TreeNode *left = nullptr, *right = nullptr;\n    TreeNode(int v) : val(v) {}\n};\n\n// builds the tree from level-order tokens (\"null\" = no node)\nTreeNode *buildTree(const vector<string> &tok) {\n    if (tok.empty() || tok[0] == \"null\") return nullptr;\n    TreeNode *root = new TreeNode(stoi(tok[0]));\n    queue<TreeNode *> q;\n    q.push(root);\n    size_t i = 1;\n    while (!q.empty() && i < tok.size()) {\n        TreeNode *cur = q.front(); q.pop();\n        if (i < tok.size() && tok[i] != \"null\") { cur->left = new TreeNode(stoi(tok[i])); q.push(cur->left); }\n        i++;\n        if (i < tok.size() && tok[i] != \"null\") { cur->right = new TreeNode(stoi(tok[i])); q.push(cur->right); }\n        i++;\n    }\n    return root;\n}\n\nint best = 0;\n\nint height(TreeNode *t) {\n    // TODO: write your solution here\n    return 0;\n}\n\nint main() {\n    int n;\n    cin >> n;\n    vector<string> tok(n);\n    for (auto &s : tok) cin >> s;\n    height(buildTree(tok));\n    cout << best << \"\\n\";\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    static class TreeNode {\n        int val; TreeNode left, right;\n        TreeNode(int v) { val = v; }\n    }\n\n    // builds the tree from level-order tokens (\"null\" = no node)\n    static TreeNode buildTree(String[] tok) {\n        if (tok.length == 0 || tok[0].equals(\"null\")) return null;\n        TreeNode root = new TreeNode(Integer.parseInt(tok[0]));\n        Deque<TreeNode> q = new ArrayDeque<>();\n        q.add(root);\n        int i = 1;\n        while (!q.isEmpty() && i < tok.length) {\n            TreeNode cur = q.poll();\n            if (i < tok.length && !tok[i].equals(\"null\")) { cur.left = new TreeNode(Integer.parseInt(tok[i])); q.add(cur.left); }\n            i++;\n            if (i < tok.length && !tok[i].equals(\"null\")) { cur.right = new TreeNode(Integer.parseInt(tok[i])); q.add(cur.right); }\n            i++;\n        }\n        return root;\n    }\n\n    static int best = 0;\n\n    static int height(TreeNode t) {\n        // TODO: write your solution here\n        return 0;\n    }\n\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt();\n        String[] tok = new String[n];\n        for (int i = 0; i < n; i++) tok[i] = in.next();\n        height(buildTree(tok));\n        System.out.println(best);\n    }\n}\n",
+   "py": "import sys\nfrom collections import deque\n\n\nclass TreeNode:\n    def __init__(self, val):\n        self.val = val\n        self.left = None\n        self.right = None\n\n\ndef build_tree(tok):\n    \"\"\"Builds the tree from level-order tokens (\"null\" = no node).\"\"\"\n    if not tok or tok[0] == \"null\":\n        return None\n    root = TreeNode(int(tok[0]))\n    q, i = deque([root]), 1\n    while q and i < len(tok):\n        cur = q.popleft()\n        if i < len(tok) and tok[i] != \"null\":\n            cur.left = TreeNode(int(tok[i]))\n            q.append(cur.left)\n        i += 1\n        if i < len(tok) and tok[i] != \"null\":\n            cur.right = TreeNode(int(tok[i]))\n            q.append(cur.right)\n        i += 1\n    return root\n\n\ndata = sys.stdin.read().split()\nn = int(data[0])\nroot = build_tree(data[1:1 + n])\n\n\nbest = 0\n\n\ndef height(t):\n    # TODO: write your solution here\n    return 0\n\n\nheight(root)\nprint(best)\n"
+  },
+  "solution": {
+   "c": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\ntypedef struct TreeNode { int val; struct TreeNode *left, *right; } TreeNode;\n\nTreeNode *newNode(int v) {\n    TreeNode *t = calloc(1, sizeof(TreeNode));\n    t->val = v;\n    return t;\n}\n\n/* builds the tree from n level-order tokens (\"null\" = no node) */\nTreeNode *buildTree(int n, char tok[][16]) {\n    if (n == 0 || strcmp(tok[0], \"null\") == 0) return NULL;\n    TreeNode *root = newNode(atoi(tok[0])), **queue = malloc(sizeof(TreeNode *) * (n + 1));\n    int head = 0, tail = 0, i = 1;\n    queue[tail++] = root;\n    while (head < tail && i < n) {\n        TreeNode *cur = queue[head++];\n        if (i < n && strcmp(tok[i], \"null\") != 0) { cur->left = newNode(atoi(tok[i])); queue[tail++] = cur->left; }\n        i++;\n        if (i < n && strcmp(tok[i], \"null\") != 0) { cur->right = newNode(atoi(tok[i])); queue[tail++] = cur->right; }\n        i++;\n    }\n    free(queue);\n    return root;\n}\n\nstatic int best = 0;\n\nint height(TreeNode *t) {\n    if (!t) return 0;\n    int l = height(t->left), r = height(t->right);\n    if (l + r > best) best = l + r;\n    return 1 + (l > r ? l : r);\n}\n\nint main(void) {\n    int n;\n    scanf(\"%d\", &n);\n    char tok[1000][16];\n    for (int i = 0; i < n; i++) scanf(\"%15s\", tok[i]);\n    TreeNode *root = buildTree(n, tok);\n    height(root);\n    printf(\"%d\\n\", best);\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\n#include <queue>\n#include <string>\n#include <vector>\nusing namespace std;\n\nstruct TreeNode {\n    int val; TreeNode *left = nullptr, *right = nullptr;\n    TreeNode(int v) : val(v) {}\n};\n\n// builds the tree from level-order tokens (\"null\" = no node)\nTreeNode *buildTree(const vector<string> &tok) {\n    if (tok.empty() || tok[0] == \"null\") return nullptr;\n    TreeNode *root = new TreeNode(stoi(tok[0]));\n    queue<TreeNode *> q;\n    q.push(root);\n    size_t i = 1;\n    while (!q.empty() && i < tok.size()) {\n        TreeNode *cur = q.front(); q.pop();\n        if (i < tok.size() && tok[i] != \"null\") { cur->left = new TreeNode(stoi(tok[i])); q.push(cur->left); }\n        i++;\n        if (i < tok.size() && tok[i] != \"null\") { cur->right = new TreeNode(stoi(tok[i])); q.push(cur->right); }\n        i++;\n    }\n    return root;\n}\n\nint best = 0;\n\nint height(TreeNode *t) {\n    if (!t) return 0;\n    int l = height(t->left), r = height(t->right);\n    best = max(best, l + r);\n    return 1 + max(l, r);\n}\n\nint main() {\n    int n;\n    cin >> n;\n    vector<string> tok(n);\n    for (auto &s : tok) cin >> s;\n    height(buildTree(tok));\n    cout << best << \"\\n\";\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    static class TreeNode {\n        int val; TreeNode left, right;\n        TreeNode(int v) { val = v; }\n    }\n\n    // builds the tree from level-order tokens (\"null\" = no node)\n    static TreeNode buildTree(String[] tok) {\n        if (tok.length == 0 || tok[0].equals(\"null\")) return null;\n        TreeNode root = new TreeNode(Integer.parseInt(tok[0]));\n        Deque<TreeNode> q = new ArrayDeque<>();\n        q.add(root);\n        int i = 1;\n        while (!q.isEmpty() && i < tok.length) {\n            TreeNode cur = q.poll();\n            if (i < tok.length && !tok[i].equals(\"null\")) { cur.left = new TreeNode(Integer.parseInt(tok[i])); q.add(cur.left); }\n            i++;\n            if (i < tok.length && !tok[i].equals(\"null\")) { cur.right = new TreeNode(Integer.parseInt(tok[i])); q.add(cur.right); }\n            i++;\n        }\n        return root;\n    }\n\n    static int best = 0;\n\n    static int height(TreeNode t) {\n        if (t == null) return 0;\n        int l = height(t.left), r = height(t.right);\n        best = Math.max(best, l + r);\n        return 1 + Math.max(l, r);\n    }\n\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt();\n        String[] tok = new String[n];\n        for (int i = 0; i < n; i++) tok[i] = in.next();\n        height(buildTree(tok));\n        System.out.println(best);\n    }\n}\n",
+   "py": "import sys\nfrom collections import deque\n\n\nclass TreeNode:\n    def __init__(self, val):\n        self.val = val\n        self.left = None\n        self.right = None\n\n\ndef build_tree(tok):\n    \"\"\"Builds the tree from level-order tokens (\"null\" = no node).\"\"\"\n    if not tok or tok[0] == \"null\":\n        return None\n    root = TreeNode(int(tok[0]))\n    q, i = deque([root]), 1\n    while q and i < len(tok):\n        cur = q.popleft()\n        if i < len(tok) and tok[i] != \"null\":\n            cur.left = TreeNode(int(tok[i]))\n            q.append(cur.left)\n        i += 1\n        if i < len(tok) and tok[i] != \"null\":\n            cur.right = TreeNode(int(tok[i]))\n            q.append(cur.right)\n        i += 1\n    return root\n\n\ndata = sys.stdin.read().split()\nn = int(data[0])\nroot = build_tree(data[1:1 + n])\n\n\nbest = 0\n\n\ndef height(t):\n    global best\n    if t is None:\n        return 0\n    l, r = height(t.left), height(t.right)\n    best = max(best, l + r)\n    return 1 + max(l, r)\n\n\nheight(root)\nprint(best)\n"
+  },
+  "explain": "The longest path whose highest node is `t` goes down the deepest path on the left and the deepest path on the right: its length is `height(left) + height(right)` (heights counted in nodes, so the sum is the number of edges). Compute every node's height with the usual recursion and, at each node, update a global best with that sum. The answer is the maximum over all nodes, found in **one** traversal.",
+  "pseudo": [
+   "best = 0",
+   "height(t): if t is NULL return 0",
+   "  l = height(t.left); r = height(t.right)",
+   "  best = max(best, l + r)",
+   "  return 1 + max(l, r)",
+   "height(root); print best"
   ],
   "time": "O(n)",
   "space": "O(h)"
@@ -2020,5 +3418,258 @@ DSA.problems = [
   ],
   "time": "O(r·c)",
   "space": "O(r·c)"
+ },
+ {
+  "id": "right-side-view",
+  "title": "Binary Tree Right Side View",
+  "module": 5,
+  "difficulty": "Medium",
+  "tags": [
+   "Tree",
+   "BFS",
+   "Queue"
+  ],
+  "source": "LeetCode 199",
+  "link": "https://leetcode.com/problems/binary-tree-right-side-view/",
+  "blurb": "What you see when you stand to the right of the tree: the last node of every level.",
+  "statement": "Imagine standing on the **right side** of a binary tree. Print the values of the nodes you can see, from the top to the bottom. That is the **last node of each level**.",
+  "format": "**Input:** n, then n tokens: the tree in **level order**, where `null` marks a missing child (the format used by LeetCode). For example `3 9 20 null null 15 7` is the tree with root 3, children 9 and 20, and 20 has children 15 and 7.\n\n**Output:** the visible values, separated by spaces.",
+  "constraints": "- 1 ≤ n ≤ 1000, and the first token is not `null`",
+  "examples": [
+   {
+    "in": "7\n1 2 3 null 5 null 4\n",
+    "out": "1 3 4\n",
+    "why": "Level 0: 1. Level 1: 3 hides 2. Level 2: 4 hides 5."
+   },
+   {
+    "in": "3\n1 null 3\n",
+    "out": "1 3\n",
+    "why": "A right-leaning chain is fully visible."
+   }
+  ],
+  "tests": [
+   {
+    "in": "7\n1 2 3 null 5 null 4\n",
+    "out": "1 3 4\n"
+   },
+   {
+    "in": "3\n1 null 3\n",
+    "out": "1 3\n"
+   },
+   {
+    "in": "1\n1\n",
+    "out": "1\n"
+   },
+   {
+    "in": "5\n1 2 null 3 null\n",
+    "out": "1 2 3\n"
+   },
+   {
+    "in": "7\n1 2 3 4 5 6 7\n",
+    "out": "1 3 7\n"
+   },
+   {
+    "in": "7\n1 2 3 4 null null null\n",
+    "out": "1 3 4\n"
+   },
+   {
+    "in": "9\n5 4 8 11 null 13 4 7 2\n",
+    "out": "5 8 4 2\n"
+   }
+  ],
+  "starter": {
+   "c": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\ntypedef struct TreeNode { int val; struct TreeNode *left, *right; } TreeNode;\n\nTreeNode *newNode(int v) {\n    TreeNode *t = calloc(1, sizeof(TreeNode));\n    t->val = v;\n    return t;\n}\n\n/* builds the tree from n level-order tokens (\"null\" = no node) */\nTreeNode *buildTree(int n, char tok[][16]) {\n    if (n == 0 || strcmp(tok[0], \"null\") == 0) return NULL;\n    TreeNode *root = newNode(atoi(tok[0])), **queue = malloc(sizeof(TreeNode *) * (n + 1));\n    int head = 0, tail = 0, i = 1;\n    queue[tail++] = root;\n    while (head < tail && i < n) {\n        TreeNode *cur = queue[head++];\n        if (i < n && strcmp(tok[i], \"null\") != 0) { cur->left = newNode(atoi(tok[i])); queue[tail++] = cur->left; }\n        i++;\n        if (i < n && strcmp(tok[i], \"null\") != 0) { cur->right = newNode(atoi(tok[i])); queue[tail++] = cur->right; }\n        i++;\n    }\n    free(queue);\n    return root;\n}\n\nint main(void) {\n    int n;\n    scanf(\"%d\", &n);\n    char tok[1000][16];\n    for (int i = 0; i < n; i++) scanf(\"%15s\", tok[i]);\n    TreeNode *root = buildTree(n, tok);\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\n#include <queue>\n#include <string>\n#include <vector>\nusing namespace std;\n\nstruct TreeNode {\n    int val; TreeNode *left = nullptr, *right = nullptr;\n    TreeNode(int v) : val(v) {}\n};\n\n// builds the tree from level-order tokens (\"null\" = no node)\nTreeNode *buildTree(const vector<string> &tok) {\n    if (tok.empty() || tok[0] == \"null\") return nullptr;\n    TreeNode *root = new TreeNode(stoi(tok[0]));\n    queue<TreeNode *> q;\n    q.push(root);\n    size_t i = 1;\n    while (!q.empty() && i < tok.size()) {\n        TreeNode *cur = q.front(); q.pop();\n        if (i < tok.size() && tok[i] != \"null\") { cur->left = new TreeNode(stoi(tok[i])); q.push(cur->left); }\n        i++;\n        if (i < tok.size() && tok[i] != \"null\") { cur->right = new TreeNode(stoi(tok[i])); q.push(cur->right); }\n        i++;\n    }\n    return root;\n}\n\nint main() {\n    int n;\n    cin >> n;\n    vector<string> tok(n);\n    for (auto &s : tok) cin >> s;\n    TreeNode *root = buildTree(tok);\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    static class TreeNode {\n        int val; TreeNode left, right;\n        TreeNode(int v) { val = v; }\n    }\n\n    // builds the tree from level-order tokens (\"null\" = no node)\n    static TreeNode buildTree(String[] tok) {\n        if (tok.length == 0 || tok[0].equals(\"null\")) return null;\n        TreeNode root = new TreeNode(Integer.parseInt(tok[0]));\n        Deque<TreeNode> q = new ArrayDeque<>();\n        q.add(root);\n        int i = 1;\n        while (!q.isEmpty() && i < tok.length) {\n            TreeNode cur = q.poll();\n            if (i < tok.length && !tok[i].equals(\"null\")) { cur.left = new TreeNode(Integer.parseInt(tok[i])); q.add(cur.left); }\n            i++;\n            if (i < tok.length && !tok[i].equals(\"null\")) { cur.right = new TreeNode(Integer.parseInt(tok[i])); q.add(cur.right); }\n            i++;\n        }\n        return root;\n    }\n\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt();\n        String[] tok = new String[n];\n        for (int i = 0; i < n; i++) tok[i] = in.next();\n        TreeNode root = buildTree(tok);\n        // TODO: write your solution here\n    }\n}\n",
+   "py": "import sys\nfrom collections import deque\n\n\nclass TreeNode:\n    def __init__(self, val):\n        self.val = val\n        self.left = None\n        self.right = None\n\n\ndef build_tree(tok):\n    \"\"\"Builds the tree from level-order tokens (\"null\" = no node).\"\"\"\n    if not tok or tok[0] == \"null\":\n        return None\n    root = TreeNode(int(tok[0]))\n    q, i = deque([root]), 1\n    while q and i < len(tok):\n        cur = q.popleft()\n        if i < len(tok) and tok[i] != \"null\":\n            cur.left = TreeNode(int(tok[i]))\n            q.append(cur.left)\n        i += 1\n        if i < len(tok) and tok[i] != \"null\":\n            cur.right = TreeNode(int(tok[i]))\n            q.append(cur.right)\n        i += 1\n    return root\n\n\ndata = sys.stdin.read().split()\nn = int(data[0])\nroot = build_tree(data[1:1 + n])\n\n\n# TODO: write your solution here\n"
+  },
+  "solution": {
+   "c": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\ntypedef struct TreeNode { int val; struct TreeNode *left, *right; } TreeNode;\n\nTreeNode *newNode(int v) {\n    TreeNode *t = calloc(1, sizeof(TreeNode));\n    t->val = v;\n    return t;\n}\n\n/* builds the tree from n level-order tokens (\"null\" = no node) */\nTreeNode *buildTree(int n, char tok[][16]) {\n    if (n == 0 || strcmp(tok[0], \"null\") == 0) return NULL;\n    TreeNode *root = newNode(atoi(tok[0])), **queue = malloc(sizeof(TreeNode *) * (n + 1));\n    int head = 0, tail = 0, i = 1;\n    queue[tail++] = root;\n    while (head < tail && i < n) {\n        TreeNode *cur = queue[head++];\n        if (i < n && strcmp(tok[i], \"null\") != 0) { cur->left = newNode(atoi(tok[i])); queue[tail++] = cur->left; }\n        i++;\n        if (i < n && strcmp(tok[i], \"null\") != 0) { cur->right = newNode(atoi(tok[i])); queue[tail++] = cur->right; }\n        i++;\n    }\n    free(queue);\n    return root;\n}\n\nint main(void) {\n    int n;\n    scanf(\"%d\", &n);\n    char tok[1000][16];\n    for (int i = 0; i < n; i++) scanf(\"%15s\", tok[i]);\n    TreeNode *root = buildTree(n, tok);\n    TreeNode *q[1000];\n    int head = 0, tail = 0, first = 1;\n    q[tail++] = root;\n    while (head < tail) {\n        int size = tail - head;\n        for (int i = 0; i < size; i++) {\n            TreeNode *u = q[head++];\n            if (u->left) q[tail++] = u->left;\n            if (u->right) q[tail++] = u->right;\n            if (i == size - 1) { printf(first ? \"%d\" : \" %d\", u->val); first = 0; }\n        }\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\n#include <queue>\n#include <string>\n#include <vector>\nusing namespace std;\n\nstruct TreeNode {\n    int val; TreeNode *left = nullptr, *right = nullptr;\n    TreeNode(int v) : val(v) {}\n};\n\n// builds the tree from level-order tokens (\"null\" = no node)\nTreeNode *buildTree(const vector<string> &tok) {\n    if (tok.empty() || tok[0] == \"null\") return nullptr;\n    TreeNode *root = new TreeNode(stoi(tok[0]));\n    queue<TreeNode *> q;\n    q.push(root);\n    size_t i = 1;\n    while (!q.empty() && i < tok.size()) {\n        TreeNode *cur = q.front(); q.pop();\n        if (i < tok.size() && tok[i] != \"null\") { cur->left = new TreeNode(stoi(tok[i])); q.push(cur->left); }\n        i++;\n        if (i < tok.size() && tok[i] != \"null\") { cur->right = new TreeNode(stoi(tok[i])); q.push(cur->right); }\n        i++;\n    }\n    return root;\n}\n\nint main() {\n    int n;\n    cin >> n;\n    vector<string> tok(n);\n    for (auto &s : tok) cin >> s;\n    TreeNode *root = buildTree(tok);\n    queue<TreeNode *> q;\n    q.push(root);\n    bool first = true;\n    while (!q.empty()) {\n        int size = q.size();\n        for (int i = 0; i < size; i++) {\n            TreeNode *u = q.front(); q.pop();\n            if (u->left) q.push(u->left);\n            if (u->right) q.push(u->right);\n            if (i == size - 1) { cout << (first ? \"\" : \" \") << u->val; first = false; }\n        }\n    }\n    cout << \"\\n\";\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    static class TreeNode {\n        int val; TreeNode left, right;\n        TreeNode(int v) { val = v; }\n    }\n\n    // builds the tree from level-order tokens (\"null\" = no node)\n    static TreeNode buildTree(String[] tok) {\n        if (tok.length == 0 || tok[0].equals(\"null\")) return null;\n        TreeNode root = new TreeNode(Integer.parseInt(tok[0]));\n        Deque<TreeNode> q = new ArrayDeque<>();\n        q.add(root);\n        int i = 1;\n        while (!q.isEmpty() && i < tok.length) {\n            TreeNode cur = q.poll();\n            if (i < tok.length && !tok[i].equals(\"null\")) { cur.left = new TreeNode(Integer.parseInt(tok[i])); q.add(cur.left); }\n            i++;\n            if (i < tok.length && !tok[i].equals(\"null\")) { cur.right = new TreeNode(Integer.parseInt(tok[i])); q.add(cur.right); }\n            i++;\n        }\n        return root;\n    }\n\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt();\n        String[] tok = new String[n];\n        for (int i = 0; i < n; i++) tok[i] = in.next();\n        TreeNode root = buildTree(tok);\n        Deque<TreeNode> q = new ArrayDeque<>();\n        q.add(root);\n        StringBuilder sb = new StringBuilder();\n        while (!q.isEmpty()) {\n            int size = q.size();\n            for (int i = 0; i < size; i++) {\n                TreeNode u = q.poll();\n                if (u.left != null) q.add(u.left);\n                if (u.right != null) q.add(u.right);\n                if (i == size - 1) sb.append(sb.length() > 0 ? \" \" : \"\").append(u.val);\n            }\n        }\n        System.out.println(sb);\n    }\n}\n",
+   "py": "import sys\nfrom collections import deque\n\n\nclass TreeNode:\n    def __init__(self, val):\n        self.val = val\n        self.left = None\n        self.right = None\n\n\ndef build_tree(tok):\n    \"\"\"Builds the tree from level-order tokens (\"null\" = no node).\"\"\"\n    if not tok or tok[0] == \"null\":\n        return None\n    root = TreeNode(int(tok[0]))\n    q, i = deque([root]), 1\n    while q and i < len(tok):\n        cur = q.popleft()\n        if i < len(tok) and tok[i] != \"null\":\n            cur.left = TreeNode(int(tok[i]))\n            q.append(cur.left)\n        i += 1\n        if i < len(tok) and tok[i] != \"null\":\n            cur.right = TreeNode(int(tok[i]))\n            q.append(cur.right)\n        i += 1\n    return root\n\n\ndata = sys.stdin.read().split()\nn = int(data[0])\nroot = build_tree(data[1:1 + n])\n\n\nout, level = [], [root]\nwhile level:\n    out.append(level[-1].val)\n    level = [c for u in level for c in (u.left, u.right) if c]\nprint(*out)\n"
+  },
+  "explain": "Do a **level-order traversal** with a queue, processing one whole level at a time: remember how many nodes the queue holds at the start of the level, dequeue exactly that many, and note the **last** one dequeued. That node is the one visible from the right. Each node is enqueued and dequeued once: O(n) time, and the queue holds at most one level, O(width).",
+  "pseudo": [
+   "queue = [root]",
+   "while queue not empty:",
+   "  size = length of queue",
+   "  for i = 1 to size:",
+   "    u = dequeue(); if u.left: enqueue; if u.right: enqueue",
+   "    if i == size: output u.val"
+  ],
+  "time": "O(n)",
+  "space": "O(w)"
+ },
+ {
+  "id": "course-schedule",
+  "title": "Course Schedule",
+  "module": 5,
+  "difficulty": "Medium",
+  "tags": [
+   "Graph",
+   "Topological sort",
+   "Cycle detection"
+  ],
+  "source": "LeetCode 207",
+  "link": "https://leetcode.com/problems/course-schedule/",
+  "blurb": "Can all courses be finished given their prerequisites? Detect a cycle with Kahn's algorithm.",
+  "statement": "There are `n` courses numbered 0 to n − 1 and `m` prerequisite pairs `a b`, meaning **b must be taken before a**. Print `true` if it is possible to finish all courses, otherwise `false` (which happens exactly when the prerequisites contain a **cycle**).",
+  "format": "**Input:** n and m, then m lines with `a b`.\n\n**Output:** `true` or `false`.",
+  "constraints": "- 1 ≤ n ≤ 100\n- 0 ≤ m ≤ 500",
+  "examples": [
+   {
+    "in": "2 1\n1 0\n",
+    "out": "true\n",
+    "why": "Take course 0, then course 1."
+   },
+   {
+    "in": "2 2\n1 0\n0 1\n",
+    "out": "false\n",
+    "why": "Each course needs the other first: a cycle."
+   }
+  ],
+  "tests": [
+   {
+    "in": "2 1\n1 0\n",
+    "out": "true\n"
+   },
+   {
+    "in": "2 2\n1 0\n0 1\n",
+    "out": "false\n"
+   },
+   {
+    "in": "1 0\n",
+    "out": "true\n"
+   },
+   {
+    "in": "3 2\n1 0\n2 1\n",
+    "out": "true\n"
+   },
+   {
+    "in": "3 3\n1 0\n2 1\n0 2\n",
+    "out": "false\n"
+   },
+   {
+    "in": "4 3\n1 0\n2 0\n3 1\n",
+    "out": "true\n"
+   },
+   {
+    "in": "5 5\n1 0\n2 1\n3 2\n4 3\n1 4\n",
+    "out": "false\n"
+   },
+   {
+    "in": "4 4\n1 0\n2 0\n3 1\n3 2\n",
+    "out": "true\n"
+   }
+  ],
+  "starter": {
+   "c": "#include <stdio.h>\n\nint main(void) {\n    int n, m, a[500], b[500];\n    scanf(\"%d %d\", &n, &m);\n    for (int i = 0; i < m; i++) scanf(\"%d %d\", &a[i], &b[i]);\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\n#include <queue>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<int> a(m), b(m);\n    for (int i = 0; i < m; i++) cin >> a[i] >> b[i];\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt(), m = in.nextInt();\n        int[] a = new int[m], b = new int[m];\n        for (int i = 0; i < m; i++) { a[i] = in.nextInt(); b[i] = in.nextInt(); }\n        // TODO: write your solution here\n    }\n}\n",
+   "py": "import sys\nfrom collections import deque\n\ndata = sys.stdin.read().split()\nn, m = int(data[0]), int(data[1])\npairs = [(int(data[2 + 2 * i]), int(data[3 + 2 * i])) for i in range(m)]\n# TODO: write your solution here\n"
+  },
+  "solution": {
+   "c": "#include <stdio.h>\n\nint main(void) {\n    int n, m, a[500], b[500];\n    scanf(\"%d %d\", &n, &m);\n    for (int i = 0; i < m; i++) scanf(\"%d %d\", &a[i], &b[i]);\n    int indeg[100] = {0}, queue[100], head = 0, tail = 0, done = 0;\n    for (int i = 0; i < m; i++) indeg[a[i]]++;\n    for (int v = 0; v < n; v++) if (indeg[v] == 0) queue[tail++] = v;\n    while (head < tail) {\n        int u = queue[head++];\n        done++;\n        for (int i = 0; i < m; i++)\n            if (b[i] == u && --indeg[a[i]] == 0) queue[tail++] = a[i];\n    }\n    printf(done == n ? \"true\\n\" : \"false\\n\");\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\n#include <queue>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<int> a(m), b(m);\n    for (int i = 0; i < m; i++) cin >> a[i] >> b[i];\n    vector<vector<int>> adj(n);\n    vector<int> indeg(n, 0);\n    for (int i = 0; i < m; i++) { adj[b[i]].push_back(a[i]); indeg[a[i]]++; }\n    queue<int> q;\n    for (int v = 0; v < n; v++) if (indeg[v] == 0) q.push(v);\n    int done = 0;\n    while (!q.empty()) {\n        int u = q.front(); q.pop();\n        done++;\n        for (int w : adj[u]) if (--indeg[w] == 0) q.push(w);\n    }\n    cout << (done == n ? \"true\" : \"false\") << \"\\n\";\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt(), m = in.nextInt();\n        int[] a = new int[m], b = new int[m];\n        for (int i = 0; i < m; i++) { a[i] = in.nextInt(); b[i] = in.nextInt(); }\n        List<List<Integer>> adj = new ArrayList<>();\n        for (int v = 0; v < n; v++) adj.add(new ArrayList<>());\n        int[] indeg = new int[n];\n        for (int i = 0; i < m; i++) { adj.get(b[i]).add(a[i]); indeg[a[i]]++; }\n        Deque<Integer> q = new ArrayDeque<>();\n        for (int v = 0; v < n; v++) if (indeg[v] == 0) q.add(v);\n        int done = 0;\n        while (!q.isEmpty()) {\n            int u = q.poll();\n            done++;\n            for (int w : adj.get(u)) if (--indeg[w] == 0) q.add(w);\n        }\n        System.out.println(done == n ? \"true\" : \"false\");\n    }\n}\n",
+   "py": "import sys\nfrom collections import deque\n\ndata = sys.stdin.read().split()\nn, m = int(data[0]), int(data[1])\npairs = [(int(data[2 + 2 * i]), int(data[3 + 2 * i])) for i in range(m)]\nadj = [[] for _ in range(n)]\nindeg = [0] * n\nfor a, b in pairs:\n    adj[b].append(a)\n    indeg[a] += 1\nq = deque(v for v in range(n) if indeg[v] == 0)\ndone = 0\nwhile q:\n    u = q.popleft()\n    done += 1\n    for w in adj[u]:\n        indeg[w] -= 1\n        if indeg[w] == 0:\n            q.append(w)\nprint(\"true\" if done == n else \"false\")\n"
+  },
+  "explain": "Model the courses as a directed graph with an edge b → a for each prerequisite. All courses can be finished exactly when the graph is a **DAG**, i.e. when it has a topological order. **Kahn's algorithm** builds one: count the incoming edges (in-degree) of every vertex, queue the vertices with in-degree 0, and repeatedly remove one, lowering the in-degree of its successors. If all n vertices get removed the answer is `true`; if some are left they all lie on or behind a cycle, so the answer is `false`.",
+  "pseudo": [
+   "build adjacency lists: b -> a; indeg[a]++",
+   "queue = all courses with indeg 0; done = 0",
+   "while queue not empty:",
+   "  u = dequeue(); done++",
+   "  for each successor w of u: indeg[w]--; if indeg[w] == 0: enqueue w",
+   "print (done == n)"
+  ],
+  "time": "O(n + m)",
+  "space": "O(n + m)"
+ },
+ {
+  "id": "number-of-provinces",
+  "title": "Number of Provinces",
+  "module": 5,
+  "difficulty": "Medium",
+  "tags": [
+   "Graph",
+   "Disjoint set",
+   "DFS"
+  ],
+  "source": "LeetCode 547",
+  "link": "https://leetcode.com/problems/number-of-provinces/",
+  "blurb": "Count the groups of connected cities with union-find.",
+  "statement": "There are `n` cities. An `n × n` matrix says whether two cities are **directly connected** (1) or not (0); the matrix is symmetric and each city is connected to itself. A **province** is a group of cities connected directly or indirectly. Print the number of provinces.",
+  "format": "**Input:** n, then n rows of n integers (0 or 1).\n\n**Output:** the number of provinces.",
+  "constraints": "- 1 ≤ n ≤ 100",
+  "examples": [
+   {
+    "in": "3\n1 1 0\n1 1 0\n0 0 1\n",
+    "out": "2\n",
+    "why": "Cities 0 and 1 form one province; city 2 is alone."
+   },
+   {
+    "in": "3\n1 0 0\n0 1 0\n0 0 1\n",
+    "out": "3\n",
+    "why": "No two cities are connected."
+   }
+  ],
+  "tests": [
+   {
+    "in": "3\n1 1 0\n1 1 0\n0 0 1\n",
+    "out": "2\n"
+   },
+   {
+    "in": "3\n1 0 0\n0 1 0\n0 0 1\n",
+    "out": "3\n"
+   },
+   {
+    "in": "1\n1\n",
+    "out": "1\n"
+   },
+   {
+    "in": "2\n1 1\n1 1\n",
+    "out": "1\n"
+   },
+   {
+    "in": "4\n1 1 0 0\n1 1 0 0\n0 0 1 1\n0 0 1 1\n",
+    "out": "2\n"
+   },
+   {
+    "in": "4\n1 0 0 1\n0 1 1 0\n0 1 1 0\n1 0 0 1\n",
+    "out": "2\n"
+   },
+   {
+    "in": "5\n1 1 0 0 0\n1 1 1 0 0\n0 1 1 0 0\n0 0 0 1 1\n0 0 0 1 1\n",
+    "out": "2\n"
+   },
+   {
+    "in": "4\n1 1 1 1\n1 1 1 1\n1 1 1 1\n1 1 1 1\n",
+    "out": "1\n"
+   }
+  ],
+  "starter": {
+   "c": "#include <stdio.h>\n\nstatic int parent[100];\n\nint find(int x) {\n    while (parent[x] != x) { parent[x] = parent[parent[x]]; x = parent[x]; }   /* path halving */\n    return x;\n}\n\nint main(void) {\n    int n, g[100][100];\n    scanf(\"%d\", &n);\n    for (int i = 0; i < n; i++) for (int j = 0; j < n; j++) scanf(\"%d\", &g[i][j]);\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\n#include <numeric>\n#include <vector>\nusing namespace std;\n\nvector<int> parent;\n\nint find(int x) {\n    while (parent[x] != x) { parent[x] = parent[parent[x]]; x = parent[x]; }   // path halving\n    return x;\n}\n\nint main() {\n    int n;\n    cin >> n;\n    vector<vector<int>> g(n, vector<int>(n));\n    for (auto &row : g) for (int &x : row) cin >> x;\n    // TODO: write your solution here\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    static int[] parent;\n\n    static int find(int x) {\n        while (parent[x] != x) { parent[x] = parent[parent[x]]; x = parent[x]; }   // path halving\n        return x;\n    }\n\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt();\n        int[][] g = new int[n][n];\n        for (int i = 0; i < n; i++) for (int j = 0; j < n; j++) g[i][j] = in.nextInt();\n        // TODO: write your solution here\n    }\n}\n",
+   "py": "import sys\n\ndata = sys.stdin.read().split()\nn = int(data[0])\ng = [[int(data[1 + i * n + j]) for j in range(n)] for i in range(n)]\n# TODO: write your solution here\n"
+  },
+  "solution": {
+   "c": "#include <stdio.h>\n\nstatic int parent[100];\n\nint find(int x) {\n    while (parent[x] != x) { parent[x] = parent[parent[x]]; x = parent[x]; }   /* path halving */\n    return x;\n}\n\nint main(void) {\n    int n, g[100][100];\n    scanf(\"%d\", &n);\n    for (int i = 0; i < n; i++) for (int j = 0; j < n; j++) scanf(\"%d\", &g[i][j]);\n    int count = n;\n    for (int i = 0; i < n; i++) parent[i] = i;\n    for (int i = 0; i < n; i++)\n        for (int j = i + 1; j < n; j++)\n            if (g[i][j]) {\n                int ri = find(i), rj = find(j);\n                if (ri != rj) { parent[ri] = rj; count--; }\n            }\n    printf(\"%d\\n\", count);\n    return 0;\n}\n",
+   "cpp": "#include <iostream>\n#include <numeric>\n#include <vector>\nusing namespace std;\n\nvector<int> parent;\n\nint find(int x) {\n    while (parent[x] != x) { parent[x] = parent[parent[x]]; x = parent[x]; }   // path halving\n    return x;\n}\n\nint main() {\n    int n;\n    cin >> n;\n    vector<vector<int>> g(n, vector<int>(n));\n    for (auto &row : g) for (int &x : row) cin >> x;\n    parent.resize(n);\n    iota(parent.begin(), parent.end(), 0);\n    int count = n;\n    for (int i = 0; i < n; i++)\n        for (int j = i + 1; j < n; j++)\n            if (g[i][j]) {\n                int ri = find(i), rj = find(j);\n                if (ri != rj) { parent[ri] = rj; count--; }\n            }\n    cout << count << \"\\n\";\n    return 0;\n}\n",
+   "java": "import java.util.*;\n\nclass Main {\n    static int[] parent;\n\n    static int find(int x) {\n        while (parent[x] != x) { parent[x] = parent[parent[x]]; x = parent[x]; }   // path halving\n        return x;\n    }\n\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt();\n        int[][] g = new int[n][n];\n        for (int i = 0; i < n; i++) for (int j = 0; j < n; j++) g[i][j] = in.nextInt();\n        parent = new int[n];\n        for (int i = 0; i < n; i++) parent[i] = i;\n        int count = n;\n        for (int i = 0; i < n; i++)\n            for (int j = i + 1; j < n; j++)\n                if (g[i][j] == 1) {\n                    int ri = find(i), rj = find(j);\n                    if (ri != rj) { parent[ri] = rj; count--; }\n                }\n        System.out.println(count);\n    }\n}\n",
+   "py": "import sys\n\ndata = sys.stdin.read().split()\nn = int(data[0])\ng = [[int(data[1 + i * n + j]) for j in range(n)] for i in range(n)]\nparent = list(range(n))\n\n\ndef find(x):\n    while parent[x] != x:\n        parent[x] = parent[parent[x]]      # path halving\n        x = parent[x]\n    return x\n\n\ncount = n\nfor i in range(n):\n    for j in range(i + 1, n):\n        if g[i][j]:\n            ri, rj = find(i), find(j)\n            if ri != rj:\n                parent[ri] = rj\n                count -= 1\nprint(count)\n"
+  },
+  "explain": "This is the **connected components** problem, a perfect fit for the **disjoint set**. Start with n separate sets. For every pair (i, j) with a direct connection, `union(i, j)`; each union that actually merges two different sets lowers the number of components by one. Finish with n minus the number of successful unions. With **path compression** and union by rank a find costs almost O(1), so the whole scan of the matrix is O(n²). A DFS or BFS from every unvisited city gives the same answer.",
+  "pseudo": [
+   "parent[i] = i for every city; count = n",
+   "for i, j with i < j and connected[i][j] == 1:",
+   "  ri = find(i); rj = find(j)",
+   "  if ri != rj: parent[ri] = rj; count--",
+   "print count"
+  ],
+  "time": "O(n² α(n))",
+  "space": "O(n)"
  }
 ];

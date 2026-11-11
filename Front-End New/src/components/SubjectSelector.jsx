@@ -276,7 +276,7 @@ function SubjectSelector({ onSelectSubject, onBackToLanding, theme, onToggleThem
           </div>
         )}
 
-        {/* DSA (CS24201) learning site: a static site served from public/dsa */}
+        {/* DSA (CS24201) learning site and DSD lab simulator: static sites served from public/dsa and public/dsd */}
         <section className="dsd-entry-section" id="dsd-entry-section">
           <a
             className="subject-selection-btn labs-btn-accent dsd-entry-btn"
@@ -295,6 +295,27 @@ function SubjectSelector({ onSelectSubject, onBackToLanding, theme, onToggleThem
             <div className="btn-content-left">
               <span className="btn-primary-title dsd-entry-title">DSA</span>
               <span className="btn-secondary-code">Data Structures &amp; Algorithms · animated slides, visualizers, past papers &amp; practice</span>
+            </div>
+            <div className="labs-indicator-dot" />
+            <svg className="btn-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </a>
+          <a
+            className="subject-selection-btn labs-btn-accent dsd-entry-btn"
+            // page may be served as /bit-jaipur (clean URL, no slash), so "./dsd/" would resolve to /dsd/
+            href={`${window.location.pathname.replace(/(\/index\.html)?\/?$/, '')}/dsd/?from=bithub&theme=${theme}`}
+            id="btn-dsd-lab"
+          >
+            <div className="dsd-entry-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="7" y="4" width="10" height="16" rx="1.5" />
+                <path d="M4 7h3M4 11h3M4 15h3M17 7h3M17 11h3M17 15h3" />
+              </svg>
+            </div>
+            <div className="btn-content-left">
+              <span className="btn-primary-title dsd-entry-title">DSD</span>
+              <span className="btn-secondary-code">Digital System Design Lab · breadboard &amp; trainer-kit simulator</span>
             </div>
             <div className="labs-indicator-dot" />
             <svg className="btn-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">

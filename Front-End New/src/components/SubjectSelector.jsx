@@ -280,8 +280,8 @@ function SubjectSelector({ onSelectSubject, onBackToLanding, theme, onToggleThem
         <section className="dsd-entry-section" id="dsd-entry-section">
           <a
             className="subject-selection-btn labs-btn-accent dsd-entry-btn"
-            // the page may be served as /bit-jaipur (no trailing slash), so build the link from the pathname; the backend address is handed over so the site needs no rebuild when it moves
-            href={`${window.location.pathname.replace(/(\/index\.html)?\/?$/, '')}/dsa/?from=bithub&theme=${theme}${import.meta.env.VITE_API_BASE_URL ? `&api=${encodeURIComponent(import.meta.env.VITE_API_BASE_URL)}` : ''}`}
+            // same clean-URL reasoning as the DSD link below; the DSA site reads its backend address from dsa/js/env.js (see vite.config.js)
+            href={`${window.location.pathname.replace(/(\/index\.html)?\/?$/, '')}/dsa/?from=bithub&theme=${theme}`}
             id="btn-dsa"
           >
             <div className="dsd-entry-icon" aria-hidden="true">
@@ -289,12 +289,12 @@ function SubjectSelector({ onSelectSubject, onBackToLanding, theme, onToggleThem
                 <circle cx="12" cy="5" r="2.5" />
                 <circle cx="5.5" cy="18" r="2.5" />
                 <circle cx="18.5" cy="18" r="2.5" />
-                <path d="M10.8 7.200 6.800 15.800M13.2 7.200l4 8.600" />
+                <path d="M10.8 7.2 6.8 15.8M13.2 7.2l4 8.6" />
               </svg>
             </div>
             <div className="btn-content-left">
               <span className="btn-primary-title dsd-entry-title">DSA</span>
-              <span className="btn-secondary-code">Data Structures &amp; Algorithms · animated slides, visualizers, past papers &amp; practice</span>
+              <span className="btn-secondary-code">Data Structures &amp; Algorithms · slides, visualizers, notes, past papers &amp; practice</span>
             </div>
             <div className="labs-indicator-dot" />
             <svg className="btn-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">

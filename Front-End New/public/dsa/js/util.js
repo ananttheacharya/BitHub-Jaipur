@@ -88,10 +88,11 @@
   /* ---------- site config ---------- */
   const qs = new URLSearchParams(location.search);
   DSA.EMBED = qs.get('from') === 'bithub' || /\/dsa\/?(index\.html)?$/.test(location.pathname) && !/^(localhost|127\.)/.test(location.hostname) && qs.get('from') !== 'standalone';
-  // Backend that serves /study-material. The BitHub DSA button passes its own VITE_API_BASE_URL as ?api=,
-  // so a backend move needs no change here; the constant is only the fallback for direct visits.
+  // Backend that serves /study-material. js/env.js (written by the Vite build from VITE_API_BASE_URL, the same
+  // value as src/config.js API_BASE) sets window.DSA_API, so a backend move only changes .env.production.
+  // ?api= overrides it for testing; without either, localhost uses a local backend and anything else the same origin.
   const LOCAL = /^(localhost|127\.|\[::1\])/.test(location.hostname);
-  const DEFAULT_API = LOCAL ? 'http://localhost:3001' : 'https://15.134.87.203.nip.io';   // local staging reads the notes from a local backend
+  const DEFAULT_API = typeof window.DSA_API === 'string' ? window.DSA_API : LOCAL ? 'http://localhost:3001' : '';
   let api = qs.get('api');
   try { if (api) sessionStorage.setItem('dsa.api', api); else api = sessionStorage.getItem('dsa.api'); } catch (e) { /* ignore */ }
   DSA.API = (api && /^https?:\/\//.test(api) ? api : DEFAULT_API).replace(/\/$/, '');

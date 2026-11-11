@@ -2,7 +2,14 @@
 <html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8">
-  <script>/* hosts with clean URLs serve this folder as ".../dsa": restore the slash so relative paths resolve */ if (!/\/$|\.html$/.test(location.pathname)) location.replace(location.pathname + "/" + location.search + location.hash);</script>
+  <script>
+    /* Hosts with clean URLs (Vercel "cleanUrls") serve this folder as ".../dsa" without the slash, and relative paths
+     * would then point at the parent folder. Restore the slash first, and only then add the page's own files: they are
+     * written by script, so the browser does not request them early from the wrong folder. */
+    window.DSA_BOOT = /\/$|\.html$/.test(location.pathname);
+    if (!DSA_BOOT) location.replace(location.pathname + '/' + location.search + location.hash);
+    else document.write(["vendor/codemirror/codemirror.css", "css/dsa.css"].map(function (h) { return '<link rel="stylesheet" href="' + h + '">'; }).join(''));
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>DSA · BitHub</title>
   <meta name="description" content="Data Structures and Algorithms (CS24201) on BitHub: animated slides and visualizers for every module, previous year questions with answers, coding problems with an online compiler, and all class notes.">
@@ -11,48 +18,52 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="vendor/codemirror/codemirror.css">
-  <link rel="stylesheet" href="css/dsa.css">
 </head>
 <body>
   <div id="app"></div>
   <noscript><p style="padding:2rem;font-family:sans-serif">BitHub DSA needs JavaScript.</p></noscript>
 
-  <script src="vendor/codemirror/codemirror.js"></script>
-  <script src="vendor/codemirror/clike.js"></script>
-  <script src="vendor/codemirror/python.js"></script>
-  <script src="vendor/codemirror/matchbrackets.js"></script>
-  <script src="vendor/codemirror/closebrackets.js"></script>
-  <script src="js/util.js"></script>
-  <script src="js/stage.js"></script>
-  <script src="js/viz/core.js"></script>
-  <script src="js/viz/m1.js"></script>
-  <script src="js/viz/m2.js"></script>
-  <script src="js/viz/m3.js"></script>
-  <script src="js/viz/m4.js"></script>
-  <script src="js/viz/m5.js"></script>
-  <script src="js/data/modules.js"></script>
-  <script src="js/data/slides.js"></script>
-  <script src="js/data/slides2.js"></script>
-  <script src="js/data/slides3.js"></script>
-  <script src="js/data/slides4.js"></script>
-  <script src="js/data/lib1.js"></script>
-  <script src="js/data/lib2.js"></script>
-  <script src="js/data/lib3.js"></script>
-  <script src="js/data/lib4.js"></script>
-  <script src="js/data/lib5.js"></script>
-  <script src="js/data/lib6.js"></script>
-  <script src="js/data/lib7.js"></script>
-  <script src="js/data/questions.js"></script>
-  <script src="js/data/questions2.js"></script>
-  <script src="js/data/quiz.js"></script>
-  <script src="js/data/problems.js"></script>
-  <script src="js/data/notes.js"></script>
-  <script src="js/data/studynotes1.js"></script>
-  <script src="js/data/studynotes2.js"></script>
-  <script src="js/data/studynotes3.js"></script>
-  <script src="js/data/studynotes4.js"></script>
-  <script src="js/compiler.js"></script>
-  <script src="js/app.js"></script>
+  <script>
+    /* the page's scripts, in order (see the note in <head>); add new data files here */
+    if (window.DSA_BOOT) document.write([
+      "vendor/codemirror/codemirror.js",
+      "vendor/codemirror/clike.js",
+      "vendor/codemirror/python.js",
+      "vendor/codemirror/matchbrackets.js",
+      "vendor/codemirror/closebrackets.js",
+      "js/env.js",
+      "js/util.js",
+      "js/stage.js",
+      "js/viz/core.js",
+      "js/viz/m1.js",
+      "js/viz/m2.js",
+      "js/viz/m3.js",
+      "js/viz/m4.js",
+      "js/viz/m5.js",
+      "js/data/modules.js",
+      "js/data/slides.js",
+      "js/data/slides2.js",
+      "js/data/slides3.js",
+      "js/data/slides4.js",
+      "js/data/lib1.js",
+      "js/data/lib2.js",
+      "js/data/lib3.js",
+      "js/data/lib4.js",
+      "js/data/lib5.js",
+      "js/data/lib6.js",
+      "js/data/lib7.js",
+      "js/data/questions.js",
+      "js/data/questions2.js",
+      "js/data/quiz.js",
+      "js/data/problems.js",
+      "js/data/notes.js",
+      "js/data/studynotes1.js",
+      "js/data/studynotes2.js",
+      "js/data/studynotes3.js",
+      "js/data/studynotes4.js",
+      "js/compiler.js",
+      "js/app.js"
+    ].map(function (s) { return '<script src="' + s + '"><\/script>'; }).join(''));
+  </script>
 </body>
 </html>

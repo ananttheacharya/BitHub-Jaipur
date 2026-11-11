@@ -1,0 +1,7 @@
+# Vercel only builds the Jaipur frontend (Front-End New); the backend and its 1.4 GB of study material run on AWS.
+Backend/
+Study Material/
+Admin-Dashboard/
+dsa-tools/
+test_environment_pipeline/
+*.pem
